@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam App</title>
+    <link rel="stylesheet" href="styles.css"> <!-- This line includes the CSS -->
+    <style>
+        #webcam {
+            width: 720px;
+            height: 480px;
+            border: 1px solid black;
+            display: none;  /* Initially hide the video element */
+        }
+    </style>
+</head>
+<body>
+<video id="webcam" autoplay playsinline></video> <!-- Video element for displaying webcam feed -->
+<canvas id="outputCanvas" width="720" height="480"></canvas> <!-- Canvas element for drawing -->
+<button id="webcamButton">ENABLE WEBCAM</button>  <!-- Button to trigger webcam -->
+<button id="fullscreenButton">🔍</button> <!-- This will be the fullscreen button -->
+
+<script type="module" src="app.js"></script>  <!-- External JS script -->
+</body>
+</html>
