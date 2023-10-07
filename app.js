@@ -88,14 +88,14 @@ function drawHands()
     canvasElement.height = video.videoHeight;
 
     // check if the video frame has updated, and if so: generate a new set of landmark results
-    let startTimeMs = performance.now();
-    if (lastVideoTime !== video.currentTime) {
+    let framesSinceStart = performance.now(); // Get the current Broswer frame number since the app started
+    if (lastVideoTime !== video.currentTime) { //If brower refresh rate is faster than video rate dont draw past past that rate ie 30fps
         lastVideoTime = video.currentTime;
-        results = handLandmarker.detectForVideo(video, startTimeMs);
+        results = handLandmarker.detectForVideo(video, framesSinceStart); //*CALULATE HAND DETECTION the results of the current (in memory)
     }
    
     // clears the canvas
-    clearCanvas()
+   // clearCanvas()
 
     // if the results are NOT empty ( ie.. hands off screen ) this draws the landmarks using mediapipes methods: drawConnectors and drawLandmarks
     if (results.landmarks) {
