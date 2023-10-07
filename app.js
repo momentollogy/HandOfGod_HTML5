@@ -1,14 +1,23 @@
 
 import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
 
-let runningMode = "VIDEO";
-let enableWebcamButton;
-let trackingButton;
+// reference all the things on the browser page
+const enableWebcamButton = document.getElementById("webcamButton");;
+const trackingButton = document.getElementById("trackerButton");;
+const video = document.getElementById("webcam");
+const canvasElement = document.getElementById("output_canvas");
+const canvasCtx = canvasElement.getContext("2d");
+
+// define variables
 let tracking = true;
+let runningMode = "VIDEO";
+let handLandmarker = undefined;
+let lastVideoTime = -1;
+let results = undefined;
+let xVal = 0;
 
 
 // Before we can use HandLandmarker class we must wait for it to finish loading. Machine Learning models can be large and take a moment to get everything needed to run.
-let handLandmarker = undefined;
 const createHandLandmarker = async () => {
     const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm");
     handLandmarker = await HandLandmarker.createFromOptions(vision, {
@@ -26,21 +35,14 @@ createHandLandmarker();
 
 
 
-
 // Make the tracking button work
-trackingButton = document.getElementById("trackerButton");
 trackingButton.addEventListener("click",toggletracking)
-function toggletracking(event){ tracking = !tracking; predictWebcam(); }
+function toggletracking(event){ tracking = !tracking; loop(); }
 
 
 
 
 
-const video = document.getElementById("webcam");
-const canvasElement = document.getElementById("output_canvas");
-const canvasCtx = canvasElement.getContext("2d");
-
-enableWebcamButton = document.getElementById("webcamButton");
 
 // Check if webcam access is supported.  If not: disable the button and change it's text 
 const hasGetUserMedia = () => { var _a; return !!((_a = navigator.mediaDevices) === null || _a === void 0 ? void 0 : _a.getUserMedia); };
@@ -54,47 +56,48 @@ else {
 
 
 
-
-
 // Enable the live webcam view and start detection.
 function enableCam(event) {
-    
-    if (!handLandmarker) {
-        console.log("Wait! objectDetector not loaded yet.");
-        return;
-    }
 
-    // Activate the webcam stream. This asks the user for permission to use the camera, if Granted the browser returns a MEDIASTREAM object
-    navigator.mediaDevices.getUserMedia( {video:true} ).then( (stream) => {
-        video.srcObject = stream;
-        video.addEventListener("loadeddata", predictWebcam);
-    });
-    enableWebcamButton.removeEventListener("click", enableCam);
-    //console.log(video.srcObject);
+    // If the webcam stream is NOT running then activate the webcam stream. This asks the user for permission to use the camera, if Granted the browser returns a MEDIASTREAM object
+    if(!video.srcObject)
+    {
+        navigator.mediaDevices.getUserMedia( {video:true} ).then( (stream) => {
+            video.srcObject = stream;
+            video.addEventListener("loadeddata", loop); // this event starts the loop
+        });
+    }
 }
 
 
 
 
-
-let lastVideoTime = -1;
-let results = undefined;
-//console.log(video);
-async function predictWebcam() 
+// clears the canvas of all visual elements
+function clearCanvas()
 {
-    //console.log("predictiWebcam() happening!!!")
-    canvasElement.style.width = video.videoWidth;
-    canvasElement.style.height = video.videoHeight;
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+}
+
+
+
+// asks the HandLandmarker to detect the current frame and uses mediapipes drawConnectors and drawLandmarks methods to draw the hands
+function drawHands()
+{
+    // set the canvas width/height to match the video width/height
     canvasElement.width = video.videoWidth;
     canvasElement.height = video.videoHeight;
 
+    // check if the video frame has updated, and if so: generate a new set of landmark results
     let startTimeMs = performance.now();
     if (lastVideoTime !== video.currentTime) {
         lastVideoTime = video.currentTime;
         results = handLandmarker.detectForVideo(video, startTimeMs);
     }
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+   
+    // clears the canvas
+    clearCanvas()
+
+    // if the results are NOT empty ( ie.. hands off screen ) this draws the landmarks using mediapipes methods: drawConnectors and drawLandmarks
     if (results.landmarks) {
         for (const landmarks of results.landmarks) {
             drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
@@ -104,11 +107,37 @@ async function predictWebcam()
             drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: .1 });
         }
     }
-    canvasCtx.restore();
-    // Call this function again to keep predicting when the browser is ready.
+}
+
+
+
+// just drawing a circle for now, just to prove the concept
+function drawUI()
+{
+    xVal += 1; if (xVal > canvasElement.width){xVal = -128;}
+    //canvasCtx.beginPath();
+    //canvasCtx.rect(60,xVal,40,40);
+    //canvasCtx.stroke();
+
+    canvasCtx.font = "30px Arial";
+    canvasCtx.strokeText("Bubble Menu",30,30)
+
+    const bub = document.getElementById("bubblePic");
+    canvasCtx.drawImage(bub, xVal, 50, 128, 128 )
+}
+
+
+
+// the browser loop
+async function loop() 
+{
+    drawHands()
+    
     if (tracking) {
-        window.requestAnimationFrame(predictWebcam);
+        window.requestAnimationFrame(loop);
     }else{
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        clearCanvas()
     }
+
+    drawUI()
 }
