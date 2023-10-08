@@ -1,5 +1,5 @@
 
-import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
+import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.6";
 
 // reference all the things on the browser page
 const enableWebcamButton = document.getElementById("webcamButton");;
@@ -19,7 +19,7 @@ let xVal = 0;
 
 // Before we can use HandLandmarker class we must wait for it to finish loading. Machine Learning models can be large and take a moment to get everything needed to run.
 const createHandLandmarker = async () => {
-    const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm");
+    const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.6/wasm");
     handLandmarker = await HandLandmarker.createFromOptions(vision, {
         baseOptions: {
             modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
@@ -105,6 +105,7 @@ function drawHands()
                 lineWidth: 1
             });
             drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: .1 });
+            
         }
     }
 }
@@ -127,20 +128,33 @@ function drawUI()
 }
 
 
-function mattsFunction(){
+function mattsGameFunction()
+{
+   // landmarks.forEach((landmark, index) => {
+   //     console.log(`Landmark ${index}: x = ${landmark.x}, y = ${landmark.y}`);
+   // });
     // Draw CICLE FOM CICLE CLASS, display it. 
     const bub = document.getElementById("bubblePic");
-    canvasCtx.drawImage(bub, xVal, 40, 129, 130 );
+     canvasCtx.drawImage(bub, xVal, 40, 129, 130 );
+
+     for (const index in landmarks) {
+        if (landmarks.hasOwnProperty(index)) {
+            const landmark = landmarks[index];
+            console.log(`Landmark ${index}: x = ${landmark.x}, y = ${landmark.y}`);
+        }
+    }
+    
            //For every hadn land mark in the landmarks, see if its in the circle, then stop check other land marks and grow etc... 
            // how you call a function mattsGameFunction();
-   }
+      //  });
+}
    
 
 // the browser loop
 async function loop() 
 {
     drawHands()
-
+    mattsGameFunction();
     if (tracking) {
         window.requestAnimationFrame(loop);
     }else{
