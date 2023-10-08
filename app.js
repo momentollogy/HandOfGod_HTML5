@@ -1,8 +1,4 @@
-
 import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.6";
-
-
-
 
 // reference all the things on the browser page
 const enableWebcamButton = document.getElementById("webcamButton");;
@@ -18,8 +14,6 @@ let handLandmarker = undefined;
 let lastVideoTime = -1;
 let results = undefined;
 let xVal = 0;
-
-
 
 
 // Before we can use HandLandmarker class we must wait for it to finish loading. Machine Learning models can be large and take a moment to get everything needed to run.
@@ -38,15 +32,14 @@ const createHandLandmarker = async () => {
 createHandLandmarker();
 
 
+//import MediaPipeTracker from './MediaPipeTracker.js'
+//let mediaPipe = new MediaPipeTracker(handLandmarker)
+//handLandmarker = mediaPipe.getHandLandmarker()
 
 
 // Make the tracking button work
 trackingButton.addEventListener("click",toggletracking)
 function toggletracking(event){ tracking = !tracking; loop(); }
-
-
-
-
 
 
 // Check if webcam access is supported.  If not: disable the button and change it's text 
@@ -80,7 +73,6 @@ function initCam(event)
     // set the canvas width/height to match the video width/height
     canvasElement.width = video.videoWidth;
     canvasElement.height = video.videoHeight;
-    
     // start the loop
     loop();
 }
@@ -125,10 +117,10 @@ function getResultsOfHandLandmarkTracker()
 function drawUI()
 {
     //xVal += 1; if (xVal > canvasElement.width){xVal = -128;}
-    //canvasCtx.font = "30px Arial";
-    //canvasCtx.strokeText("Bubble Menu",30,30)
-    const bub = document.getElementById("bubblePic");
-    canvasCtx.drawImage(bub, xVal, 50, 128, 128 );
+    canvasCtx.font = "30px Arial";
+    canvasCtx.strokeText("Bubble Menu",30,30)
+    //const bub = document.getElementById("bubblePic");
+    //canvasCtx.drawImage(bub, xVal, 50, 128, 128 );
 }
 
 
