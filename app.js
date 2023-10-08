@@ -1,6 +1,9 @@
 
 import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.6";
 
+
+
+
 // reference all the things on the browser page
 const enableWebcamButton = document.getElementById("webcamButton");;
 const trackingButton = document.getElementById("trackerButton");;
@@ -15,6 +18,8 @@ let handLandmarker = undefined;
 let lastVideoTime = -1;
 let results = undefined;
 let xVal = 0;
+
+
 
 
 // Before we can use HandLandmarker class we must wait for it to finish loading. Machine Learning models can be large and take a moment to get everything needed to run.
@@ -64,11 +69,21 @@ function enableCam(event) {
     {
         navigator.mediaDevices.getUserMedia( {video:true} ).then( (stream) => {
             video.srcObject = stream;
-            video.addEventListener("loadeddata", loop); // this event starts the loop
+            video.addEventListener("loadeddata", initCam); // this event starts the loop
         });
     }
 }
 
+//  what to do when the camera has finally started up
+function initCam(event)
+{
+    // set the canvas width/height to match the video width/height
+    canvasElement.width = video.videoWidth;
+    canvasElement.height = video.videoHeight;
+    
+    // start the loop
+    loop();
+}
 
 
 
@@ -79,24 +94,9 @@ function clearCanvas()
 }
 
 
-
 // asks the HandLandmarker to detect the current frame and uses mediapipes drawConnectors and drawLandmarks methods to draw the hands
 function drawHands()
 {
-    // set the canvas width/height to match the video width/height
-    canvasElement.width = video.videoWidth;
-    canvasElement.height = video.videoHeight;
-
-    // check if the video frame has updated, and if so: generate a new set of landmark results
-    let framesSinceStart = performance.now(); // Get the current Broswer frame number since the app started
-    if (lastVideoTime !== video.currentTime) { //If brower refresh rate is faster than video rate dont draw past past that rate ie 30fps
-        lastVideoTime = video.currentTime;
-        results = handLandmarker.detectForVideo(video, framesSinceStart); //*CALULATE HAND DETECTION the results of the current (in memory)
-    }
-   
-    // clears the canvas
-   // clearCanvas()
-
     // if the results are NOT empty ( ie.. hands off screen ) this draws the landmarks using mediapipes methods: drawConnectors and drawLandmarks
     if (results.landmarks) {
         for (const landmarks of results.landmarks) {
@@ -104,62 +104,52 @@ function drawHands()
                 color: "#00FF00",
                 lineWidth: 1
             });
-            drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: .1 });
-            
+            drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: .1 });   
         }
     }
 }
 
+
+function getResultsOfHandLandmarkTracker()
+{
+    // check if the video frame has updated, and if so: generate a new set of landmark results
+    let framesSinceStart = performance.now(); // Get the current Broswer frame number since the app started
+    if (lastVideoTime !== video.currentTime) { //If brower refresh rate is faster than video rate dont draw past past that rate ie 30fps
+        lastVideoTime = video.currentTime;
+        results = handLandmarker.detectForVideo(video, framesSinceStart); //*CALULATE HAND DETECTION the results of the current (in memory)
+    }
+}
 
 
 // just drawing a circle for now, just to prove the concept
 function drawUI()
 {
-    xVal += 1; if (xVal > canvasElement.width){xVal = -128;}
-    //canvasCtx.beginPath();
-    //canvasCtx.rect(60,xVal,40,40);
-    //canvasCtx.stroke();
-
-    canvasCtx.font = "30px Arial";
-    canvasCtx.strokeText("Bubble Menu",30,30)
-
+    //xVal += 1; if (xVal > canvasElement.width){xVal = -128;}
+    //canvasCtx.font = "30px Arial";
+    //canvasCtx.strokeText("Bubble Menu",30,30)
     const bub = document.getElementById("bubblePic");
     canvasCtx.drawImage(bub, xVal, 50, 128, 128 );
 }
 
 
-function mattsGameFunction()
-{
-   // landmarks.forEach((landmark, index) => {
-   //     console.log(`Landmark ${index}: x = ${landmark.x}, y = ${landmark.y}`);
-   // });
-    // Draw CICLE FOM CICLE CLASS, display it. 
-    const bub = document.getElementById("bubblePic");
-     canvasCtx.drawImage(bub, xVal, 40, 129, 130 );
+// import and use the current level.   This will eventually need to be moved to a LevelManager or the GameManager etc..
+import Level_01 from './Level_01.js'
+let currentLevel = new Level_01(results, canvasElement, canvasCtx)
 
-     for (const index in landmarks) {
-        if (landmarks.hasOwnProperty(index)) {
-            const landmark = landmarks[index];
-            console.log(`Landmark ${index}: x = ${landmark.x}, y = ${landmark.y}`);
-        }
-    }
-    
-           //For every hadn land mark in the landmarks, see if its in the circle, then stop check other land marks and grow etc... 
-           // how you call a function mattsGameFunction();
-      //  });
-}
-   
 
 // the browser loop
 async function loop() 
 {
+    getResultsOfHandLandmarkTracker() // this captures hand lanmarks in the "results" variable
+    
+    clearCanvas()
     drawHands()
-    mattsGameFunction();
+    currentLevel.level_loop(results,canvasElement,canvasCtx);
+    drawUI()
+
     if (tracking) {
         window.requestAnimationFrame(loop);
     }else{
         clearCanvas()
     }
-
-    drawUI()
 }
