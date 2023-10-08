@@ -123,16 +123,24 @@ function drawUI()
     canvasCtx.strokeText("Bubble Menu",30,30)
 
     const bub = document.getElementById("bubblePic");
-    canvasCtx.drawImage(bub, xVal, 50, 128, 128 )
+    canvasCtx.drawImage(bub, xVal, 50, 128, 128 );
 }
 
 
+function mattsFunction(){
+    // Draw CICLE FOM CICLE CLASS, display it. 
+    const bub = document.getElementById("bubblePic");
+    canvasCtx.drawImage(bub, xVal, 40, 129, 130 );
+           //For every hadn land mark in the landmarks, see if its in the circle, then stop check other land marks and grow etc... 
+           // how you call a function mattsGameFunction();
+   }
+   
 
 // the browser loop
 async function loop() 
 {
     drawHands()
-    
+
     if (tracking) {
         window.requestAnimationFrame(loop);
     }else{
