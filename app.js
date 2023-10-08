@@ -1,4 +1,5 @@
 import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.6";
+import MediaPipeTracker from './MediaPipeTracker.js';
 
 // reference all the things on the browser page
 const enableWebcamButton = document.getElementById("webcamButton");;
@@ -16,25 +17,11 @@ let results = undefined;
 let xVal = 0;
 
 
-// Before we can use HandLandmarker class we must wait for it to finish loading. Machine Learning models can be large and take a moment to get everything needed to run.
-const createHandLandmarker = async () => {
-    const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.6/wasm");
-    handLandmarker = await HandLandmarker.createFromOptions(vision, {
-        baseOptions: {
-            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-            delegate: "GPU"
-        },
-        runningMode: runningMode,
-        numHands: 2
-    });
-
-};
-createHandLandmarker();
-
-
-//import MediaPipeTracker from './MediaPipeTracker.js'
-//let mediaPipe = new MediaPipeTracker(handLandmarker)
-//handLandmarker = mediaPipe.getHandLandmarker()
+let mediaPipe = new MediaPipeTracker();
+mediaPipe.getHandLandmarkerPromise().then(() => {
+    handLandmarker = mediaPipe.getHandLandmarker();
+    // Now you can use handLandmarker
+});
 
 
 // Make the tracking button work
