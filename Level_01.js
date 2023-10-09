@@ -3,6 +3,7 @@ export default class Level_01
     constructor(){
         this.xpos = 0;
         this.ypos = 0;
+        console.log("level 1 constructor works");
     }
 
     level_loop(results,canvasElement,canvasCtx)
@@ -16,11 +17,16 @@ export default class Level_01
                 //console.log(landmarks[0].x);
                 this.xpos = landmarks[8].x * canvasElement.width;
                 this.ypos = landmarks[8].y * canvasElement.height;
+
+                this.xpos1 = landmarks[20].x * canvasElement.width;
+                this.ypos1 = landmarks[20].y * canvasElement.height;
             }
         }
     
         // place a bubble at the fingertip coordinates
         const bub = document.getElementById("bubblePic");
-        canvasCtx.drawImage(bub, this.xpos-32, this.ypos-32, 64, 64 );
+        const bub1 = document.getElementById("bubblePic");
+        canvasCtx.drawImage(bub, this.xpos-23, this.ypos-23, 46, 46 );
+        canvasCtx.drawImage(bub1, this.xpos1-23, this.ypos1-23, 46, 46 );
     }
 }

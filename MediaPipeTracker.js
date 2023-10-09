@@ -2,8 +2,11 @@
 import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.6";
 
 export default class MediaPipeTracker {
-    constructor() {
-        this.handLandmarkerPromise = this.createHandLandmarker();
+    constructor(vid) {
+        this.video = vid;
+        this.createHandLandmarker().then(() => {
+            console.log("Hand Landmark model loaded!");
+        });
     }
 
     async createHandLandmarker() {
@@ -18,11 +21,10 @@ export default class MediaPipeTracker {
         });
     }
 
-    getHandLandmarkerPromise() {
-        return this.handLandmarkerPromise;
-    }
-
-    getHandLandmarker() {
-        return this.handLandmarker;
+    getResults() {
+        if(this.handLandmarker)
+        {
+            return this.handLandmarker.detectForVideo(this.video, performance.now());
+        }
     }
 }
