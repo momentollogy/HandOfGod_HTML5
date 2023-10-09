@@ -1,9 +1,15 @@
+import Circle from './Circle.js';  // Adjust the path to match the location of your Circle.js file
+
+
 export default class Level_01
 {
-    constructor(){
+    constructor(mp,canvasElement, canvasCtx){
         this.xpos = 0;
         this.ypos = 0;
-        console.log("level 1 constructor works");
+        this.canvas = canvasElement;  // Fixed here
+        this.ctx = canvasCtx;  // Fixed here
+        console.log("MATTS",canvasElement, canvasCtx);
+        this.circle = new Circle(canvasElement, canvasCtx);
     }
 
     level_loop(results,canvasElement,canvasCtx)
@@ -14,12 +20,15 @@ export default class Level_01
             for (const landmarks of results.landmarks) 
             {
                 // get the X and Y position of the fingertip
-                //console.log(landmarks[0].x);
+                console.log(landmarks[0].x);
                 this.xpos = landmarks[8].x * canvasElement.width;
                 this.ypos = landmarks[8].y * canvasElement.height;
 
                 this.xpos1 = landmarks[20].x * canvasElement.width;
                 this.ypos1 = landmarks[20].y * canvasElement.height;
+
+              //  this.circle.draw();  // Draw the circle to the canvas
+
             }
         }
     
@@ -28,5 +37,7 @@ export default class Level_01
         const bub1 = document.getElementById("bubblePic");
         canvasCtx.drawImage(bub, this.xpos-23, this.ypos-23, 46, 46 );
         canvasCtx.drawImage(bub1, this.xpos1-23, this.ypos1-23, 46, 46 );
+      //  const level_01 = new Level_01(canvasElement, canvasCtx);
+
     }
 }

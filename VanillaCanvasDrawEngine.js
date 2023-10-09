@@ -35,7 +35,7 @@ export default class VanillaCanvasDrawEngine {
     {
         // get the results and store them as a class member even though results is only used in this method
         if(this.results == undefined){this.results = this.mediaPipe.getResults();}
-        
+        if(this.results== undefined){return;}
         // check if the video frame has updated, and if so: generate a new set of landmark results
         let framesSinceStart = performance.now(); // Get the current Broswer frame number since the app started
         if (this.lastVideoTime !== this.video.currentTime) { //If brower refresh rate is faster than video rate dont draw past past that rate ie 30fps

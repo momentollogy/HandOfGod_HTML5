@@ -20,7 +20,7 @@ export default class MediaPipeTracker {
             numHands: 2
         });
     }
-
+//THIS IS where we pull the detection data xzy
     getResults() {
         if(this.handLandmarker)
         {
