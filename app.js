@@ -1,12 +1,14 @@
 import MediaPipeTracker from './MediaPipeTracker.js';
 import VanillaCanvasDrawEngine from './VanillaCanvasDrawEngine.js';
 import GameManager from './GameManager.js';
+import MediaUtility from './Utility.js';
 
-// reference all the things on the browser page
+
+// reference all the things on the HTML 
 const enableWebcamButton = document.getElementById("webcamButton");;
-const trackingButton = document.getElementById("trackerButton");;
-const loopButton = document.getElementById("loopButton");;
 const video = document.getElementById("webcam");
+//const mediaUtility = new MediaUtility(video); 
+
 const canvasElement = document.getElementById("output_canvas");
 
 // Instatiate the MediaPipe / CVProcessor Class  and send it the video tag in it's constructor
@@ -17,6 +19,13 @@ let gm = new GameManager(canvasElement,mediaPipe)
 // instantiate the vanilla Draw engine
 let de = new VanillaCanvasDrawEngine(canvasElement,mediaPipe, video, gm)
 
+
+// Define a function to handle stream changes // New Line
+function handleStreamChange(stream) {
+    mediaPipe.updateStream(stream);  // New Line
+}
+
+const mediaUtility = new MediaUtility(video, handleStreamChange); //new?
 
 
 // Check if webcam access is supported.  If not: disable the button and change it's text 
@@ -30,30 +39,31 @@ else {
 }
 
 // Enable the live webcam view and start detection.
-function enableCam(event) {
-    // If the webcam stream is NOT running then activate the webcam stream. This asks the user for permission to use the camera, if Granted the browser returns a MEDIASTREAM object
-    if(!video.srcObject)
-    {
-        navigator.mediaDevices.getUserMedia( {video:true} ).then( (stream) => {
-            video.srcObject = stream;
-            video.addEventListener("loadeddata", onCamStartup); // this event starts the loop
-        });
-    }
+async function enableCam(event) {
+    await mediaUtility.initCameraSelection();  // Add this line
+    mediaUtility.createFullscreenButton();  // Add this line
+    video.srcObject = mediaUtility.videoElement.srcObject;
+    video.addEventListener("User_Webcam_Change",()=> {
+        console.log('Event triggered');
+        onCamStartup();
+    })
+
+
+    video.addEventListener("loadeddata", async () => {  // Make this function async
+        onCamStartup(event);
+       
+    });
+   
 }
 
-// the toggle loop button event handler ( should be just a boolean toggle )
-function toggleLooping(event){ de.toggleLoop() }
-function toggletracking(event){ de.toggleTracking() }
+
 
 //  what to do when the camera has finally started up
 function onCamStartup(event)
 {
     // set the canvas width/height to match the video width/height
     canvasElement.width = video.videoWidth;
-    canvasElement.height = video.videoHeight;
-    // enable the toggle buttons
-    trackingButton.addEventListener("click",toggletracking)
-    loopButton.addEventListener("click",toggleLooping)
+    canvasElement.height = video.videoHeight; 
     // start the loop
     de.loop();
 }

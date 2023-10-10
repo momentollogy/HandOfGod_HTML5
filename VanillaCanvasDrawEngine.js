@@ -5,12 +5,11 @@ export default class VanillaCanvasDrawEngine {
         this.mediaPipe = _mediaPipe;
         this.video = _video;
         this.gm = _gm;
-
         this.tracking = true;
         this.looping = true;
 
         this.bub = document.getElementById("bubblePic");
-        console.log("vanillaConstructer",this.gm)
+       // console.log("vanillaConstructer",this.gm)
     }
 
     clearCanvas()
@@ -20,9 +19,18 @@ export default class VanillaCanvasDrawEngine {
 
     drawUI()
     {
+         // Store the current state of the canvas context
+        this.canvasCtx.save(); // new line 
+        
+        // Apply transformation to reverse the text
+        this.canvasCtx.translate(this.canvasElement.width, 0); //new line 
+        this.canvasCtx.scale(-1, 1);
+
         // Draw label
         this.canvasCtx.font = "30px Arial";
         this.canvasCtx.strokeText("Bubble Menu",30,30)
+
+        this.canvasCtx.restore(); //new line
 
         // calculate xPos using a sin wave for simple oscilating motion
         this.xVal = (Math.sin(performance.now()*.001) * this.canvasElement.width/2) + this.canvasElement.width/2 - 64;
@@ -35,7 +43,7 @@ export default class VanillaCanvasDrawEngine {
     {
         // get the results and store them as a class member even though results is only used in this method
         if(this.results == undefined){this.results = this.mediaPipe.getResults();}
-        
+        if(this.results== undefined){return;}
         // check if the video frame has updated, and if so: generate a new set of landmark results
         let framesSinceStart = performance.now(); // Get the current Broswer frame number since the app started
         if (this.lastVideoTime !== this.video.currentTime) { //If brower refresh rate is faster than video rate dont draw past past that rate ie 30fps

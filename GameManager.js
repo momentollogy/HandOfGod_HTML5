@@ -7,6 +7,6 @@ export default class GameManager {
         this.mediaPipe = _mediaPipe;
 
         // set the current level to level_01
-        this.currentLevel = new Level_01(this.mediaPipe.getResults(), this.canvasElement, this.canvasCtx)
+        this.currentLevel = new Level_01();//(this.mediaPipe.getResults(), this.canvasElement, this.canvasCtx)
     }
 }

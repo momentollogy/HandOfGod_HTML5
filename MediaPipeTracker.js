@@ -27,4 +27,10 @@ export default class MediaPipeTracker {
             return this.handLandmarker.detectForVideo(this.video, performance.now());
         }
     }
+
+    //updateStream(stream) {
+    //    this.video.srcObject = stream;
+        // Re-initialize your hand landmarker or do other necessary updates here
+      //  this.createHandLandmarker();
+  //  }
 }
