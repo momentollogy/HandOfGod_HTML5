@@ -22,18 +22,33 @@ export default class Level_01
         {
             for (const landmarks of results.landmarks) 
             {
-                if(true){}
+                // get the X and Y position of the fingertip
+                //console.log(landmarks[0].x, landmarks[0].y);
+                this.xpos = landmarks[8].x * canvasElement.width;
+                this.ypos = landmarks[8].y * canvasElement.height;
+
+                this.xpos1 = landmarks[20].x * canvasElement.width;
+                this.ypos1 = landmarks[20].y * canvasElement.height;
+
+              //  this.circle.draw();  // Draw the circle to the canvas
+
             }
         }
     
+        // place a bubble at the fingertip coordinates
+        const bub = document.getElementById("bubblePic");
+        const bub1 = document.getElementById("bubblePic");
+        canvasCtx.drawImage(bub, this.xpos-23, this.ypos-23, 46, 46 );
+        canvasCtx.drawImage(bub1, this.xpos1-23, this.ypos1-23, 46, 46 );
+
         // win lose condition is set here
         if(this.xpos-23 > 320)
         {
-          this.win=true;
-        }
+          this.win=true;}
         else
         {
           this.win=false;
         }
+
     }
 }

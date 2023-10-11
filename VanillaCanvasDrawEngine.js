@@ -10,7 +10,7 @@ export default class VanillaCanvasDrawEngine {
         this.looping = true;
 
         this.bub = document.getElementById("bubblePic");
-        console.log("vanillaConstructer",this.gm)
+        //console.log("vanillaConstructer",this.gm)
     }
 
     clearCanvas()
@@ -20,15 +20,18 @@ export default class VanillaCanvasDrawEngine {
 
     drawUI()
     {
-        // Draw label
+        // Draw all text and human readable stuff inbetween these save() and restore() methods.. otherwise they will be reversed
+        this.canvasCtx.save();
+        this.canvasCtx.scale(-1, 1);
         this.canvasCtx.font = "30px Arial";
-        this.canvasCtx.strokeText("Bubble Menu",30,30)
+        this.canvasCtx.strokeText("Bubble Menu", -this.canvasElement.width+30, 30);
+        this.canvasCtx.restore();
 
         // calculate xPos using a sin wave for simple oscilating motion
-        this.xVal = (Math.sin(performance.now()*.001) * this.canvasElement.width/2) + this.canvasElement.width/2 - 64;
+        //this.xVal = (Math.sin(performance.now()*.001) * this.canvasElement.width/2) + this.canvasElement.width/2 - 64;
 
         // draw bubble using xPos
-        this.canvasCtx.drawImage(this.bub, this.xVal, 50, 128, 128 );
+        //this.canvasCtx.drawImage(this.bub, this.xVal, 50, 128, 128 );
     }
 
     drawHands()
@@ -62,6 +65,11 @@ export default class VanillaCanvasDrawEngine {
 
     toggleTracking(){this.tracking = !this.tracking}
 
+    checkGameStateAndProcessWinLose()
+    {
+        console.log(this.gm.currentLevel.win, this.gm.currentLevel.lose)
+    }
+
     loop() 
     {
         this.clearCanvas() // clear canvas
@@ -70,8 +78,11 @@ export default class VanillaCanvasDrawEngine {
         
         this.gm.currentLevel.level_loop(this.results,this.canvasElement,this.canvasCtx); // draw game level stuff
         
+        this.checkGameStateAndProcessWinLose(); // check game conditions
+
         this.drawUI() // draw UI
 
         if (this.looping) { requestAnimationFrame(() => this.loop()); }  // repeat loop
     }
+
 }

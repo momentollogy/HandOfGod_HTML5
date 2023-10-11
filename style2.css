@@ -1,0 +1,28 @@
+
+body {
+  font-family: roboto;
+  background-color: black;
+}
+
+video {
+    /*z-index: 0;
+    position: absolute;*/
+}
+
+.canvas {
+    /*z-index: 1;
+    position: absolute;
+    pointer-events: none;*/
+}
+
+#bubblePic {
+    display:none;
+}
+
+#fullButton {
+    /*background-color: transparent;
+    position:absolute;
+    bottom:0;
+    right:0;*/
+    display:none;
+}
