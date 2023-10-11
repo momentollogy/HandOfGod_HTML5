@@ -33,13 +33,7 @@ em {
   font-weight: bold;
 }
 
-video {
-  clear: both;
-  display: block;
-  transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg);
-  -moz-transform: rotateY(180deg);
-}
+
 
 section {
   opacity: 1;
@@ -92,13 +86,25 @@ footer {
   position: absolute;
 }
 
+video {
+  clear: both;
+  display: block;
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+}
+
+
 .canvas {
   z-index: 1;
   position: absolute;
   pointer-events: none;
 }
 
+
 .output_canvas {
+  z-index: 1000;
+  position: absolute;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
   -moz-transform: rotateY(180deg);

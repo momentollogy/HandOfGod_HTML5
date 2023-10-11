@@ -57,6 +57,8 @@ export default class VanillaCanvasDrawEngine {
     toggleLoop()
     {
         this.looping = ! this.looping;
+        console.log('Looping state!!!:', this.looping);  // <-- Log the looping state
+
         if(this.looping){this.loop();}
     }
 
@@ -64,8 +66,13 @@ export default class VanillaCanvasDrawEngine {
 
     loop() 
     {
-        this.clearCanvas() // clear canvas
+        console.log('Loop is being called!!!!!!!');  // <-- This line logs to the console each time loop() is called
 
+       // this.clearCanvas() // clear canvas
+
+        this.canvasCtx.fillStyle = 'red';  // Set fill color to red
+        this.canvasCtx.fillRect(0, 0, this.canvasElement.width, this.canvasElement.height);  // Fill the entire canvas red
+       
         if(this.tracking){this.drawHands()}  // draw hands
         
         this.gm.currentLevel.level_loop(this.results,this.canvasElement,this.canvasCtx); // draw game level stuff
