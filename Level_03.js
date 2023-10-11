@@ -13,7 +13,6 @@ export default class Level_01
         this.linePos = 100;
         //console.log("MATTS",canvasElement, canvasCtx);
         this.circle = new Circle(canvasElement, canvasCtx);
-        this.won = false;
     }
 
     level_loop(results,canvasElement,canvasCtx)
@@ -35,8 +34,7 @@ export default class Level_01
         const bub = document.getElementById("bubblePic");
         const bub1 = document.getElementById("bubblePic");
         canvasCtx.drawImage(bub, this.xpos-23, this.ypos-23, 46, 46 );
-        //canvasCtx.drawImage(bub1, this.xpos1-23, this.ypos1-23, 46, 46 );
-        canvasCtx.drawImage(bub1, 0, 0, 46, 46 );
+        canvasCtx.drawImage(bub1, this.xpos1-23, this.ypos1-23, 46, 46 );
 
         
         var distance = Math.sqrt((Math.pow(0-this.xpos,2))+(Math.pow(0-this.ypos,2)))
@@ -44,23 +42,21 @@ export default class Level_01
 
         // Start a new Path
         canvasCtx.beginPath();
-        canvasCtx.moveTo(23, 23);
-        canvasCtx.lineWidth = 80 - distance / 5;
+        canvasCtx.moveTo(0, 0);
+        canvasCtx.lineWidth = canvasCtx.width / distance +.1 ;
         canvasCtx.lineTo(this.xpos, this.ypos);
 
         // Draw the Path
         canvasCtx.stroke();
-        //console.log(distance);
+
 
         // win lose condition is set here
-        if(distance < 80 && !this.won)
+        if(distance < 10)
         {
-            //this.win = true;
-            //this.won = true;
-        }
+          this.win=true;}
         else
         {
-            this.win=false;
+          this.win=false;
         }
 
     }

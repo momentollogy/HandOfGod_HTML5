@@ -27,6 +27,7 @@ export default class VanillaCanvasDrawEngine {
     {
         // Draw all text and human readable stuff inbetween these save() and restore() methods.. otherwise they will be reversed
         this.canvasCtx.save();
+        this.canvasCtx.lineWidth = 1;
         this.canvasCtx.scale(-1, 1);
         this.canvasCtx.font = "30px Arial";
         this.canvasCtx.strokeText(this.label, -this.canvasElement.width+30, 30);

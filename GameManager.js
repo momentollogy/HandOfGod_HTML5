@@ -9,6 +9,7 @@ export default class GameManager {
         this.mediaPipe = _mediaPipe;
         
         // set the current level to level_01
+        //this.de.setLabel("Bubble Game");
         this.currentLevel = new Level_01(this.mediaPipe.getResults(), this.canvasElement, this.canvasCtx)
     }
 
@@ -18,9 +19,9 @@ export default class GameManager {
 
     nextLevel()
     {
-        //var audio = new Audio('audio_file.mp3');
-        //audio.play();
-        this.de.setLabel("Level 02 - Finger bubbles!  :)");
+        var audio = new Audio('sound2/pop.mp3');
+        audio.play();
+        this.de.setLabel("Level 02 - line draw ( no win condition )  :)");
         this.currentLevel = new Level_02(this.mediaPipe.getResults(), this.canvasElement, this.canvasCtx)
     }
 }

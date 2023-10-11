@@ -49,6 +49,8 @@ export default class Level_01
           }
         }
 
+
+
         // if hand is out do this  ( I used a toddle because of the for loop on the landmarks )
         if(inside){
           this.circle.color = 'blue';
@@ -62,7 +64,7 @@ export default class Level_01
         this.circle.draw();
 
         // win lose condition is set here
-        if(this.circle.radius > 180)
+        if(this.circle.radius > 130)
         {
           this.win=true;
         }
