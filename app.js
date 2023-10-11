@@ -19,6 +19,7 @@ let gm = new GameManager(canvasElement,mediaPipe)
 // instantiate the vanilla Draw engine
 let de = new VanillaCanvasDrawEngine(canvasElement,mediaPipe, video, gm)
 
+gm.setDrawEngine(de); // tell the game manager about the draw engine
 
 // Check if webcam access is supported.  If not: disable the button and change it's text 
 const hasGetUserMedia = () => { var _a; return !!((_a = navigator.mediaDevices) === null || _a === void 0 ? void 0 : _a.getUserMedia); };

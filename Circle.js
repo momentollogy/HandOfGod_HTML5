@@ -1,6 +1,5 @@
 export default class Circle {
-    constructor(canvas, ctx, color = 'rgb(0, 255, 0)',position = {x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight},
-    radius = 50, thickness = 2, is_growing = false, is_moving = false, growth_rate = 1)
+    constructor(canvas, ctx, color='green', position = {x:0,y:240}, radius = 50, thickness = 2, is_growing = false, is_moving = false, growth_rate = .6)
      {
         this.canvas = canvas;
         this.ctx = ctx;
@@ -8,9 +7,10 @@ export default class Circle {
         this.radius = radius;
         this.color = color;
         this.thickness = thickness;
+        this.baseRadius = radius;
      //   this.is_growing = is_growing;
       //  this.is_moving = is_moving;
-      //  this.growth_rate = growth_rate;
+        this.growth_rate = growth_rate;
        // this.is_hand_inside_last_frame = false;
        // this.canvas = document.getElementById('canvas');
        // this.ctx = this.canvas.getContext('2d');
@@ -25,7 +25,6 @@ export default class Circle {
         }
     }
 
-
     randomize(bright = false) {
         this.randomizeColor(bright);
         this.randomizePosition();
@@ -35,17 +34,35 @@ export default class Circle {
         this.radius += this.growth_rate;
     }
 
+    shrink(){
+        if(this.radius > this.baseRadius)
+        {
+            this.radius -= this.growth_rate * 3;
+        }else
+        {
+            this.radius = this.baseRadius
+        }
+    }
+
     move(xx, yy) {
         this.position = {x: xx, y: yy};
     }
 
     draw() {
+        // draw the arc
         this.ctx.beginPath();
-        this.ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false);
+        this.ctx.arc(this.position.x,this.position.y, this.radius, 0, Math.PI * 2, false);
         this.ctx.strokeStyle = this.color;
         this.ctx.lineWidth = this.thickness;
         this.ctx.stroke();
         this.ctx.closePath();
+
+        // draw radius at center
+        this.ctx.save();
+        this.ctx.scale(-1, 1);
+        this.ctx.font = "20px Arial";
+        this.ctx.strokeText(Math.trunc(this.radius), -this.position.x-11, this.position.y+5);
+        this.ctx.restore();
     }
 
     is_hand_inside(hand_position) {

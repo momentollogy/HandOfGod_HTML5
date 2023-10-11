@@ -5,6 +5,7 @@ export default class VanillaCanvasDrawEngine {
         this.mediaPipe = _mediaPipe;
         this.video = _video;
         this.gm = _gm;
+        this.label = "Bubble Game"
 
         this.tracking = true;
         this.looping = true;
@@ -18,13 +19,17 @@ export default class VanillaCanvasDrawEngine {
         this.canvasCtx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
     }
 
+    setLabel(incomingText){
+        this.label = incomingText;
+    }
+
     drawUI()
     {
         // Draw all text and human readable stuff inbetween these save() and restore() methods.. otherwise they will be reversed
         this.canvasCtx.save();
         this.canvasCtx.scale(-1, 1);
         this.canvasCtx.font = "30px Arial";
-        this.canvasCtx.strokeText("Bubble Menu", -this.canvasElement.width+30, 30);
+        this.canvasCtx.strokeText(this.label, -this.canvasElement.width+30, 30);
         this.canvasCtx.restore();
 
         // calculate xPos using a sin wave for simple oscilating motion
@@ -67,7 +72,12 @@ export default class VanillaCanvasDrawEngine {
 
     checkGameStateAndProcessWinLose()
     {
-        console.log(this.gm.currentLevel.win, this.gm.currentLevel.lose)
+        //console.log(this.gm.currentLevel.win, this.gm.currentLevel.lose)
+        if(this.gm.currentLevel.win)
+        {
+            console.log("WIN!!!!");
+            this.gm.nextLevel();
+        }
     }
 
     loop() 

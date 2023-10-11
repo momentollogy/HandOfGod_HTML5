@@ -22,16 +22,11 @@ export default class Level_01
         {
             for (const landmarks of results.landmarks) 
             {
-                // get the X and Y position of the fingertip
-                //console.log(landmarks[0].x, landmarks[0].y);
                 this.xpos = landmarks[8].x * canvasElement.width;
                 this.ypos = landmarks[8].y * canvasElement.height;
 
                 this.xpos1 = landmarks[20].x * canvasElement.width;
                 this.ypos1 = landmarks[20].y * canvasElement.height;
-
-              //  this.circle.draw();  // Draw the circle to the canvas
-
             }
         }
     
