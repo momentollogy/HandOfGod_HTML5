@@ -50,10 +50,9 @@ export default class Level_01
         }
 
 
-
-        // if hand is out do this  ( I used a toddle because of the for loop on the landmarks )
+        // if hand is out do this  ( I used a toggle because of the for loop on the landmarks )
         if(inside){
-          this.circle.color = 'blue';
+         // this.circle.color = 'blue';
           this.circle.grow(.1);
         }else{
           this.circle.color = 'green';

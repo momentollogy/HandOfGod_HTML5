@@ -36,7 +36,9 @@ function onEnableCamButtonClicked(event) {
     // If the webcam stream is NOT running then activate the webcam stream. This asks the user for permission to use the camera, if Granted the browser returns a MEDIASTREAM object
     if(!video.srcObject)
     {
-        navigator.mediaDevices.getUserMedia( {video:true} ).then( (stream) => {
+        const videoConstraints = { width: 1920, height: 1080 };
+
+        navigator.mediaDevices.getUserMedia( {video:videoConstraints} ).then( (stream) => {
             video.srcObject = stream;
             video.addEventListener("loadeddata", onCamStartup); // this event starts the loop
         });

@@ -44,7 +44,8 @@ export default class Circle {
         }
     }
 
-    move(xx, yy) {
+    move(xx, yy) 
+    {
         this.position = {x: xx, y: yy};
     }
 
@@ -72,4 +73,12 @@ export default class Circle {
         }
         return false;
     }
+
+    randomizePosition() 
+    {
+        var randomXposition=Math.random() * this.canvas.width;
+        var randomYposition=Math.random() * this.canvas.height;
+        this.position = {x: randomXposition, y: randomYposition};
+    }
+
 }
