@@ -8,12 +8,11 @@ export default class Circle {
         this.color = color;
         this.thickness = thickness;
         this.baseRadius = radius;
-     //   this.is_growing = is_growing;
-      //  this.is_moving = is_moving;
         this.growth_rate = growth_rate;
-       // this.is_hand_inside_last_frame = false;
-       // this.canvas = document.getElementById('canvas');
-       // this.ctx = this.canvas.getContext('2d');
+        this.handInside = false;
+        this.randomizePosition();
+        this.newCircleMade=false;
+     
     }
 
     randomizeColor(bright = false) {
@@ -66,11 +65,16 @@ export default class Circle {
         this.ctx.restore();
     }
 
-    is_hand_inside(hand_position) {
-        if (hand_position) {
+    is_hand_inside(hand_position) 
+    {
+        if (hand_position) 
+        {
             const dist = Math.sqrt((this.position.x - hand_position.x) ** 2 + (this.position.y - hand_position.y) ** 2);
+            this.handInside = true;
             return dist <= this.radius;
+           
         }
+        this.handInside=false;
         return false;
     }
 

@@ -13,65 +13,68 @@ export default class Level_02
         this.lose= false;
         this.circlesArray = [];
         this.circlesArray.push(new Circle(this.canvas, this.ctx,'rgb(0, 255, 0)', {x:320,y:240}, 40));
-        this.circlesArray[0].randomizePosition();
-    //creating the first object and storing it in a varible "this.circle"
-      //  this.circle = new Circle(this.canvas, this.ctx, "red", {x:320,y:240}, 40);
     }
 
     level_loop(results,canvasElement,canvasCtx)
     {
-      var inside = false
         // if landmark results exist, then you can loop over them and do stuff ( like console.log their coordinates )
         if (results.landmarks) 
         {
           for (const landmarks of results.landmarks) 
           {
-            for (const landmark of landmarks) 
+            outerLoop: for (const landmark of landmarks) 
             {
-              // Convert landmark coordinates to canvas coordinates
-              const handPosition = 
-              {
-                  x: landmark.x * this.canvas.width,
-                  y: landmark.y * this.canvas.height
-              };
-              
-              // Check if any landmark is inside the circle
-              if (this.circlesArray[0].is_hand_inside(handPosition)) 
-              {
-                  inside = true;
-                  break;  // Exit loop if any landmark is inside the circle
-              }
-              else
-              {
-                  inside = false;
-              }
+                // Convert landmark coordinates to canvas coordinates
+                const handPosition = 
+                {
+                    x: landmark.x * this.canvas.width,
+                    y: landmark.y * this.canvas.height
+                };             
+                for(let circle of this.circlesArray)
+                // Check if any landmark is inside the circle
+                {  if (circle.is_hand_inside(handPosition)) 
+                    {
+                        circle.handInside = true;
+                        break outerLoop;  // Exit loop if any landmark is inside the circle
+                    }
+                    else
+                    {
+                        circle.handInside = false;
+                    }
+                }
             }
           }
         }
-
-
         // if hand is out do this  ( I used a toggle because of the for loop on the landmarks )
-        if(inside)
+        for (let circle of this.circlesArray)
         {
-         // this.circle.color = 'blue';
-          this.circlesArray[0].grow(.1);
-            if (this.circlesArray[0].radius > 70)
+            if(circle.handInside)
             {
-                this.circlesArray[0].color="rgb(0, 0, 255)";
+            // this.circle.color = 'blue';
+                circle.grow(.1);
+                if (circle.radius > 70)
+                {                  
+                    if  (circle.newCircleMade==false)
+                    {
+                        this.circlesArray.push(new Circle(this.canvas, this.ctx,'rgb(0, 255, 0)', {x:320,y:240}, 40));
+                        circle.newCircleMade = true;
+                    }
+                    circle.color="rgb(0, 0, 255)";
+                        
+                }
             }
+            // must be called in order to see the cricle on the canvas
+            circle.draw();
         }
-        // must be called in order to see the cricle on the canvas
-        this.circlesArray[0].draw();
-
         // win lose condition is set here
-        if(this.circlesArray[0].radius > 130)
-        {
-          this.win=true;
-        }
-        else
-        {
-          this.win=false;
-        }
+        //if(this.circlesArray[0].radius > 130)
+        // {
+       //   this.win=true;
+      //  }
+      //  else
+      //  {
+      //    this.win=false;
+      //  }
     
   }
 }
