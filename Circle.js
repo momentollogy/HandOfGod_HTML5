@@ -1,5 +1,5 @@
 export default class Circle {
-    constructor(canvas, ctx, color='green', position = {x:0,y:240}, radius = 50, thickness = 2, is_growing = false, is_moving = false, growth_rate = .6)
+    constructor(canvas, ctx, color='rgb(0, 255, 0)', position = {x:800,y:200}, radius = 80, thickness = 2, is_growing = false, is_moving = false, growth_rate = .6)
      {
         this.canvas = canvas;
         this.ctx = ctx;
@@ -83,6 +83,7 @@ export default class Circle {
         var randomXposition=Math.random() * this.canvas.width;
         var randomYposition=Math.random() * this.canvas.height;
         this.position = {x: randomXposition, y: randomYposition};
+        console.log(this.canvas.width,this.canvas.length,"=CHECKING DIMENSIONS from INSIDE CIrCLE")
     }
 
 }

@@ -13,6 +13,8 @@ const container = document.getElementById("container");
 
 // Instatiate the MediaPipe / CVProcessor Class  and send it the video tag in it's constructor
 let mediaPipe = new MediaPipeTracker(video);
+ canvasElement.width=1920;
+ canvasElement.height=1080;;
 
 let gm = new GameManager(canvasElement,mediaPipe)
 
