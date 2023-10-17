@@ -36,7 +36,7 @@ export default class Level_03
                         if (circle.is_hand_inside(handPosition))    // check if the circle has any landmark in it
                         {
                             circle.handInside = true;
-                            circle.grow(.9);
+                            circle.grow();
                             if (circle.radius > 120)                // if the circle is big enough, then make the next circle
                             {                  
                                 if  (circle.newCircleMade==false)   // If this circle is big enough and it has NOT spawned a new circle, then spawn a new circle

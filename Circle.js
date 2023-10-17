@@ -1,5 +1,5 @@
 export default class Circle {
-    constructor(canvas, ctx, color='rgb(0, 255, 0)', position = {x:800,y:200}, radius = 80, thickness = 2, is_growing = false, is_moving = false, growth_rate = .6)
+    constructor(canvas, ctx, color='rgb(0, 255, 0)', position = {x:800,y:200}, radius = 80, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
      {
         this.canvas = canvas;
         this.ctx = ctx;
@@ -29,8 +29,8 @@ export default class Circle {
         this.randomizePosition();
     }
 
-    grow() {
-        this.radius += this.growth_rate;
+    grow(rate=this.growth_rate) {
+        this.radius += rate;
     }
 
     shrink(){
