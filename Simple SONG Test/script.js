@@ -110,13 +110,10 @@ canvas.addEventListener("click", function(event) {
     } else if (x >= 350 && x <= 450 && y >= 460 && y <= 510 && songPlaying) {
         stopSong();
     } else if (x >= 350 && x <= 450 && y >= 520 && y <= 570) {
-        //console.log("THIS WOKS!")
-        stopSong();
-        audioContext.currentTime=0
-        songElapsedTime = 0; // Reset elapsed time to 0
-
+        restartSong();
     }
 });
+
 
 function playSong() {
     if (audioSource) {
@@ -139,6 +136,17 @@ function stopSong() {
         songPlaying = false;
     }
 }
+
+function restartSong() {
+    if (audioSource) {
+        audioSource.stop();
+        audioSource.disconnect();
+    }
+    songOffset = 0; // Reset song offset to 0
+    songElapsedTime = 0; // Reset elapsed time to 0
+    songPlaying = false;
+}
+
 
 function exportMoments() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({beatTimes: recordedMoments}));
