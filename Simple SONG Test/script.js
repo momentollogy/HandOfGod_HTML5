@@ -147,15 +147,6 @@ function populateBeatCircles(){
 
 
 
-
-
-
-
-
-
-
-
-
 ///////////////////////////////////////
 ///////////////////////////////////////
 // Loop
@@ -241,29 +232,6 @@ function updateBeatCircles(timeOfCurrentLoop)
         cir.checkForRemoval();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -371,19 +339,6 @@ function loadSong(path) {
             songBuffer = buffer;
         });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
