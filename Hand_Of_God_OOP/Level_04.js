@@ -114,7 +114,36 @@ export default class Level_04
             this.nextBeatArrayIndex++;
         }
 
+//HAND IN CIrCLE STUFF
+        if (results.landmarks)                                  // do landmarks exist?
+{
+    for (const landmarks of results.landmarks)          // do this for each hand
+    {
+        for (const landmark of landmarks)               //  do this for each landmark on a hand
+        { 
+            const handPosition =                        // make an object with X, Y, properties that match the screen coordinates so we can check it it's in the circle later
+            {
+                x: landmark.x * this.canvas.width,
+                y: landmark.y * this.canvas.height
+            };             
 
+            if (this.circle.is_hand_inside(handPosition))    // check if the circle has any landmark in it
+            {
+                this.circle.handInside = true;
+                this.circle.color="red";
+                break;                                  // this break ensures that only one landmark triggers the circle growth.  in other words: no other landmarks will be checked as long as one is already inside the circle
+            }
+            else
+            {
+                this.circle.handInside = false;
+                this.circle.color="green";
+
+            }
+        }
+    }
+}
+
+        //  Drawing/Displaying/applying calculations Screen
         // Update and draw the circle on every frame, regardless of beat timing
         this.circle.update();  // Assuming you have an update method to handle pulsing
         this.circle.draw();
@@ -212,5 +241,8 @@ calculateStartingPosition(timestamp)
 
 
 }
+
+
+
 
 
