@@ -29,17 +29,17 @@ export default class Circle {
         this.randomizePosition();
     }
 
-    grow(rate=this.growth_rate) {
-        this.radius += rate;
+    grow() {
+        if (this.radius < this.maxRadius) {
+            this.radius += this.growth_rate;
+        } else {
+            this.isGrowing = false;
+        }
     }
 
-    shrink(){
-        if(this.radius > this.baseRadius)
-        {
-            this.radius -= this.growth_rate * 3;
-        }else
-        {
-            this.radius = this.baseRadius
+    shrink() {
+        if (this.radius > this.baseRadius) {
+            this.radius -= this.growth_rate;
         }
     }
 
@@ -84,6 +84,22 @@ export default class Circle {
         var randomYposition=Math.random() * this.canvas.height;
         this.position = {x: randomXposition, y: randomYposition};
         console.log(this.canvas.width,this.canvas.length,"=CHECKING DIMENSIONS from INSIDE CIrCLE")
+    }
+
+
+
+    startPulsing() {
+        this.isGrowing = true;  // Start growing the circle
+        this.maxRadius = this.radius + 20;  // Set the max radius for this pulse
+    }
+
+    update() {
+        if (this.isGrowing) {
+            this.grow();
+        } else {
+            //this.shrink();
+            this.radius=this.baseRadius;
+        }
     }
 
 }

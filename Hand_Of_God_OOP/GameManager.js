@@ -22,7 +22,7 @@ export default class GameManager {
 
     nextLevel()
     {
-        var audio = new Audio('sound2/pop.mp3');
+        let audio = new Audio('sound2/pop.mp3');
         audio.play();
         this.de.setLabel("Level 02 - line draw ( no win condition )  :)");
         this.currentLevel = new Level_02(this.mediaPipe.getResults(), this.canvasElement, this.canvasCtx)

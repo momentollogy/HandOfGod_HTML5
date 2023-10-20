@@ -5,7 +5,7 @@ export default class VanillaCanvasDrawEngine {
         this.mediaPipe = _mediaPipe;
         this.video = _video;
         this.gm = _gm;
-        this.label = "Bubble Game"
+        this.label = "Hand Of God"
 
         this.tracking = true;
         this.looping = true;

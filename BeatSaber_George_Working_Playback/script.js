@@ -32,15 +32,8 @@ let elapsedTime;
 
 
 
-
-
-
-
-
-///////////////////////////////////////
 ///////////////////////////////////////
 // Beat Circle Class
-///////////////////////////////////////
 ///////////////////////////////////////
 
 
@@ -120,16 +113,8 @@ class BeatCircle {
 
 
 
-
-
-
-
-
-
-///////////////////////////////////////
 ///////////////////////////////////////
 // Circle utilities
-///////////////////////////////////////
 ///////////////////////////////////////
 
 
@@ -144,26 +129,22 @@ function populateBeatCircles(){
 
 
 
-
-
-
-///////////////////////////////////////
 ///////////////////////////////////////
 // Loop
-///////////////////////////////////////
 ///////////////////////////////////////
 
 
 function render(timeOfCurrentLoop) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // clears the canvas so the current frame can be drawn
-    updateBeatCircles(timeOfCurrentLoop) // Update and Draw all BeatCircles
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // clears the canvas everyframe so the current frame can be drawn
+    updateBeatCircles(timeOfCurrentLoop); // Update and Draw all BeatCircles
     drawUI(); // draws the UI stuff on the canvas
-    
+   console.log(timeOfCurrentLoop)
     requestAnimationFrame(render);
 }
 
 function drawUI()
 {
+    //CENTEr CICLE PULSE BULLSHIT
     let shouldPulse = false;
     if (loadedBeats.length > 0 && songPlaying) {
         for (let beatTime of loadedBeats) {
@@ -181,12 +162,14 @@ function drawUI()
         let progress = elapsedTimeSincePulse / (pulseDuration / 1000);
         currentPulseFactor = 1 + (pulseFactor - 1) * (1 - progress); // This will interpolate the pulse factor over time
     }
-    
+    //MrOE PULSE BS - CHANGING COLOr of pulse.
     ctx.strokeStyle = currentPulseFactor > 1 ? "blue" : "green"; 
     let drawingRadius = circleRadius * currentPulseFactor;
     ctx.beginPath();
     ctx.arc(400, 300, drawingRadius, 0, 2 * Math.PI);
     ctx.stroke();  
+
+
 
     // Draw the "Start Track" button
     ctx.fillStyle = "#eee";
@@ -218,8 +201,7 @@ function drawUI()
     const displayTime = songElapsedTime * 1000; // Convert to milliseconds
     ctx.fillText(Math.floor(displayTime) + " ms", 375, 370); // Adjusted y-coordinate
 
-    // find a way to display the next beat here using the nextBeatIndex
-    //ctx.fillText(loadedBeats[nextBeatIndex] + " ms   Next Beat", 500, 370); // Adjusted y-coordinate
+     
 }
 
 function updateBeatCircles(timeOfCurrentLoop)
@@ -238,25 +220,28 @@ function updateBeatCircles(timeOfCurrentLoop)
 
 
 ///////////////////////////////////////
-///////////////////////////////////////
 // Buttons and file stuff
 ///////////////////////////////////////
-///////////////////////////////////////
 
-    // these are the canvas buttons
-canvas.addEventListener("click", function(event) {
+
+    // All about looking for CLICKS on the canvas and determining where they are to make things happen (puslse circle, start song, stop, reset)
+canvas.addEventListener("click", function(event) 
+{
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
-        // checks if the click is in the circle.. if it is, it pushes a rounded-down time-stamp into the recordedMoments array, and it "pulses the circle"
+    //defines the center of the sweet spot circle
     const distToCenter = Math.sqrt(Math.pow(400 - x, 2) + Math.pow(300 - y, 2));
-    if (distToCenter <= circleRadius && songPlaying) {
+
+    // checks if the click is in the circle.. if it is, it pushes a rounded-down time-stamp into the recordedMoments array, and it "pulses the circle"
+    if (distToCenter <= circleRadius && songPlaying) 
+    {
         recordedMoments.push(Math.floor(songElapsedTime * 1000));
         circleRadius = 60;
         setTimeout(() => {circleRadius = 50}, 100);
     }
-        // the button handlers
+        // if clicks are in any of these buttons (defined by cavnas cordinants) do THIS.Next time make HTML circles.
     if (x >= 350 && x <= 450 && y >= 400 && y <= 450) {
         if (!songPlaying) { playSong(); }
     } else if (x >= 350 && x <= 450 && y >= 460 && y <= 510 && songPlaying) {
@@ -308,9 +293,11 @@ function exportMoments() {
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
 }
-    // button Handler
+
+    // HTML button Handler
     //  basically just populates the  loadedBeats  array from the json file
-function loadBeatTimes() {
+function loadBeatTimes() 
+{
     console.log("load pressed");
     const file = chooseFileButton.files[0];
     if (!file) {
@@ -344,9 +331,8 @@ function loadSong(path) {
 
 
 ///////////////////////////////////////
-///////////////////////////////////////
 // Startup code  ( kinda like init() )
 ///////////////////////////////////////
-///////////////////////////////////////
+
 loadSong("Plateau.mp3");
-render();
+render(0);
