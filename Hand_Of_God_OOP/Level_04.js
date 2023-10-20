@@ -18,7 +18,7 @@ export default class Level_04
         this.circle = new Circle(canvasElement, canvasCtx);  // Create a single circle instance
         this.circle.position = { x: canvasElement.width / 2, y: canvasElement.height / 2 };  // Position the circle at the center
         this.beatCircles_Array = [];
-        this.velocity=85;
+        this.velocity=100;
         this.playing=false;
         
 
@@ -39,9 +39,9 @@ export default class Level_04
 
         .then(data => 
         {
-            console.log(data);  // Log the data to the console
+           // console.log(data);  // Log the data to the console
             this.beatArray = data.beatTimes; //getting arrays and storing them in beatarray.
-            console.log("Beat Arrays are", this.beatArray)
+          //  console.log("Beat Arrays are", this.beatArray)
             this.everythingloaded=true;
             this.timer.start()    
             })
@@ -73,7 +73,7 @@ export default class Level_04
     populateBeatCircles(){
         this.beatCircles_Array = [];
         for(let timemarker of this.beatArray){
-            this.beatCircles_Array.push( new BeatCircle(timemarker,this.velocity,this.audio) )
+            this.beatCircles_Array.push( new BeatCircle(timemarker,this.velocity,this.audio,this.canvasElement) )
         }
     }
 
@@ -81,16 +81,15 @@ export default class Level_04
 
     updateBeatCircles(timeOfCurrentLoop)
     {
-        for( let i = 0 ; i < beatCircles_Array.length ; i++)
+
+        for( let i = 0 ; i < this.beatCircles_Array.length ; i++)
         {
-            let cir = beatCircles_Array[i];
+            let cir = this.beatCircles_Array[i];
             if(!this.audio.paused){cir.updatePosition(timeOfCurrentLoop)}
-            cir.draw(ctx);
+            cir.draw(this.ctx);
             cir.checkForRemoval();
         }
     }
-
-
 
 
     level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
@@ -103,7 +102,7 @@ export default class Level_04
                 this.audio.play();
                 this.playing=true;
                 this.populateBeatCircles();
-                console.log("startsong")
+               
             }
            
             const currentTime = this.audio.currentTime * 1000;  // Get current time in milliseconds from the audio
@@ -111,9 +110,6 @@ export default class Level_04
 
 
         if (currentTime >= nextBeatTime && this.nextBeatArrayIndex < this.beatArray.length) {
-           // console.log("CurrentTimeStart", currentTimeSinceAppStart,`Pulse at audio time: ${currentTime} ms, beat time: ${nextBeatTime} ms, beat array index: ${this.nextBeatArrayIndex},`);
-           // console.log("timestamp=", currentTimeSinceAppStart);
-           //  console.log('Pulse at:', Date.now());
             this.pulseCircle();
             this.nextBeatArrayIndex++;
         }
@@ -122,13 +118,10 @@ export default class Level_04
         // Update and draw the circle on every frame, regardless of beat timing
         this.circle.update();  // Assuming you have an update method to handle pulsing
         this.circle.draw();
+        this.updateBeatCircles(currentTimeSinceAppStart);  // Update the positions of the beat circles
+
         for(let beatcircle of this.beatCircles_Array)
-        {
-            //beatcircle.updatePosition(currentTimeSinceAppStart);
-            beatcircle.y+=2;
-            beatcircle.draw(canvasCtx);
-           // console.log("Cir pos", beatcircle.y)
-        }
+        {beatcircle.draw(canvasCtx);}
         }
 
       
@@ -138,40 +131,45 @@ export default class Level_04
     
 }
 
-class BeatCircle {
-    constructor(timestamp,beatCircleSpeed,_audio) {
+class BeatCircle 
+{
+    constructor(timestamp,beatCircleSpeed,_audio,canvasElement) {
         this.timestamp = timestamp;
-        this.y = this.calculateStartingPosition(timestamp); // Y position
-        this.x = 400;
-        this.speed = 85; // Set the speed based on the initialized beatCircleSpeed
         this.color = "green"; // Default color
         this.radius = 40;
         this.lastTimeOfCurrentLoop;
         this.alpha = 1.0;
-        this.SWEET_SPOT_Y=540;
+        this.SWEET_SPOT_Y = 540;
         this.audio=_audio;
+        this.canvasElement = canvasElement;
+        this.x = canvasElement.width / 2;
         this.elapsedTime=0;
         this.lastTimeOfCurrentLoop;
         this.distance;
+        this.velocity = 200;
+        this.y = this.calculateStartingPosition(timestamp); // Y position
+
+
+        
     }
 
     isNearSweetSpot(currentTimeMs) {
         const difference = Math.abs(this.timestamp - currentTimeMs);
-        //console.log(difference);
         return difference <= 75;
     }
 
     updatePosition(timeOfCurrentLoop){
         if(!this.lastTimeOfCurrentLoop){this.lastTimeOfCurrentLoop = timeOfCurrentLoop;}
         this.elapsedTime = timeOfCurrentLoop - this.lastTimeOfCurrentLoop;
-        this.distance = (this.speed/1000) * this.elapsedTime;  //  find the pixels per millisecond, then multiply that by the number of milliseconds to find how far it should move this loop!!
-        this.y += this.distance;
+        this.distance = (this.velocity/1000) * this.elapsedTime;  // This line is fine
+        this.y = this.calculateStartingPosition(this.timestamp);
         this.lastTimeOfCurrentLoop = timeOfCurrentLoop;
     }
 
     draw(ctx){
+
             // set the alpha of circle
-        if (this.y > this.SWEET_SPOT_Y + 5) {this.alpha -=.02}; if(this.alpha<0){this.alpha=0};
+        if (this.y > this.SWEET_SPOT_Y + 5) {this.alpha -=.01}; if(this.alpha<0){this.alpha=0};
         ctx.globalAlpha = this.alpha;
         
             // Determine the color based on the position
@@ -191,26 +189,28 @@ class BeatCircle {
     }
 
     killSelf(){
-        beatCircles.splice(beatCircles.indexOf(this),1);
+        this.beatCircles_Array.splice(this.beatCircles_Array.indexOf(this),1);
     }
 
     checkForRemoval()
     {
         // Remove BeatCircle if it's too far past the sweet spot
-      //  if (songElapsedTime * 1000 > this.timestamp){
-            //this.x += 2;
-      //      if (this.y > SWEET_SPOT_Y + BEAT_CIRCLE_THRESHOLD_MS) {
-       //         this.killSelf()
-       //     }
-        //}
+       // if (this.alpha <= 0) {
+       //     this.killSelf();
+           // console.log(this.killSelf)
+       // }
+        
     }
     
-    calculateStartingPosition(timestamp) {
-        let totalDist = (85/1000) * timestamp;
-        let offset = -totalDist + 540;
-       // console.log("Timestamp is", timestamp, totalDist);
-        return offset;
-    }
+
+calculateStartingPosition(timestamp)
+ {
+    const timeUntilBeat = timestamp - this.audio.currentTime * 1000;  // Assuming audio.currentTime is in seconds
+    const initialOffset = (timeUntilBeat / 1000) * this.velocity;
+    return this.SWEET_SPOT_Y - initialOffset;
+ }
+
+
 }
 
 

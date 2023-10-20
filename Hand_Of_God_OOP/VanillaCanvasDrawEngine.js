@@ -82,7 +82,7 @@ export default class VanillaCanvasDrawEngine {
     }
 
     loop(timestamp) 
-    { console.log("from DE Loop", timestamp)
+    {
         this.clearCanvas() // clear canvas
 
         if(this.tracking){this.drawHands()}  // draw hands
