@@ -81,19 +81,21 @@ export default class VanillaCanvasDrawEngine {
         }
     }
 
-    loop() 
-    {
+    loop(timestamp) 
+    { console.log("from DE Loop", timestamp)
         this.clearCanvas() // clear canvas
 
         if(this.tracking){this.drawHands()}  // draw hands
         
-        this.gm.currentLevel.level_loop(this.results,this.canvasElement,this.canvasCtx); // draw game level stuff
-        
+        this.gm.currentLevel.level_loop(this.results,this.canvasElement,this.canvasCtx,timestamp); // draw game level stuff
+       
         this.checkGameStateAndProcessWinLose(); // check game conditions
 
         this.drawUI() // draw UI
 
-        if (this.looping) { requestAnimationFrame(() => this.loop()); }  // repeat loop
+       // if (this.looping) { requestAnimationFrame(() => this.loop()); }  // repeat loop
+        if (this.looping) { requestAnimationFrame(this.loop.bind(this)); }
+
     }
 
 }
