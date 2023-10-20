@@ -334,5 +334,5 @@ function loadSong(path) {
 // Startup code  ( kinda like init() )
 ///////////////////////////////////////
 
-loadSong("Plateau.mp3");
+loadSong("apache.mp3");
 render(0);

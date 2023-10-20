@@ -13,7 +13,7 @@ export default class GameManager {
         
         // set the current level to level_01
         //this.de.setLabel("Bubble Game");
-        this.currentLevel = new Level_04(this.mediaPipe.getResults(), this.canvasElement, this.canvasCtx)
+        this.currentLevel = new Level_03(this.mediaPipe.getResults(), this.canvasElement, this.canvasCtx)
     }
 
     setDrawEngine(_drawEngine){
@@ -24,7 +24,7 @@ export default class GameManager {
     {
         let audio = new Audio('sound2/pop.mp3');
         audio.play();
-        this.de.setLabel("Level 02 - line draw ( no win condition )  :)");
-        this.currentLevel = new Level_02(this.mediaPipe.getResults(), this.canvasElement, this.canvasCtx)
+        this.de.setLabel("Level 03 - line draw ( no win condition )  :)");
+        this.currentLevel = new Level_03(this.mediaPipe.getResults(), this.canvasElement, this.canvasCtx)
     }
 }

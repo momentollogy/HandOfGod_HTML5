@@ -25,7 +25,7 @@ export default class Level_04
 
 
         //LOADS json array beats, saved as file in folder
-        fetch('LONGBeats.json')
+        fetch('apache.json')
         .then(response => 
         {
             // Check if the request was successful
@@ -53,8 +53,8 @@ export default class Level_04
 
         //load music
 
-        this.audio = new Audio('sound2/Plateau.mp3');
-        this.audio.volume = 0.01; 
+        this.audio = new Audio('sound2/apache.mp3');
+        this.audio.volume = 0.1; 
         
     }
 
