@@ -24,7 +24,7 @@ export default class Level_04
         this.prevHandPositions=[];
         this.handInsidePreviously = false;
         this.swipePositions = [];
-        this.yValues = [];
+        this.xyHandPositions = [];
 
 
 
@@ -58,7 +58,7 @@ export default class Level_04
         //load music
 
         this.audio = new Audio('sound2/apache.mp3');
-        this.audio.volume = 0.5; 
+        this.audio.volume = 0.01; 
         
     }
 
@@ -96,41 +96,54 @@ export default class Level_04
     }
 
 
-        getSwipeDirection() {
+    getSwipeDirection() {
         console.log('getSwipeDirection called');
-        console.log('Y values:', this.yValues);
+        console.log('XY Hand Positions:', this.xyHandPositions);
         
-        if (this.yValues.length < 2) {
+        if (this.xyHandPositions.length < 2) {
             console.log('Not enough data for a swipe');
-            return null;  // Not enough data to determine direction
+            return null;
         }
         
-        const firstY = this.yValues[0];
-        const lastY = this.yValues[this.yValues.length - 1];
-        const deltaY = lastY - firstY;
+        const startPoint = this.xyHandPositions[0];
+        const endPoint = this.xyHandPositions[this.xyHandPositions.length - 1];
+        const deltaVector = {
+            x: endPoint.x - startPoint.x,
+            y: endPoint.y - startPoint.y
+        };
         
-        // Determining the direction of swipe based on the Y values
-        const direction = deltaY > 0 ? 'Down' : 'Up';
+        const magnitude = Math.sqrt(deltaVector.x**2 + deltaVector.y**2);
+    
+        let direction = '';
+        if (Math.abs(deltaVector.x) > Math.abs(deltaVector.y)) {
+            direction = deltaVector.x > 0 ? 'Right' : 'Left';
+        } else {
+            direction = deltaVector.y > 0 ? 'Down' : 'Up';
+        }
+    
+        // Calculating average velocity for both X and Y directions
+        const averageVelocityX = deltaVector.x / this.xyHandPositions.length;
+        const averageVelocityY = deltaVector.y / this.xyHandPositions.length;
+    
+        // Calculating the angle in degrees
+        const angleInRadians = Math.atan2(deltaVector.y, deltaVector.x);
+        const angleInDegrees = angleInRadians * (180 / Math.PI);
+    
+        console.log(`Swipe direction: ${direction}, Magnitude: ${magnitude}, VelocityX: ${averageVelocityX}, VelocityY: ${averageVelocityY}, Angle: ${angleInDegrees}°`);
         
-        // Calculating average velocity
-        const velocity = deltaY / this.yValues.length;
-        
-        // Logging the detected swipe direction and velocity
-        console.log(`Swipe direction: ${direction}, Velocity: ${velocity}`);
-        
-        // For now, we'll just return the direction, you can extend this to return velocity or other information as needed
         return direction;
     }
     
+    
 
-        handleSwipeDetection(handPosition, timestamp) {
+    handleSwipeDetection(handPosition, timestamp)
+    {
         const isHandInside = this.circle.is_hand_inside(handPosition);
-        
         if (isHandInside) {
-            this.yValues.push(handPosition.y);  // Store y value
-            console.log('Hand INSIDE the circle.');
+            this.xyHandPositions.push(handPosition);  // Store y value
+            console.log('Hand posotion.', handPosition);
             console.log('Y value added:', handPosition.y);
-            console.log('Y values array:', this.yValues);
+            console.log('Y values array:', this.xyHandPositions);
         }
     
         this.handInsidePreviously = isHandInside;  // This will set the previous state for the next frame.
@@ -190,7 +203,7 @@ export default class Level_04
                 if (swipeDirection) {
                     console.log(`Swipe direction: ${swipeDirection}`);
                 }
-                this.yValues = [];  // Reset the yValues array
+                this.xyHandPositions = [];  // Reset the xyHandPositions array
                 console.log('Y values array RESET.');
             }
             
