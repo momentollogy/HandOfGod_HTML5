@@ -103,51 +103,44 @@ export default class Level_04
         if (this.xyHandPositions.length < 2) {
             return null;
         }
-        
+    
         const startPoint = this.xyHandPositions[0];
         const endPoint = this.xyHandPositions[this.xyHandPositions.length - 1];
         const deltaVector = {
             x: endPoint.x - startPoint.x,
             y: endPoint.y - startPoint.y
         };
-        
+    
         const magnitude = Math.sqrt(deltaVector.x**2 + deltaVector.y**2);
-        
-        const angleInRadians = Math.atan2(deltaVector.y, deltaVector.x);
-        const angleInDegrees = angleInRadians * (180 / Math.PI);
-        
+        const timeElapsed = this.xyHandPositions.length;
+        const averageVelocity = magnitude / timeElapsed;
+    
         let direction = '';
     
-        // Using Difference Ratios:
-        const xRatio = Math.abs(deltaVector.x / magnitude);
-        const yRatio = Math.abs(deltaVector.y / magnitude);
-        
-        // Using Tolerance Angles:
-        const toleranceAngle = 15;  // 15 degrees tolerance
+        // Compute the ratio of y change to x change
+        const deltaY = Math.abs(deltaVector.y);
+        const deltaX = Math.abs(deltaVector.x);
+        const ratio = deltaY / deltaX;
     
-        if (angleInDegrees > -toleranceAngle && angleInDegrees < toleranceAngle) {
-            direction = 'RIGHT';
-        } else if (angleInDegrees > 180 - toleranceAngle || angleInDegrees < -180 + toleranceAngle) {
-            direction = 'LEFT';
-        } else if (angleInDegrees > 90 - toleranceAngle && angleInDegrees < 90 + toleranceAngle) {
-            direction = 'DOWN';
-        } else if (angleInDegrees > -90 - toleranceAngle && angleInDegrees < -90 + toleranceAngle) {
-            direction = 'UP';
-        } else if (xRatio > yRatio) {
-            direction = deltaVector.x > 0 ? 'Right' : 'Left';
-        } else {
+        // Set a threshold ratio to decide between vertical and horizontal swipes
+        const thresholdRatio = 2;  // Adjust this value based on testing
+    
+        if (ratio > thresholdRatio) {
+            // Predominantly vertical swipe
             direction = deltaVector.y > 0 ? 'Down' : 'Up';
+        } else {
+            // Predominantly horizontal swipe
+            direction = deltaVector.x > 0 ? 'Right' : 'Left';
         }
     
-        // Calculating average velocity
-        const averageVelocity = magnitude / this.xyHandPositions.length;
-    
-        console.log(`${handHandedness} Hand Swiped ${direction}. Angle = ${angleInDegrees.toFixed(2)}°. Velocity = ${averageVelocity.toFixed(2)}`);
-        
+        //console.log(`${handHandedness} Hand Swiped ${direction}. Angle = ${(Math.atan2(deltaVector.y, deltaVector.x) * (180 / Math.PI)).toFixed(2)}°. Velocity = ${averageVelocity.toFixed(2)}`);
+          console.log(JSON.stringify({hand: handHandedness,direction: direction,xyPositions: this.xyHandPositions,frames: this.xyHandPositions.length}));
+
         return direction;
     }
     
     
+
     
     
     
@@ -206,8 +199,8 @@ export default class Level_04
         
                 for (const landmark of landmarks) {
                     const handPosition = {
-                        x: landmark.x * this.canvas.width,
-                        y: landmark.y * this.canvas.height
+                        x: parseFloat((landmark.x * this.canvas.width).toFixed(2)),
+                        y: parseFloat((landmark.y * this.canvas.height).toFixed(2))
                     };
         
                     if (this.circle.is_hand_inside(handPosition)) {
@@ -269,7 +262,7 @@ class BeatCircle
         this.elapsedTime=0;
         this.lastTimeOfCurrentLoop;
         this.distance;
-        this.velocity = 200;
+        this.velocity = 300;
         this.y = this.calculateStartingPosition(timestamp); // Y position
         this.vibrated = false;
         this.canVibrate = "vibrate" in navigator;
@@ -299,7 +292,7 @@ class BeatCircle
                 this.color = "red";
                 if (this.canVibrate && !this.vibrated) {
                     navigator.vibrate(100);
-                    console.log("This vibrated!");  
+                  //  console.log("This vibrated!");  
                     this.vibrated = true;
                 }
             } else {
