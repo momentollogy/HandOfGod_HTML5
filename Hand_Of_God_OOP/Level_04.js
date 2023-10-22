@@ -25,6 +25,8 @@ export default class Level_04
         this.handInsidePreviously = false;
         this.swipePositions = [];
         this.xyHandPositions = [];
+        this.currentHandedness = null;
+
 
 
 
@@ -58,7 +60,7 @@ export default class Level_04
         //load music
 
         this.audio = new Audio('sound2/apache.mp3');
-        this.audio.volume = 0.01; 
+        this.audio.volume = 0.00; 
         
     }
 
@@ -96,12 +98,8 @@ export default class Level_04
     }
 
 
-    getSwipeDirection() {
-        console.log('getSwipeDirection called');
-        console.log('XY Hand Positions:', this.xyHandPositions);
-        
+    getSwipeDirection(handHandedness) {
         if (this.xyHandPositions.length < 2) {
-            console.log('Not enough data for a swipe');
             return null;
         }
         
@@ -113,41 +111,62 @@ export default class Level_04
         };
         
         const magnitude = Math.sqrt(deltaVector.x**2 + deltaVector.y**2);
-    
+        
+        const angleInRadians = Math.atan2(deltaVector.y, deltaVector.x);
+        const angleInDegrees = angleInRadians * (180 / Math.PI);
+        
         let direction = '';
-        if (Math.abs(deltaVector.x) > Math.abs(deltaVector.y)) {
+    
+        // Using Difference Ratios:
+        const xRatio = Math.abs(deltaVector.x / magnitude);
+        const yRatio = Math.abs(deltaVector.y / magnitude);
+        
+        // Using Tolerance Angles:
+        const toleranceAngle = 15;  // 15 degrees tolerance
+    
+        if (angleInDegrees > -toleranceAngle && angleInDegrees < toleranceAngle) {
+            direction = 'RIGHT';
+        } else if (angleInDegrees > 180 - toleranceAngle || angleInDegrees < -180 + toleranceAngle) {
+            direction = 'LEFT';
+        } else if (angleInDegrees > 90 - toleranceAngle && angleInDegrees < 90 + toleranceAngle) {
+            direction = 'DOWN';
+        } else if (angleInDegrees > -90 - toleranceAngle && angleInDegrees < -90 + toleranceAngle) {
+            direction = 'UP';
+        } else if (xRatio > yRatio) {
             direction = deltaVector.x > 0 ? 'Right' : 'Left';
         } else {
             direction = deltaVector.y > 0 ? 'Down' : 'Up';
         }
     
-        // Calculating average velocity for both X and Y directions
-        const averageVelocityX = deltaVector.x / this.xyHandPositions.length;
-        const averageVelocityY = deltaVector.y / this.xyHandPositions.length;
+        // Calculating average velocity
+        const averageVelocity = magnitude / this.xyHandPositions.length;
     
-        // Calculating the angle in degrees
-        const angleInRadians = Math.atan2(deltaVector.y, deltaVector.x);
-        const angleInDegrees = angleInRadians * (180 / Math.PI);
-    
-        console.log(`Swipe direction: ${direction}, Magnitude: ${magnitude}, VelocityX: ${averageVelocityX}, VelocityY: ${averageVelocityY}, Angle: ${angleInDegrees}°`);
+        console.log(`${handHandedness} Hand Swiped ${direction}. Angle = ${angleInDegrees.toFixed(2)}°. Velocity = ${averageVelocity.toFixed(2)}`);
         
         return direction;
     }
     
     
+    
+    
+    
 
-    handleSwipeDetection(handPosition, timestamp)
-    {
+    handleSwipeDetection(handPosition, timestamp, handedness) {
         const isHandInside = this.circle.is_hand_inside(handPosition);
+        
         if (isHandInside) {
-            this.xyHandPositions.push(handPosition);  // Store y value
-            console.log('Hand posotion.', handPosition);
-            console.log('Y value added:', handPosition.y);
-            console.log('Y values array:', this.xyHandPositions);
+            this.xyHandPositions.push(handPosition);
+        }
+    
+        // No need to check for hand inside again. We use handInsidePreviously for the leaving action.
+        if (!isHandInside && this.handInsidePreviously) {
+            console.log(`${handedness} Hand Swiped: ${this.getSwipeDirection()}`);
+            this.xyHandPositions = [];  // Reset the xyHandPositions array when the hand leaves the circle
         }
     
         this.handInsidePreviously = isHandInside;  // This will set the previous state for the next frame.
     }
+    
     
     
     
@@ -177,40 +196,44 @@ export default class Level_04
 
 
         // HAND IN CIRCLE STUFF
-        if (results.handednesses && results.landmarks) {  
-            let anyHandInside = false;
-            
-            for (let i = 0; i < results.handednesses.length; i++) {  
+        if (results.handednesses && results.landmarks) {
+            let anyHandInside = false; 
+        
+            for (let i = 0; i < results.handednesses.length; i++) {
+                const handHandedness = results.handednesses[i][0].displayName; 
                 const landmarks = results.landmarks[i];
-            
+        
                 for (const landmark of landmarks) {
                     const handPosition = {
                         x: landmark.x * this.canvas.width,
                         y: landmark.y * this.canvas.height
                     };
-            
+        
                     if (this.circle.is_hand_inside(handPosition)) {
                         anyHandInside = true;
-                        this.handleSwipeDetection(handPosition, currentTimeSinceAppStart);
+                        this.currentHandedness = handHandedness; // Store the handedness
+                        if (!this.handInsidePreviously) {
+                            this.handInsidePreviously = true;
+                            this.xyHandPositions = [];
+                        }
+                        this.handleSwipeDetection(handPosition, currentTimeSinceAppStart, this.currentHandedness);
                     }
                 }
             }
             
-            // Check if the hand has left the circle
             if (!anyHandInside && this.handInsidePreviously) {
                 this.handInsidePreviously = false;
-                const swipeDirection = this.getSwipeDirection();
+                const swipeDirection = this.getSwipeDirection(this.currentHandedness);
                 if (swipeDirection) {
-                    console.log(`Swipe direction: ${swipeDirection}`);
+                  //  console.log(`Swipe direction: ${swipeDirection}`);
                 }
-                this.xyHandPositions = [];  // Reset the xyHandPositions array
-                console.log('Y values array RESET.');
+                this.xyHandPositions = [];
             }
             
-            // Update circle properties
             this.circle.handInside = anyHandInside;
             this.circle.color = anyHandInside ? "red" : "green";
         }
+        
 
 
         //  Drawing/Displaying/applying calculations Screen
