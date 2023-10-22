@@ -30,6 +30,7 @@ export default class Level_04
 
 
 
+
         //LOADS json array beats, saved as file in folder
         fetch('apache.json')
         .then(response => 
@@ -270,6 +271,9 @@ class BeatCircle
         this.distance;
         this.velocity = 200;
         this.y = this.calculateStartingPosition(timestamp); // Y position
+        this.vibrated = false;
+        this.canVibrate = "vibrate" in navigator;
+
 
 
         
@@ -291,15 +295,17 @@ class BeatCircle
     draw(ctx){
 
             // set the alpha of circle
-        if (this.y > this.SWEET_SPOT_Y + 5) {this.alpha -=.01}; if(this.alpha<0){this.alpha=0};
-        ctx.globalAlpha = this.alpha;
-        
-            // Determine the color based on the position
-        if (this.isNearSweetSpot(this.audio.currentTime * 1000)) {
-            this.color = "red";
-        } else {
-            this.color = "green";
-        }
+            if (this.isNearSweetSpot(this.audio.currentTime * 1000)) {
+                this.color = "red";
+                if (this.canVibrate && !this.vibrated) {
+                    navigator.vibrate(100);
+                    console.log("This vibrated!");  
+                    this.vibrated = true;
+                }
+            } else {
+                this.color = "green";
+                this.vibrated = false;
+            }
 
             // Draw the BeatCircle
         ctx.fillStyle = this.color;
