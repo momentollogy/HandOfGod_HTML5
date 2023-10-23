@@ -1,38 +1,39 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CodePen - MediaPipe HandLandmarker Task for web</title>
+  <title>MediaPipe HandLandmarker Task for web</title>
   <link rel="stylesheet" href="./style2.css">
-
 </head>
 <body>
-<!--link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet"-->
-<!--script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script-->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 
-<body>
-    <div id="liveView" class="videoView">
+<div id="liveView" class="videoView">
 
-      <button id="webcamButton" class="mdc-button mdc-button--raised">
-        <span class="mdc-button__ripple"></span>
-        <span class="mdc-button__label">ENABLE WEBCAM</span>
-      </button>
-      <button id="fullButton" class="mdc-button mdc-button--raised">
-        <span class="mdc-button__ripple"></span>
-        <span class="mdc-button__label">Full Screen</span>
-        <!--img src="images/fullScreen.png" /-->
-      </button>
+  <button id="webcamButton" class="mdc-button mdc-button--raised">
+    <span class="mdc-button__ripple"></span>
+    <span class="mdc-button__label">ENABLE WEBCAM</span>
+  </button>
+  
+  <button id="fullButton" class="mdc-button mdc-button--raised">
+    <span class="mdc-button__ripple"></span>
+    <span class="mdc-button__label">Full Screen</span>
+  </button>
 
-      <div id="container" style="position: relative;">
-        <video id="webcam" style="position: abso" autoplay playsinline></video>
-        <canvas class="output_canvas" id="output_canvas" style="position: absolute; left: 0px; top: 0px;"></canvas>
-      </div> 
+  <div id="container" style="position: relative;">
+    <video id="webcam" style="position: absolute" autoplay playsinline></video>
+    <canvas class="output_canvas" id="output_canvas" style="position: absolute; left: 0px; top: 0px;"></canvas>
+  </div> 
 
-    </div>
+</div>
 
-    <img id="bubblePic" src="images/Bubble.png" width="32" height="32" >
-    <script type="module" src="./app.js"></script>
+<img id="bubblePic" src="images/Bubble.png" width="32" height="32">
+
+<!-- Import UIManager and Level_05 -->
+<script src="path_to_UIManager.js"></script>
+<script src="path_to_Level_05.js"></script>
+<script type="module" src="./app.js"></script>
+
 </body>
 </html>
