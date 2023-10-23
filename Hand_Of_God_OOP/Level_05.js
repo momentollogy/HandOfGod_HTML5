@@ -1,5 +1,7 @@
  import Circle from './Circle.js';  // Adjust the path to match the location of your Circle.js file
  import Timer from './Timer.js';
+ import UIManager, { Button } from './UIManager.js';
+
 
 
 export default class Level_05
@@ -29,6 +31,17 @@ export default class Level_05
         this.recordedMoments_Array=[];
         this.audio = new Audio('sound2/apache.mp3');
         this.audio.volume = 0.00; 
+
+        this.uiManager = new UIManager();
+        this.hoveredButton = null;
+        this.activeButton = null;
+    
+        this.canvasElement.addEventListener('click', this.uiManager.handleClick.bind(this.uiManager));
+        this.canvasElement.addEventListener('mousemove', this.uiManager.handleMouseMove.bind(this.uiManager));
+        this.canvasElement.addEventListener('mousedown', this.uiManager.handleMouseDown.bind(this.uiManager));
+        this.canvasElement.addEventListener('mouseup', this.uiManager.handleMouseUp.bind(this.uiManager));
+    
+
 
 
 
@@ -60,28 +73,8 @@ export default class Level_05
         });
 
 
-        this.canvas.addEventListener('click', (event) => 
-        {
-            const rect = this.canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-            console.log (x,y);
-            this.exportRecordedMoments_Array();
 
-        
-                // if clicks are in any of these buttons (defined by cavnas cordinants) do THIS.Next time make HTML circles.
-            if (x >= 350 && x <= 450 && y >= 400 && y <= 450) {
-            //    if (!songPlaying) { playSong(); }
-                console.log ("play button");
-            } else if (x >= 350 && x <= 450 && y >= 460 && y <= 510 && songPlaying) {
-           //     stopSong();
-                console.log ("stop button");
-            } else if (x >= 350 && x <= 450 && y >= 520 && y <= 570) {
-            //    resetSession();
-                console.log ("play button");
-            }
-        });
-        
+     
     }
 
 
@@ -201,43 +194,7 @@ export default class Level_05
     }
     
     
-    
 
-    drawUI()
-    {
-        this.ctx.save();
-        this.ctx.scale(-1, 1);
-
-
-        // Draw the "Start Track" button
-        this.ctx.fillStyle = "#eee";
-        this.ctx.fillRect(-350, 400, 100, 50);
-        this.ctx.strokeRect(-350, 400, 100, 50);
-        this.ctx.fillStyle = "black";
-        this.ctx.fillText("Start Track", -355, 430);
-    
-        // Draw the "Stop" button
-        this.ctx.fillStyle = "#eee";
-        this.ctx.fillRect(-350, 460, 100, 50);
-        this.ctx.strokeRect(-350, 460, 100, 50);
-        this.ctx.fillStyle = "black";
-        this.ctx.fillText("Stop", -375, 490);
-    
-        // Draw the "Restart" button
-        this.ctx.fillStyle = "#eee";
-        this.ctx.fillRect(-350, 520, 100, 50);
-        this.ctx.strokeRect(-350, 520, 100, 50);
-        this.ctx.fillStyle = "black";
-        this.ctx.fillText("Reset",- 360, 550);
-
-
-        this.ctx.restore();
-    }
-
-    
-
-    
-    
 
     level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
     {
@@ -305,16 +262,20 @@ export default class Level_05
 
         //  Drawing/Displaying/applying calculations Screen
         // Update and draw the circle on every frame, regardless of beat timing
+       // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.circle.update();  // Assuming you have an update method to handle pulsing
+
         this.circle.draw();
         this.updateBeatCircles(currentTimeSinceAppStart);  // Update the positions of the beat circles
-        this.drawUI();
-
+           
+        
+        this.uiManager.drawAll(this.ctx, this.canvas.width, this.canvas.height, this.hoveredButton, this.activeButton);
+      
         for(let beatcircle of this.beatCircles_Array)
         {beatcircle.draw(canvasCtx);}
         }
 
-      
+       // this.drawUI(); 
     }
     
 

@@ -39,16 +39,13 @@ export class Button
 
     // Check if a point is inside the button
     isInside(x, y, canvasWidth, canvasHeight) {
-        const btnX = canvasWidth - (this.xRatio * canvasWidth + this.widthRatio * canvasWidth);
+        const btnX = this.xRatio * canvasWidth;
         const btnY = this.yRatio * canvasHeight;
         const btnWidth = this.widthRatio * canvasWidth;
         const btnHeight = this.heightRatio * canvasHeight;
-    
-        const isWithinButton = x > btnX && x < btnX + btnWidth && y > btnY && y < btnY + btnHeight;
-        return isWithinButton;
-    
+
+        return x > btnX && x < btnX + btnWidth && y > btnY && y < btnY + btnHeight;
     }
-    
 }
 
 
@@ -89,11 +86,6 @@ export default class UIManager
     }
 
     drawAll(ctx, canvasWidth, canvasHeight, hoveredButton, activeButton) {
-
-        ctx.save();  // Save the current state of the context
-        ctx.scale(-1, 1);  // Flip horizontally
-        ctx.translate(-canvasWidth, 0);  // Offset by the canvas width because flipping moves it off screen
-
         Object.values(this.buttons).forEach(btn => {
             const isHovered = btn === hoveredButton;
             const isActive = btn === activeButton;
@@ -117,20 +109,16 @@ export default class UIManager
 
         ctx.fillText(`${formattedTimer}s`, timerXPosition, timerYPosition);
 
-        ctx.restore();  // Restore the state of the context
 
     }
 
 
     //logic for what to do with buttons when mouse is clicked
     handleCanvasClick(x, y, canvasWidth, canvasHeight) {
-        console.log(x,y, canvasWidth,canvasHeight);
         for (const [buttonName, button] of Object.entries(this.buttons)) {
-
-       
             if (button.isInside(x, y, canvasWidth, canvasHeight)) {
-                console.log ("BUTTON CLICKED MF")
-            
+                console.log(`${buttonName} clicked!`);
+    
                 if (buttonName === "startStopButton") {
                     if (button.text === "Start Track") {
                         button.text = "Stop Track";
@@ -153,16 +141,11 @@ export default class UIManager
     //handing the varios mouse position and clicks on the canvus:
     getRelativeMousePosition(e) {
         const rect = e.target.getBoundingClientRect();
-        const x = e.target.width - (e.clientX - rect.left);  // Mirrored x-coordinate
-        const y = e.clientY - rect.top;
         return {
-            x: x,
-            y: y
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
         };
     }
-    
-    
-    
  
     handleMouseMove(e) {
         const position = this.getRelativeMousePosition(e);
@@ -180,7 +163,6 @@ export default class UIManager
  
     handleClick(e) {
         const position = this.getRelativeMousePosition(e);
-
         this.handleCanvasClick(position.x, position.y, e.target.width, e.target.height);
     }
 
