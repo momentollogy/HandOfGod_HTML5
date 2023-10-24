@@ -14,7 +14,7 @@ export default class GameManager {
         
         // set the current level to level_01
         //this.de.setLabel("Bubble Game");
-        this.currentLevel = new Level_05(this.mediaPipe.getResults(), this.canvasElement, this.canvasCtx)
+        this.currentLevel = new Level_01(this.mediaPipe.getResults(), this.canvasElement)
     }
 
     setDrawEngine(_drawEngine){

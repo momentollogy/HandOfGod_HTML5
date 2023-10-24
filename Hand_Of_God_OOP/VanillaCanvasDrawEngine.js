@@ -1,7 +1,9 @@
 export default class VanillaCanvasDrawEngine {
-    constructor(_canvas, _mediaPipe, _video, _gm) {
+    constructor(_mpCanvas, _canvas, _mediaPipe, _video, _gm) {
+        this.mpCanvasElement = _mpCanvas;
         this.canvasElement = _canvas;
-        this.canvasCtx = this.canvasElement.getContext("2d");
+        this.mpctx = this.mpCanvasElement.getContext("2d");
+        this.ctx = this.canvasElement.getContext("2d");
         this.mediaPipe = _mediaPipe;
         this.video = _video;
         this.gm = _gm;
@@ -9,14 +11,12 @@ export default class VanillaCanvasDrawEngine {
 
         this.tracking = true;
         this.looping = true;
-
-        this.bub = document.getElementById("bubblePic");
-        //console.log("vanillaConstructer",this.gm)
     }
 
     clearCanvas()
     {
-        this.canvasCtx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+        this.mpctx.clearRect(0, 0, this.mpCanvasElement.width, this.mpCanvasElement.height);
+        this.ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
     }
 
     setLabel(incomingText){
@@ -26,18 +26,12 @@ export default class VanillaCanvasDrawEngine {
     drawUI()
     {
         // Draw all text and human readable stuff inbetween these save() and restore() methods.. otherwise they will be reversed
-        this.canvasCtx.save();
-        this.canvasCtx.lineWidth = 1;
-        this.canvasCtx.scale(-1, 1);
-        this.canvasCtx.font = "30px Arial";
-        this.canvasCtx.strokeText(this.label, -this.canvasElement.width+30, 30);
-        this.canvasCtx.restore();
-
-        // calculate xPos using a sin wave for simple oscilating motion
-        //this.xVal = (Math.sin(performance.now()*.001) * this.canvasElement.width/2) + this.canvasElement.width/2 - 64;
-
-        // draw bubble using xPos
-        //this.canvasCtx.drawImage(this.bub, this.xVal, 50, 128, 128 );
+        //this.ctx.save();
+        this.ctx.lineWidth = 1;
+        //this.ctx.scale(-1, 1);
+        this.ctx.font = "30px Arial";
+        this.ctx.strokeText(this.label, -this.canvasElement.width+30, 30);
+        //this.ctx.restore();
     }
 
     drawHands()
@@ -46,7 +40,7 @@ export default class VanillaCanvasDrawEngine {
         if(this.results == undefined){this.results = this.mediaPipe.getResults();}
         if(this.results== undefined){return;}
         // check if the video frame has updated, and if so: generate a new set of landmark results
-        let framesSinceStart = performance.now(); // Get the current Broswer frame number since the app started
+        //let framesSinceStart = performance.now(); // Get the current Broswer frame number since the app started
         if (this.lastVideoTime !== this.video.currentTime) { //If brower refresh rate is faster than video rate dont draw past past that rate ie 30fps
             this.lastVideoTime = this.video.currentTime;
             this.results = this.mediaPipe.getResults();
@@ -54,11 +48,11 @@ export default class VanillaCanvasDrawEngine {
 
         if (this.results.landmarks) {
             for (const landmarks of this.results.landmarks) {
-                drawConnectors(this.canvasCtx, landmarks, HAND_CONNECTIONS, {
+                drawConnectors(this.mpctx, landmarks, HAND_CONNECTIONS, {
                     color: "#00FF00",
                     lineWidth: 1
                 });
-                drawLandmarks(this.canvasCtx, landmarks, { color: "#FF0000", lineWidth: .1 });   
+                drawLandmarks(this.mpctx, landmarks, { color: "#FF0000", lineWidth: .1 });   
             }
         }
     }
@@ -87,7 +81,7 @@ export default class VanillaCanvasDrawEngine {
 
         if(this.tracking){this.drawHands()}  // draw hands
         
-        this.gm.currentLevel.level_loop(this.results,this.canvasElement,this.canvasCtx,timestamp); // draw game level stuff
+        this.gm.currentLevel.level_loop(this.results,this.canvasElement,this.ctx,timestamp); // draw game level stuff
        
         this.checkGameStateAndProcessWinLose(); // check game conditions
 
