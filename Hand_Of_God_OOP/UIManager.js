@@ -60,7 +60,7 @@ export default class UIManager
             startStopButton: new Button(0.1, 0.9, 0.1, 0.05, "Start Track"),
             resetButton: new Button(0.3, 0.9, 0.1, 0.05, "Reset"),
             exportBeatsButton: new Button(0.5, 0.9, 0.1, 0.05, "Export Beats"),
-            loadBeatsButton: new Button(0.7, 0.9, 0.1, 0.05, "Load Beats")
+            loadBeatsButton: new Button(0.7, 0.9, 0.1, 0.05, "Load Beat5")
         };
 
         this.hoveredButton = null;
