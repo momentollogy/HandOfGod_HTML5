@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slice Circle</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    // <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.14.2/matter.min.js"></script>
+
+</head>
+
+<body>
+    <script>
+let circle;
+let isSliced = false;
+let sliceStart, sliceEnd;
+let slice1, slice2;
+
+function setup() {
+  createCanvas(600, 600);
+  circle = {
+    x: width / 2,
+    y: height / 2,
+    r: 100,
+    velocity: createVector(0, 2)
+  };
+}
+
+function draw() {
+  background(220);
+
+  if (!isSliced) {
+    ellipse(circle.x, circle.y, circle.r * 2, circle.r * 2);
+    if (mouseIsPressed) {
+      line(sliceStart.x, sliceStart.y, mouseX, mouseY);
+    }
+  } else {
+    handleSlices();
+  }
+}
+
+function mousePressed() {
+  sliceStart = createVector(mouseX, mouseY);
+}
+
+function mouseReleased() {
+  sliceEnd = createVector(mouseX, mouseY);
+  if (!isSliced) {
+    isSliced = true;
+    sliceCircle();
+  }
+}
+
+function sliceCircle() {
+  let angle1 = atan2(sliceStart.y - circle.y, sliceStart.x - circle.x);
+  let angle2 = atan2(sliceEnd.y - circle.y, sliceEnd.x - circle.x);
+
+  slice1 = {
+    x: circle.x,
+    y: circle.y,
+    r: circle.r,
+    start: angle1,
+    end: angle2,
+    velocity: createVector(1, 2)
+  };
+  
+  slice2 = {
+    x: circle.x,
+    y: circle.y,
+    r: circle.r,
+    start: angle2,
+    end: angle1 + TWO_PI,
+    velocity: createVector(-1, 2)
+  };
+}
+
+function handleSlices() {
+  fill(150);
+  arc(slice1.x, slice1.y, slice1.r * 2, slice1.r * 2, slice1.start, slice1.end);
+  arc(slice2.x, slice2.y, slice2.r * 2, slice2.r * 2, slice2.start, slice2.end);
+  
+  slice1.x += slice1.velocity.x;
+  slice1.y += slice1.velocity.y;
+  
+  slice2.x += slice2.velocity.x;
+  slice2.y += slice2.velocity.y;
+}
+
+
+    </script>
+</body>
+
+</html>
