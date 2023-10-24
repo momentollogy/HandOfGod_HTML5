@@ -6,18 +6,18 @@
 
 export default class Level_05
 {
-    constructor(mp,canvasElement, canvasCtx)
+    constructor(mp,canvasElement)
     {
         console.log("welcome to level 4")
-        this.canvasCtx = canvasCtx;
+        //this.canvasCtx = canvasCtx;
         this.canvasElement = canvasElement;
         this.canvas = canvasElement;
-        this.ctx = canvasCtx;
+        this.ctx = this.canvas.getContext("2d");
         this.beatArray=[];
         this.everythingloaded=false;
         this.nextBeatArrayIndex=0;
-        this.timer = new Timer(canvasCtx);
-        this.circle = new Circle(canvasElement, canvasCtx);  // Create a single circle instance
+        this.timer = new Timer(this.ctx);
+        this.circle = new Circle(canvasElement, this.ctx);  // Create a single circle instance
         this.circle.position = { x: canvasElement.width / 2, y: canvasElement.height / 2 };  // Position the circle at the center
         this.beatCircles_Array = [];
         this.velocity=100;
@@ -32,7 +32,7 @@ export default class Level_05
         this.audio = new Audio('sound2/apache.mp3');
         this.audio.volume = 0.00; 
 
-        this.uiManager = new UIManager();
+        this.uiManager = new UIManager(this.canvas);
         this.hoveredButton = null;
         this.activeButton = null;
     
@@ -269,13 +269,13 @@ export default class Level_05
         this.updateBeatCircles(currentTimeSinceAppStart);  // Update the positions of the beat circles
            
         
-        this.uiManager.drawAll(this.ctx, this.canvas.width, this.canvas.height, this.hoveredButton, this.activeButton);
+        this.uiManager.drawAll(this.ctx, this.canvas.width, this.canvas.height);
       
         for(let beatcircle of this.beatCircles_Array)
         {beatcircle.draw(canvasCtx);}
         }
 
-       // this.drawUI(); 
+        // this.drawUI(); 
     }
     
 

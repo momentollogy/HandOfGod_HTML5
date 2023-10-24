@@ -56,12 +56,12 @@ function onEnableCamButtonClicked(event) {
 // when the camera finally starts up
 function onCamStartup(event)
 {
+    container.style.width = "100%";
+    video.style.width = "100%";
     mpCanvasElement.width = video.videoWidth;
     mpCanvasElement.height = video.videoHeight;
     canvasElement.width = video.videoWidth;
     canvasElement.height = video.videoHeight;
-    container.style.width = "50%";
-    video.style.width = "100%";
     canvasElement.style.width = "100%";
     mpCanvasElement.style.width = "100%";
     fullButton.style.display="inline";

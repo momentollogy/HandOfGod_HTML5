@@ -79,6 +79,17 @@ export default class VanillaCanvasDrawEngine {
     {
         this.clearCanvas() // clear canvas
 
+        this.ctx.strokeStyle = 'red';
+        this.ctx.lineWidth = 10;
+        this.ctx.strokeRect(0, 0, this.mpCanvasElement.width, this.mpCanvasElement.height);
+
+        this.ctx.strokeStyle = 'blue';
+        this.ctx.lineWidth = 5;
+        this.ctx.strokeRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+
+
+
+
         if(this.tracking){this.drawHands()}  // draw hands
         
         this.gm.currentLevel.level_loop(this.results,this.canvasElement,this.ctx,timestamp); // draw game level stuff
