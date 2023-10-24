@@ -12,9 +12,7 @@ export default class GameManager {
         this.canvasCtx = this.canvasElement.getContext("2d");
         this.mediaPipe = _mediaPipe;
         
-        // set the current level to level_01
-        //this.de.setLabel("Bubble Game");
-        this.currentLevel = new Level_01(this.mediaPipe.getResults(), this.canvasElement)
+        this.currentLevel = new Level_05(this.mediaPipe.getResults(), this.canvasElement)
     }
 
     setDrawEngine(_drawEngine){

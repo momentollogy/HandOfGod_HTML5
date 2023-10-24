@@ -16,10 +16,10 @@ export class Button
         const height = this.heightRatio * canvasHeight;
     
         if (isActive) {
-            ctx.fillStyle = "#cccccc";  // Active state color
+            ctx.fillStyle = "#ccccee";  // Active state color
             ctx.shadowColor = 'transparent';  // No shadow when button is pressed
         } else {
-            ctx.fillStyle = isHovered ? "#e0e0e0" : "#f0f0f0";  // Normal/Hover state color
+            ctx.fillStyle = isHovered ? "#a0a0a0" : "#f0f0f0";  // Normal/Hover state color
             ctx.shadowColor = "rgba(0, 0, 0, 0.3)"; 
             ctx.shadowBlur = 5;
             ctx.shadowOffsetX = 3;  
@@ -39,29 +39,32 @@ export class Button
 
     // Check if a point is inside the button
     isInside(x, y, canvasWidth, canvasHeight) {
-        const btnX = canvasWidth - (this.xRatio * canvasWidth + this.widthRatio * canvasWidth);
+        const btnX = this.xRatio * canvasWidth;// + this.widthRatio * canvasWidth;
         const btnY = this.yRatio * canvasHeight;
         const btnWidth = this.widthRatio * canvasWidth;
         const btnHeight = this.heightRatio * canvasHeight;
     
         const isWithinButton = x > btnX && x < btnX + btnWidth && y > btnY && y < btnY + btnHeight;
         return isWithinButton;
-    
     }
-    
 }
 
 
 // Exported UIManager
 export default class UIManager 
 {
-    constructor() {
+    constructor(_canvas) {
+        this.canvas = _canvas
+        this.ctx = this.canvas.getContext("2d");
         this.buttons = {
             startStopButton: new Button(0.1, 0.9, 0.1, 0.05, "Start Track"),
             resetButton: new Button(0.3, 0.9, 0.1, 0.05, "Reset"),
             exportBeatsButton: new Button(0.5, 0.9, 0.1, 0.05, "Export Beats"),
-            loadBeatsButton: new Button(0.7, 0.9, 0.1, 0.05, "Load Beats")
+            loadBeatsButton: new Button(0.7, 0.9, 0.1, 0.05, "Load Beat5")
         };
+
+        this.hoveredButton = null;
+        this.activeButton = null;
 
         // Timer properties
         this.timer = 0;  // in seconds
@@ -88,15 +91,13 @@ export default class UIManager
         this.timer = 0;
     }
 
-    drawAll(ctx, canvasWidth, canvasHeight, hoveredButton, activeButton) {
+    drawAll(ctx, canvasWidth, canvasHeight) {
 
-        ctx.save();  // Save the current state of the context
-        ctx.scale(-1, 1);  // Flip horizontally
-        ctx.translate(-canvasWidth, 0);  // Offset by the canvas width because flipping moves it off screen
+        
 
         Object.values(this.buttons).forEach(btn => {
-            const isHovered = btn === hoveredButton;
-            const isActive = btn === activeButton;
+            const isHovered = btn === this.hoveredButton;
+            const isActive = btn === this.activeButton;
             btn.draw(ctx, canvasWidth, canvasHeight, isHovered, isActive);
         });
 
@@ -116,21 +117,23 @@ export default class UIManager
         const formattedTimer = this.timer.toFixed(2);
 
         ctx.fillText(`${formattedTimer}s`, timerXPosition, timerYPosition);
-
-        ctx.restore();  // Restore the state of the context
-
     }
 
 
     //logic for what to do with buttons when mouse is clicked
     handleCanvasClick(x, y, canvasWidth, canvasHeight) {
-        console.log(x,y, canvasWidth,canvasHeight);
-        for (const [buttonName, button] of Object.entries(this.buttons)) {
 
-       
-            if (button.isInside(x, y, canvasWidth, canvasHeight)) {
-                console.log ("BUTTON CLICKED MF")
-            
+        let actualWidth = this.canvas.parentNode.offsetWidth;
+        let actualHeight = actualWidth * 1080/1920; //this.canvas.parentNode.offsetHeight;
+
+        let adjustedX = Math.round((canvasWidth /actualWidth ) * x);
+        let adjustedY = Math.round((canvasHeight/actualHeight) * y);
+
+        //console.log("actual: ",x,y, "adjusted: ",adjustedX, adjustedY);
+        
+        for (const [buttonName, button] of Object.entries(this.buttons)) {
+            //if (button.isInside(x, y, canvasWidth, canvasHeight)) {
+            if (button.isInside(x, y, actualWidth, actualHeight)) {
                 if (buttonName === "startStopButton") {
                     if (button.text === "Start Track") {
                         button.text = "Stop Track";
@@ -153,7 +156,7 @@ export default class UIManager
     //handing the varios mouse position and clicks on the canvus:
     getRelativeMousePosition(e) {
         const rect = e.target.getBoundingClientRect();
-        const x = e.target.width - (e.clientX - rect.left);  // Mirrored x-coordinate
+        const x = e.clientX - rect.left; 
         const y = e.clientY - rect.top;
         return {
             x: x,
@@ -161,17 +164,27 @@ export default class UIManager
         };
     }
     
-    
+    // this method is only used to calculate the offset of the canvas size vs the screen size.
+    getPositionAndDimensions(e)
+    {
+        const position = this.getRelativeMousePosition(e);
+
+        let actualWidth = this.canvas.parentNode.offsetWidth;
+        let actualHeight = actualWidth * 1080/1920; //this.canvas.parentNode.offsetHeight;
+        //let adjustedX = Math.round((this.canvas.width /actualWidth ) * position.x);
+        //let adjustedY = Math.round((this.canvas.height/actualHeight) * position.y);
+        return {x:position.x, y:position.y, w:actualWidth, h:actualHeight}
+    }
     
  
     handleMouseMove(e) {
-        const position = this.getRelativeMousePosition(e);
-        this.hoveredButton = Object.values(this.buttons).find(btn => btn.isInside(position.x, position.y, e.target.width, e.target.height));
+        const pos = this.getPositionAndDimensions(e)
+        this.hoveredButton = Object.values(this.buttons).find(btn => btn.isInside(pos.x, pos.y, pos.w, pos.h));
     }
  
     handleMouseDown(e) {
-        const position = this.getRelativeMousePosition(e);
-        this.activeButton = Object.values(this.buttons).find(btn => btn.isInside(position.x, position.y, e.target.width, e.target.height));
+        const pos = this.getPositionAndDimensions(e)
+        this.activeButton = Object.values(this.buttons).find(btn => btn.isInside(pos.x, pos.y, pos.w, pos.h));
     }
  
     handleMouseUp() {
@@ -180,7 +193,6 @@ export default class UIManager
  
     handleClick(e) {
         const position = this.getRelativeMousePosition(e);
-
         this.handleCanvasClick(position.x, position.y, e.target.width, e.target.height);
     }
 
