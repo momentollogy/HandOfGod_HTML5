@@ -8,6 +8,8 @@ export class Button
         this.text = text;
     }
 
+
+    
     // Draw the button on a canvas context
     draw(ctx, canvasWidth, canvasHeight, isHovered = false, isActive = false) {
         const x = this.xRatio * canvasWidth;
@@ -49,41 +51,57 @@ export class Button
 }
 
 
-// Exported UIManager
+//---------------------------
+// UIManager MANAGE CLASS
+//---------------------------
 export default class UIManager 
 {
-    constructor() {
-        this.buttons = {
+    constructor() 
+    {
+        this.buttons = 
+        {
             startStopButton: new Button(0.1, 0.9, 0.1, 0.05, "Start Track"),
             resetButton: new Button(0.3, 0.9, 0.1, 0.05, "Reset"),
             exportBeatsButton: new Button(0.5, 0.9, 0.1, 0.05, "Export Beats"),
-            loadBeatsButton: new Button(0.7, 0.9, 0.1, 0.05, "Load Beats")
+            loadBeatsButton: new Button(0.7, 0.9, 0.1, 0.05, "Load Beats"),
+            loadSongButton: new Button(0.9, 0.9, 0.1, 0.05, "Load Song")
+
         };
+
+        this.hoveredButton = null;
+        this.activeButton = null;
 
         // Timer properties
         this.timer = 0;  // in seconds
         this.timerInterval = null;  // to hold the setInterval reference
+
+        //Load Song button properties
+        this.songInput = document.createElement('input');
+        this.songInput.type = 'file';
+        this.songInput.accept = '.mp3,.wav';
+        this.songInput.style.display = 'none';
+        document.body.appendChild(this.songInput);
     }
 
     startTimer() {
-        if (!this.timerInterval) {
-            this.timerInterval = setInterval(() => {
-                this.timer += 0.01; // Increment by 0.01 to represent milliseconds
-            }, 10); // Run every 10ms for smoothness
+        if (this.loadedSong) {
+            this.loadedSong.play();
         }
     }
     
 
     stopTimer() {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
+        if (this.loadedSong) {
+            this.loadedSong.pause();
         }
     }
 
-    resetTimer() {
-        this.timer = 0;
+   resetTimer() {
+    this.timer = 0;
+    if (this.loadedSong) {
+        this.loadedSong.currentTime = 0;
     }
+}
 
     drawAll(ctx, canvasWidth, canvasHeight, hoveredButton, activeButton) {
         Object.values(this.buttons).forEach(btn => {
@@ -105,7 +123,8 @@ export default class UIManager
         ctx.textBaseline = "middle";
 
         // Format timer with two decimal places
-        const formattedTimer = this.timer.toFixed(2);
+        const formattedTimer = this.loadedSong ? (this.loadedSong.currentTime).toFixed(2):0;
+        //const formattedTimer = this.loadedSong.currentTime.toFixed(2);
 
         ctx.fillText(`${formattedTimer}s`, timerXPosition, timerYPosition);
 
@@ -130,10 +149,16 @@ export default class UIManager
                 } else if (buttonName === "resetButton") {
                     this.resetTimer();
                 } // ... other button logic remains unchanged
+
+                else if (buttonName === "loadSongButton") 
+                {
+                    this.songInput.click();
+                }
             }
         }
     }
 
+    
 
 
 
@@ -153,9 +178,12 @@ export default class UIManager
     }
  
     handleMouseDown(e) {
+        console.log("Mouse down detected")
         const position = this.getRelativeMousePosition(e);
         this.activeButton = Object.values(this.buttons).find(btn => btn.isInside(position.x, position.y, e.target.width, e.target.height));
+        
     }
+
  
     handleMouseUp() {
         this.activeButton = null;
@@ -166,4 +194,15 @@ export default class UIManager
         this.handleCanvasClick(position.x, position.y, e.target.width, e.target.height);
     }
 
+    handleSongInput(e) {
+        const files = e.target.files;
+        if (files.length === 0) return;
+    
+        const selectedFile = files[0];
+        this.loadedSong = new Audio(URL.createObjectURL(selectedFile));
+    }
+    
+
 }
+
+
