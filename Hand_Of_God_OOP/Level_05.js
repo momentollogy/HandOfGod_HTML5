@@ -236,23 +236,33 @@ export default class Level_05
     
     
 
-    handleSwipeDetection(handPosition, timestamp, handedness) {
-        const isHandInside = this.SweetSpotCircleArray[0].is_hand_inside(handPosition);
+    handleSwipeDetection(handPosition, timestamp, handedness) 
+    {
+        for (let sweetspotcircle of this.SweetSpotCircleArray)
+        {
+            const isHandInside = sweetspotcircle.is_hand_inside(handPosition);
+            
+            if (isHandInside) 
+            {
+                this.xyHandPositions.push(handPosition);
+            }
         
-        if (isHandInside) {
-            this.xyHandPositions.push(handPosition);
-        }
+            // No need to check for hand inside again. We use handInsidePreviously for the leaving action.
+            if (!isHandInside && this.handInsidePreviously) 
+            {
+                console.log(`${handedness} Hand Swiped: ${this.getSwipeDirection()}`);
+                this.xyHandPositions = [];  // Reset the xyHandPositions array when the hand leaves the circle
+            }
+        
+           
     
-        // No need to check for hand inside again. We use handInsidePreviously for the leaving action.
-        if (!isHandInside && this.handInsidePreviously) {
-            console.log(`${handedness} Hand Swiped: ${this.getSwipeDirection()}`);
-            this.xyHandPositions = [];  // Reset the xyHandPositions array when the hand leaves the circle
+        
+            this.handInsidePreviously = isHandInside;  // This will set the previous state for the next frame.
         }
-    
-        this.handInsidePreviously = isHandInside;  // This will set the previous state for the next frame.
     }
     
     
+
 
 
     level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
@@ -292,14 +302,16 @@ export default class Level_05
                         y: landmark.y * this.canvas.height
                     };
         
-                    if (this.SweetSpotCircleArray[0].is_hand_inside(handPosition)) {
-                        anyHandInside = true;
-                        this.currentHandedness = handHandedness; // Store the handedness
-                        if (!this.handInsidePreviously) {
-                            this.handInsidePreviously = true;
-                            this.xyHandPositions = [];
+                    for (let sweetspotcircle of this.SweetSpotCircleArray) {
+                        if (sweetspotcircle.is_hand_inside(handPosition)) {
+                            anyHandInside = true;
+                            this.currentHandedness = handHandedness; // Store the handedness
+                            if (!this.handInsidePreviously) {
+                                this.handInsidePreviously = true;
+                                this.xyHandPositions = [];
+                            }
+                            this.handleSwipeDetection(handPosition, currentTimeSinceAppStart, this.currentHandedness);
                         }
-                        this.handleSwipeDetection(handPosition, currentTimeSinceAppStart, this.currentHandedness);
                     }
                 }
             }
@@ -313,22 +325,21 @@ export default class Level_05
                 this.xyHandPositions = [];
             }
             
-            this.SweetSpotCircleArray[0].handInside = anyHandInside;
-            this.SweetSpotCircleArray[0].color = anyHandInside ? "red" : "green";
+            for (let sweetspotcircle of this.SweetSpotCircleArray) {
+                sweetspotcircle.handInside = anyHandInside;
+                sweetspotcircle.color = anyHandInside ? "red" : "green";
+            }
         }
         
 
 
         //  Drawing/Displaying/applying calculations Screen
-        // Update and draw the circle on every frame, regardless of beat timing
-       // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.SweetSpotCircleArray[0].update();  // Assuming you have an update method to handle pulsing
-
-        for(let sweetspotcircle of this.SweetSpotCircleArray)
-        {
+      
+        for(let sweetspotcircle of this.SweetSpotCircleArray) {
+            sweetspotcircle.update();
             sweetspotcircle.draw();
         }
-    
+        
 
 
         this.updateBeatCircles(currentTimeSinceAppStart);  // Update the positions of the beat circles
