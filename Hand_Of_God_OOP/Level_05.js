@@ -148,9 +148,12 @@ export default class Level_05
 
     pulseCircle() 
     {
-        this.SweetSpotCircleArray[0].isGrowing = !this.SweetSpotCircleArray[0].isGrowing;  // Toggle growing/shrinking
-        if (this.SweetSpotCircleArray[0].isGrowing) {
-            this.SweetSpotCircleArray[0].maxRadius = this.SweetSpotCircleArray[0].radius + 20;  // Set the max radius for this pulse
+        for(let sweetspotcircle of this.SweetSpotCircleArray)
+        {
+            sweetspotcircle.isGrowing = !sweetspotcircle.isGrowing;  // Toggle growing/shrinking
+            if (sweetspotcircle.isGrowing) {
+                sweetspotcircle.maxRadius = sweetspotcircle.radius + 20;  // Set the max radius for this pulse
+            }
         }
     }
 
@@ -321,8 +324,13 @@ export default class Level_05
        // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.SweetSpotCircleArray[0].update();  // Assuming you have an update method to handle pulsing
 
-        this.SweetSpotCircleArray[0].draw();
-        this.SweetSpotCircleArray[1].draw();
+        for(let sweetspotcircle of this.SweetSpotCircleArray)
+        {
+            sweetspotcircle.draw();
+        }
+    
+
+
         this.updateBeatCircles(currentTimeSinceAppStart);  // Update the positions of the beat circles
            
         
