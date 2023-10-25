@@ -51,50 +51,24 @@ export class Button
 
 
 // Exported UIManager
-export default class UIManager 
+export default class UIManager
 {
-    constructor(_canvas) {
-        this.canvas = _canvas
+    constructor(_canvas, _audio) {
+        this.canvas = _canvas;
+        this.audio = _audio;
         this.ctx = this.canvas.getContext("2d");
         this.buttons = {
-            startStopButton: new Button(0.1, 0.9, 0.1, 0.05, "Start Track"),
-            resetButton: new Button(0.3, 0.9, 0.1, 0.05, "Reset"),
-            exportBeatsButton: new Button(0.5, 0.9, 0.1, 0.05, "Export Beats"),
-            loadBeatsButton: new Button(0.7, 0.9, 0.1, 0.05, "Load Beat5")
+            startStopButton: new Button(0.05, 0.9, 0.1, 0.05, "Start/Stop"),
+            resetButton: new Button(0.25, 0.9, 0.1, 0.05, "Reset"),
+            exportBeatsButton: new Button(0.45, 0.9, 0.1, 0.05, "Export Beats"),
+            loadBeatsButton: new Button(0.65, 0.9, 0.1, 0.05, "Load Beats"),
+            loadSongButton: new Button(0.85, 0.9, 0.1, 0.05, "Load Song")
         };
-
         this.hoveredButton = null;
         this.activeButton = null;
-
-        // Timer properties
-        this.timer = 0;  // in seconds
-        this.timerInterval = null;  // to hold the setInterval reference
-    }
-
-    startTimer() {
-        if (!this.timerInterval) {
-            this.timerInterval = setInterval(() => {
-                this.timer += 0.01; // Increment by 0.01 to represent milliseconds
-            }, 10); // Run every 10ms for smoothness
-        }
-    }
-    
-
-    stopTimer() {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
-        }
-    }
-
-    resetTimer() {
-        this.timer = 0;
     }
 
     drawAll(ctx, canvasWidth, canvasHeight) {
-
-        
-
         Object.values(this.buttons).forEach(btn => {
             const isHovered = btn === this.hoveredButton;
             const isActive = btn === this.activeButton;
@@ -105,7 +79,7 @@ export default class UIManager
         const timerYPosition = this.buttons.startStopButton.yRatio * canvasHeight - 60;
 
         // Calculate the x-position with an offset (adjust as needed)
-        const offset = -670; // This will move the text 50 pixels to the right
+        const offset = -700; // This will move the text 50 pixels to the right
         const timerXPosition = (canvasWidth / 2) + offset;
 
         ctx.fillStyle = "#000";  // Text color
@@ -114,45 +88,46 @@ export default class UIManager
         ctx.textBaseline = "middle";
 
         // Format timer with two decimal places
-        const formattedTimer = this.timer.toFixed(2);
+        const formattedTimer = this.audio.currentTime ? this.audio.currentTime.toFixed(2) : 0.0;
 
         ctx.fillText(`${formattedTimer}s`, timerXPosition, timerYPosition);
     }
 
-
-    //logic for what to do with buttons when mouse is clicked
     handleCanvasClick(x, y, canvasWidth, canvasHeight) {
-
         let actualWidth = this.canvas.parentNode.offsetWidth;
-        let actualHeight = actualWidth * 1080/1920; //this.canvas.parentNode.offsetHeight;
-
-        let adjustedX = Math.round((canvasWidth /actualWidth ) * x);
-        let adjustedY = Math.round((canvasHeight/actualHeight) * y);
-
-        //console.log("actual: ",x,y, "adjusted: ",adjustedX, adjustedY);
-        
+        let actualHeight = actualWidth * 1080/1920;
+         
         for (const [buttonName, button] of Object.entries(this.buttons)) {
-            //if (button.isInside(x, y, canvasWidth, canvasHeight)) {
             if (button.isInside(x, y, actualWidth, actualHeight)) {
-                if (buttonName === "startStopButton") {
-                    if (button.text === "Start Track") {
-                        button.text = "Stop Track";
-                        this.startTimer();
-                    } else {
-                        button.text = "Start Track";
-                        this.stopTimer();
-                    }
-                } else if (buttonName === "resetButton") {
-                    this.resetTimer();
-                } // ... other button logic remains unchanged
+                if (buttonName === "startStopButton") 
+                {
+                    document.dispatchEvent(new Event("PLAY_PRESSED"));
+                    button.text = this.findStartStopLabelFromAudioState();
+                } else if (buttonName === "resetButton") 
+                {
+                    document.dispatchEvent(new Event("RESET_PRESSED"));
+                }
+                else if (buttonName === "exportBeatsButton") 
+                {
+                    document.dispatchEvent(new Event("EXPORT_PRESSED"));
+                }
+                else if (buttonName === "loadBeatsButton") 
+                {
+                    document.dispatchEvent(new Event("LOADBEATS_PRESSED"));
+                }
+                else if (buttonName === "loadSongButton")
+                {
+                    document.dispatchEvent(new Event("LOADSONG_PRESSED"));
+                }
             }
         }
     }
-
-
-
-
     
+    findStartStopLabelFromAudioState(){
+        if (this.audio.paused) {    return "Start Track";   } 
+        else {  return "Stop Track";   }
+    }
+
     //handing the varios mouse position and clicks on the canvus:
     getRelativeMousePosition(e) {
         const rect = e.target.getBoundingClientRect();
@@ -176,7 +151,6 @@ export default class UIManager
         return {x:position.x, y:position.y, w:actualWidth, h:actualHeight}
     }
     
- 
     handleMouseMove(e) {
         const pos = this.getPositionAndDimensions(e)
         this.hoveredButton = Object.values(this.buttons).find(btn => btn.isInside(pos.x, pos.y, pos.w, pos.h));
@@ -195,5 +169,4 @@ export default class UIManager
         const position = this.getRelativeMousePosition(e);
         this.handleCanvasClick(position.x, position.y, e.target.width, e.target.height);
     }
-
 }

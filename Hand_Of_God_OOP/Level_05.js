@@ -30,9 +30,11 @@ export default class Level_05
         this.currentHandedness = null;
         this.recordedMoments_Array=[];
         this.audio = new Audio('sound2/apache.mp3');
-        this.audio.volume = 0.00; 
+        this.audio.volume = 0.03; 
 
-        this.uiManager = new UIManager(this.canvas);
+        this.fileInput = document.getElementById('fileInput');
+
+        this.uiManager = new UIManager(this.canvas, this.audio);
         this.hoveredButton = null;
         this.activeButton = null;
     
@@ -40,7 +42,54 @@ export default class Level_05
         this.canvasElement.addEventListener('mousemove', this.uiManager.handleMouseMove.bind(this.uiManager));
         this.canvasElement.addEventListener('mousedown', this.uiManager.handleMouseDown.bind(this.uiManager));
         this.canvasElement.addEventListener('mouseup', this.uiManager.handleMouseUp.bind(this.uiManager));
-    
+        
+        
+
+        document.addEventListener('PLAY_PRESSED', (data) => {
+            console.log("Play button!!");
+            if(this.audio.paused){this.audio.play();}
+            else{this.audio.pause();}
+        });
+        
+        document.addEventListener('RESET_PRESSED', (data) => {
+            console.log("Reset");
+            this.audio.currentTime = 0;
+        });
+
+        document.addEventListener('EXPORT_PRESSED', (data) => {
+            console.log("export");
+        });
+
+        document.addEventListener('LOADBEATS_PRESSED', (data) => {
+            console.log("load beats");
+        });
+
+        document.addEventListener('LOADSONG_PRESSED', () => {
+            console.log("load Song");
+            //this.audio.src = "sound2/Plateau.mp3"
+           
+            // if there is no file input node on the HTML, then create one
+            if(!this.songInput){
+                this.songInput = document.createElement('input');
+                this.songInput.type = 'file';
+                this.songInput.accept = '.mp3,.wav';
+                this.songInput.style.display = 'none';
+                document.body.appendChild(this.songInput);
+            }
+            
+            // when the file is loaded use it as the new src for the audio object
+            this.songInput.addEventListener('change', () => {
+                const selectedFile = this.songInput.files[0];
+                if (selectedFile) {
+                    this.audio.src = URL.createObjectURL(selectedFile)
+                    this.audio.load();
+                    this.audio.play();
+                }
+            });
+
+            this.songInput.click();
+        });
+
 
 
 
