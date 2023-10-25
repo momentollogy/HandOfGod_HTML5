@@ -17,10 +17,13 @@ export default class Level_05
         this.everythingloaded=false;
         this.nextBeatArrayIndex=0;
         this.timer = new Timer(this.ctx);
-        this.circle = new Circle(canvasElement, this.ctx);  // Create a single circle instance
-       // this.circle.position = { x: canvasElement.width / 2, y: canvasElement.height / 2 };  // Position the circle at the center
-        this.circle.position = { x: 530, y: 400};
-      //  this.circle.move(newX, newY);
+
+
+        this.SweetSpotCircleArray=[];
+        this.SweetSpotCircleArray[0] = new Circle(canvasElement, this.ctx);  // Create a single circle instance
+        this.SweetSpotCircleArray[1] = new Circle(canvasElement, this.ctx);  // Create a single circle instance
+        this.SweetSpotCircleArray[0].position = { x: 640, y: 400};
+        this.SweetSpotCircleArray[1].position = { x: 1280, y: 400};
 
         this.beatCircles_Array = [];
         this.velocity=100;
@@ -145,9 +148,9 @@ export default class Level_05
 
     pulseCircle() 
     {
-        this.circle.isGrowing = !this.circle.isGrowing;  // Toggle growing/shrinking
-        if (this.circle.isGrowing) {
-            this.circle.maxRadius = this.circle.radius + 20;  // Set the max radius for this pulse
+        this.SweetSpotCircleArray[0].isGrowing = !this.SweetSpotCircleArray[0].isGrowing;  // Toggle growing/shrinking
+        if (this.SweetSpotCircleArray[0].isGrowing) {
+            this.SweetSpotCircleArray[0].maxRadius = this.SweetSpotCircleArray[0].radius + 20;  // Set the max radius for this pulse
         }
     }
 
@@ -231,7 +234,7 @@ export default class Level_05
     
 
     handleSwipeDetection(handPosition, timestamp, handedness) {
-        const isHandInside = this.circle.is_hand_inside(handPosition);
+        const isHandInside = this.SweetSpotCircleArray[0].is_hand_inside(handPosition);
         
         if (isHandInside) {
             this.xyHandPositions.push(handPosition);
@@ -286,7 +289,7 @@ export default class Level_05
                         y: landmark.y * this.canvas.height
                     };
         
-                    if (this.circle.is_hand_inside(handPosition)) {
+                    if (this.SweetSpotCircleArray[0].is_hand_inside(handPosition)) {
                         anyHandInside = true;
                         this.currentHandedness = handHandedness; // Store the handedness
                         if (!this.handInsidePreviously) {
@@ -307,8 +310,8 @@ export default class Level_05
                 this.xyHandPositions = [];
             }
             
-            this.circle.handInside = anyHandInside;
-            this.circle.color = anyHandInside ? "red" : "green";
+            this.SweetSpotCircleArray[0].handInside = anyHandInside;
+            this.SweetSpotCircleArray[0].color = anyHandInside ? "red" : "green";
         }
         
 
@@ -316,9 +319,10 @@ export default class Level_05
         //  Drawing/Displaying/applying calculations Screen
         // Update and draw the circle on every frame, regardless of beat timing
        // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.circle.update();  // Assuming you have an update method to handle pulsing
+        this.SweetSpotCircleArray[0].update();  // Assuming you have an update method to handle pulsing
 
-        this.circle.draw();
+        this.SweetSpotCircleArray[0].draw();
+        this.SweetSpotCircleArray[1].draw();
         this.updateBeatCircles(currentTimeSinceAppStart);  // Update the positions of the beat circles
            
         
