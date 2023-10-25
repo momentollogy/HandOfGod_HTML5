@@ -20,8 +20,8 @@ export default class Level_05
 
 
         this.SweetSpotCircleArray=[];
-        this.SweetSpotCircleArray[0] = new Circle(canvasElement, this.ctx);  // Create a single circle instance
-        this.SweetSpotCircleArray[1] = new Circle(canvasElement, this.ctx);  // Create a single circle instance
+        this.SweetSpotCircleArray[0] = new SweetSpotCircle(canvasElement, this.ctx);  // Create a single circle instance
+        this.SweetSpotCircleArray[1] = new SweetSpotCircle(canvasElement, this.ctx);  // Create a single circle instance
         this.SweetSpotCircleArray[0].position = { x: 640, y: 400};
         this.SweetSpotCircleArray[1].position = { x: 1280, y: 400};
 
@@ -134,6 +134,8 @@ export default class Level_05
     }
 
 
+    
+
     exportRecordedMoments_Array() 
     {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({beatTimes: this.recordedMoments_Array}));
@@ -235,27 +237,41 @@ export default class Level_05
     
     
     
+//In this modified version, this.handInsidePreviouslyArray is used to keep track of the 
+//hand inside state for each circle individually. This way, the this.handInsidePreviouslyArray[i] 
+//value for each circle is only updated based on the isHandInside value for that particular circle, 
+//rather than being overwritten in each iteration of the loop.
+handleSwipeDetection(handPosition, timestamp, handedness) 
+    {
 
-    handleSwipeDetection(handPosition, timestamp, handedness) {
-        const isHandInside = this.SweetSpotCircleArray[0].is_hand_inside(handPosition);
-        
-        if (isHandInside) {
-            this.xyHandPositions.push(handPosition);
-        }
+        // Initialize an array to keep track of the hand inside state for each circle
+this.handInsidePreviouslyArray = this.handInsidePreviouslyArray || Array(this.SweetSpotCircleArray.length).fill(false);
+
+for(let i = 0; i < this.SweetSpotCircleArray.length; i++)
+{
+    const sweetspotcircle = this.SweetSpotCircleArray[i];
+    const isHandInside = sweetspotcircle.is_hand_inside(handPosition);
     
-        // No need to check for hand inside again. We use handInsidePreviously for the leaving action.
-        if (!isHandInside && this.handInsidePreviously) {
-            console.log(`${handedness} Hand Swiped: ${this.getSwipeDirection()}`);
-            this.xyHandPositions = [];  // Reset the xyHandPositions array when the hand leaves the circle
-        }
-    
-        this.handInsidePreviously = isHandInside;  // This will set the previous state for the next frame.
+    if (isHandInside) {
+        this.xyHandPositions.push(handPosition);
     }
+
+    // No need to check for hand inside again. We use handInsidePreviouslyArray for the leaving action.
+    if (!isHandInside && this.handInsidePreviouslyArray[i]) {
+        console.log(`${handedness} Hand Swiped: ${this.getSwipeDirection()}`);
+        this.xyHandPositions = [];  // Reset the xyHandPositions array when the hand leaves the circle
+    }
+
+    this.handInsidePreviouslyArray[i] = isHandInside;  // This will set the previous state for the next frame.
+}
+
+    }
+
     
     
 
 
-    level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
+level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
     {
         
         if (this.everythingloaded)
@@ -292,15 +308,22 @@ export default class Level_05
                         y: landmark.y * this.canvas.height
                     };
         
-                    if (this.SweetSpotCircleArray[0].is_hand_inside(handPosition)) {
-                        anyHandInside = true;
-                        this.currentHandedness = handHandedness; // Store the handedness
-                        if (!this.handInsidePreviously) {
-                            this.handInsidePreviously = true;
-                            this.xyHandPositions = [];
+                    
+                    for(let sweetspotcircle of this.SweetSpotCircleArray) 
+                    {
+                        if (sweetspotcircle.is_hand_inside(handPosition)) 
+                        {
+                            anyHandInside = true;
+                            this.currentHandedness = handHandedness; // Store the handedness
+                            if (!this.handInsidePreviously) 
+                            {
+                                this.handInsidePreviously = true;
+                                this.xyHandPositions = [];
+                            }
+                            this.handleSwipeDetection(handPosition, currentTimeSinceAppStart, this.currentHandedness);
                         }
-                        this.handleSwipeDetection(handPosition, currentTimeSinceAppStart, this.currentHandedness);
                     }
+                    
                 }
             }
             
@@ -313,8 +336,19 @@ export default class Level_05
                 this.xyHandPositions = [];
             }
             
+           // for(let sweetspotcircle of this.SweetSpotCircleArray)
+           // {
+           ///     sweetspotcircle.handInside = anyHandInside;
+           //     sweetspotcircle.color = anyHandInside ? "red" : "green";
+           // }
+
             this.SweetSpotCircleArray[0].handInside = anyHandInside;
-            this.SweetSpotCircleArray[0].color = anyHandInside ? "red" : "green";
+            this.SweetSpotCircleArray[0].anyHandInside ? "red" : "green";
+            this.SweetSpotCircleArray[1].handInside = anyHandInside;
+            this.SweetSpotCircleArray[1].anyHandInside ? "red" : "green";
+        
+
+            
         }
         
 
@@ -322,10 +356,12 @@ export default class Level_05
         //  Drawing/Displaying/applying calculations Screen
         // Update and draw the circle on every frame, regardless of beat timing
        // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.SweetSpotCircleArray[0].update();  // Assuming you have an update method to handle pulsing
+
+
 
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {
+            sweetspotcircle.update(); 
             sweetspotcircle.draw();
         }
     
@@ -391,7 +427,7 @@ class BeatCircle
         if (this.isNearSweetSpot(this.audio.currentTime * 1000)) {
             this.color = "red";
         } else {
-            this.color = "green";
+            this.color = "rgb(0,255,0)";
         }
 
             // Draw the BeatCircle
