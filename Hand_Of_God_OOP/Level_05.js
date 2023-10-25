@@ -18,7 +18,10 @@ export default class Level_05
         this.nextBeatArrayIndex=0;
         this.timer = new Timer(this.ctx);
         this.circle = new Circle(canvasElement, this.ctx);  // Create a single circle instance
-        this.circle.position = { x: canvasElement.width / 2, y: canvasElement.height / 2 };  // Position the circle at the center
+       // this.circle.position = { x: canvasElement.width / 2, y: canvasElement.height / 2 };  // Position the circle at the center
+        this.circle.position = { x: 530, y: 400};
+      //  this.circle.move(newX, newY);
+
         this.beatCircles_Array = [];
         this.velocity=100;
         this.playing=false;
@@ -29,7 +32,7 @@ export default class Level_05
         this.xyHandPositions = [];
         this.currentHandedness = null;
         this.recordedMoments_Array=[];
-        this.audio = new Audio('sound2/apache.mp3');
+        this.audio = new Audio();
         this.audio.volume = 0.03; 
 
         this.fileInput = document.getElementById('fileInput');
@@ -58,6 +61,7 @@ export default class Level_05
 
         document.addEventListener('EXPORT_PRESSED', (data) => {
             console.log("export");
+            this.exportRecordedMoments_Array();
         });
 
         document.addEventListener('LOADBEATS_PRESSED', (data) => {
@@ -83,7 +87,7 @@ export default class Level_05
                 if (selectedFile) {
                     this.audio.src = URL.createObjectURL(selectedFile)
                     this.audio.load();
-                    this.audio.play();
+                 //   this.audio.play();
                 }
             });
 
@@ -278,7 +282,7 @@ export default class Level_05
         
                 for (const landmark of landmarks) {
                     const handPosition = {
-                        x: landmark.x * this.canvas.width,
+                        x: this.canvas.width - (landmark.x * this.canvas.width),
                         y: landmark.y * this.canvas.height
                     };
         
@@ -328,7 +332,6 @@ export default class Level_05
     }
     
 
-    
 }
 
 class BeatCircle 

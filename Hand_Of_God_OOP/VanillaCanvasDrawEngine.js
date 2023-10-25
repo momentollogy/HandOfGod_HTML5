@@ -79,13 +79,13 @@ export default class VanillaCanvasDrawEngine {
     {
         this.clearCanvas() // clear canvas
 
-        this.ctx.strokeStyle = 'red';
-        this.ctx.lineWidth = 10;
-        this.ctx.strokeRect(0, 0, this.mpCanvasElement.width, this.mpCanvasElement.height);
+     //   this.ctx.strokeStyle = 'red';
+       // this.ctx.lineWidth = 10;
+      //  this.ctx.strokeRect(0, 0, this.mpCanvasElement.width, this.mpCanvasElement.height);
 
-        this.ctx.strokeStyle = 'blue';
-        this.ctx.lineWidth = 5;
-        this.ctx.strokeRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+      //  this.ctx.strokeStyle = 'blue';
+      //  this.ctx.lineWidth = 5;
+      //  this.ctx.strokeRect(0, 0, this.canvasElement.width, this.canvasElement.height);
 
 
 
@@ -98,7 +98,6 @@ export default class VanillaCanvasDrawEngine {
 
         this.drawUI() // draw UI
 
-       // if (this.looping) { requestAnimationFrame(() => this.loop()); }  // repeat loop
         if (this.looping) { requestAnimationFrame(this.loop.bind(this)); }
 
     }

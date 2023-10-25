@@ -77,15 +77,53 @@ function sliceCircle() {
 
 function handleSlices() {
   fill(150);
-  arc(slice1.x, slice1.y, slice1.r * 2, slice1.r * 2, slice1.start, slice1.end);
-  arc(slice2.x, slice2.y, slice2.r * 2, slice2.r * 2, slice2.start, slice2.end);
-  
+
+  // Calculate start and end points for slice 1
+  let slice1StartX = slice1.x + slice1.r * cos(slice1.start);
+  let slice1StartY = slice1.y + slice1.r * sin(slice1.start);
+  let slice1EndX = slice1.x + slice1.r * cos(slice1.end);
+  let slice1EndY = slice1.y + slice1.r * sin(slice1.end);
+
+  // Draw slice 1
+  beginShape();
+  vertex(slice1StartX, slice1StartY);
+  let numPoints = 20;  // Adjust this value to change the resolution of the arc
+  for (let i = 0; i <= numPoints; i++) {
+    let angle = lerp(slice1.start, slice1.end, i / numPoints);
+    let x = slice1.x + slice1.r * cos(angle);
+    let y = slice1.y + slice1.r * sin(angle);
+    vertex(x, y);
+  }
+  vertex(slice1EndX, slice1EndY);
+  endShape(CLOSE);
+
+  // Calculate start and end points for slice 2
+  let slice2StartX = slice2.x + slice2.r * cos(slice2.start);
+  let slice2StartY = slice2.y + slice2.r * sin(slice2.start);
+  let slice2EndX = slice2.x + slice2.r * cos(slice2.end);
+  let slice2EndY = slice2.y + slice2.r * sin(slice2.end);
+
+  // Draw slice 2
+  beginShape();
+  vertex(slice2StartX, slice2StartY);
+  for (let i = 0; i <= numPoints; i++) {
+    let angle = lerp(slice2.start, slice2.end, i / numPoints);
+    let x = slice2.x + slice2.r * cos(angle);
+    let y = slice2.y + slice2.r * sin(angle);
+    vertex(x, y);
+  }
+  vertex(slice2EndX, slice2EndY);
+  endShape(CLOSE);
+
+  // Update slice positions
   slice1.x += slice1.velocity.x;
   slice1.y += slice1.velocity.y;
   
   slice2.x += slice2.velocity.x;
   slice2.y += slice2.velocity.y;
 }
+
+
 
 
     </script>
