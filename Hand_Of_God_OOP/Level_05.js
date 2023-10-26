@@ -1,6 +1,8 @@
  import Circle from './Circle.js';  // Adjust the path to match the location of your Circle.js file
  import Timer from './Timer.js';
  import UIManager, { Button } from './UIManager.js';
+ import SweetSpotCircle from './SweetSpotCircle.js';
+ import JsonManager from './JsonManager.js';
 
 
 
@@ -20,8 +22,14 @@ export default class Level_05
 
 
         this.SweetSpotCircleArray=[];
+
         this.SweetSpotCircleArray[0] = new SweetSpotCircle(canvasElement, this.ctx);  // Create a single circle instance
         this.SweetSpotCircleArray[1] = new SweetSpotCircle(canvasElement, this.ctx);  // Create a single circle instance
+       
+        //set/override default color
+        this.SweetSpotCircleArray[1].color = 'rgb(255, 0, 0)';  // Set color to bright orange
+ 
+        //set position
         this.SweetSpotCircleArray[0].position = { x: 640, y: 400};
         this.SweetSpotCircleArray[1].position = { x: 1280, y: 400};
 
@@ -37,7 +45,6 @@ export default class Level_05
         this.recordedMoments_Array=[];
         this.audio = new Audio();
         this.audio.volume = 0.03; 
-
         this.fileInput = document.getElementById('fileInput');
 
         this.uiManager = new UIManager(this.canvas, this.audio);
@@ -48,7 +55,8 @@ export default class Level_05
         this.canvasElement.addEventListener('mousemove', this.uiManager.handleMouseMove.bind(this.uiManager));
         this.canvasElement.addEventListener('mousedown', this.uiManager.handleMouseDown.bind(this.uiManager));
         this.canvasElement.addEventListener('mouseup', this.uiManager.handleMouseUp.bind(this.uiManager));
-        
+        this.jsonManager = new JsonManager();
+
         
 
         document.addEventListener('PLAY_PRESSED', (data) => {
@@ -67,9 +75,13 @@ export default class Level_05
             this.exportRecordedMoments_Array();
         });
 
+
         document.addEventListener('LOADBEATS_PRESSED', (data) => {
             console.log("load beats");
+            this.jsonManager.promptForFile(); 
         });
+        
+
 
         document.addEventListener('LOADSONG_PRESSED', () => {
             console.log("load Song");
@@ -100,10 +112,8 @@ export default class Level_05
 
 
 
-
-
         //LOADS json array beats, saved as file in folder
-        fetch('apache.json')
+        fetch('sound2/apache.json')
         .then(response => 
         {
             // Check if the request was successful
@@ -126,10 +136,7 @@ export default class Level_05
         .catch(error => 
         {
             console.error('There has been a problem with your fetch operation:', error);
-        });
-
-
-
+        })
      
     }
 
@@ -160,26 +167,7 @@ export default class Level_05
     }
 
 
-    populateBeatCircles(){
-        this.beatCircles_Array = [];
-        for(let timemarker of this.beatArray){
-            this.beatCircles_Array.push( new BeatCircle(timemarker,this.velocity,this.audio,this.canvasElement) )
-        }
-    }
 
-
-
-    updateBeatCircles(timeOfCurrentLoop)
-    {
-
-        for( let i = 0 ; i < this.beatCircles_Array.length ; i++)
-        {
-            let cir = this.beatCircles_Array[i];
-            if(!this.audio.paused){cir.updatePosition(timeOfCurrentLoop)}
-            cir.draw(this.ctx);
-            cir.checkForRemoval();
-        }
-    }
 
 
     getSwipeDirection(handHandedness) {
@@ -280,7 +268,10 @@ level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
             {
                 this.audio.play();
                 this.playing=true;
-                this.populateBeatCircles();
+              // this.populateBeatCircles();
+               for (let sweetSpot of this.SweetSpotCircleArray) {
+                sweetSpot.populateBeatCircles();
+            }
                
             }
            
@@ -336,12 +327,7 @@ level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
                 this.xyHandPositions = [];
             }
             
-           // for(let sweetspotcircle of this.SweetSpotCircleArray)
-           // {
-           ///     sweetspotcircle.handInside = anyHandInside;
-           //     sweetspotcircle.color = anyHandInside ? "red" : "green";
-           // }
-
+        
             this.SweetSpotCircleArray[0].handInside = anyHandInside;
             this.SweetSpotCircleArray[0].anyHandInside ? "red" : "green";
             this.SweetSpotCircleArray[1].handInside = anyHandInside;
@@ -366,8 +352,7 @@ level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
         }
     
 
-
-        this.updateBeatCircles(currentTimeSinceAppStart);  // Update the positions of the beat circles
+        this.SweetSpotCircleArray[0].updateBeatCircles(currentTimeSinceAppStart);  // Update the positions of the beat circles
            
         
         this.uiManager.drawAll(this.ctx, this.canvas.width, this.canvas.height);
@@ -382,6 +367,12 @@ level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
 
 }
 
+
+
+
+
+
+/*
 class BeatCircle 
 {
     constructor(timestamp,beatCircleSpeed,_audio,canvasElement) {
@@ -393,12 +384,12 @@ class BeatCircle
         this.SWEET_SPOT_Y = 540;
         this.audio=_audio;
         this.canvasElement = canvasElement;
-        this.x = canvasElement.width / 2;
+        this.x = canvasElement.width / 2; //insread of whats there center sweetspotcircle.x circle
         this.elapsedTime=0;
         this.lastTimeOfCurrentLoop;
         this.distance;
         this.velocity = 200;
-        this.y = this.calculateStartingPosition(timestamp); // Y position
+        this.y = this.calculateStartingPosition(timestamp); 
 
 
         
@@ -419,7 +410,7 @@ class BeatCircle
 
     draw(ctx){
 
-            // set the alpha of circle
+            // set the alpha of beatcircle
         if (this.y > this.SWEET_SPOT_Y + 5) {this.alpha -=.01}; if(this.alpha<0){this.alpha=0};
         ctx.globalAlpha = this.alpha;
         
@@ -463,5 +454,5 @@ calculateStartingPosition(timestamp)
 
 
 }
-
+*/
 

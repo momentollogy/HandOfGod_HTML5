@@ -1,4 +1,4 @@
-export default class Circle {
+export default class SweetSpotCircle {
     constructor(canvas, ctx, color='rgb(0, 255, 0)', position = {x:800,y:200}, radius = 80, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
      {
         this.canvas = canvas;
@@ -12,8 +12,61 @@ export default class Circle {
         this.handInside = false;
         this.randomizePosition();
         this.newCircleMade=false;
-     
+        this.beatCircles_Array = [];
+        this.beatArray=[];
     }
+
+    populateBeatCircles(){
+        this.beatCircles_Array = [];
+        for(let timemarker of this.beatArray){
+            this.beatCircles_Array.push( new BeatCircle(timemarker,this.velocity,this.audio,this.canvasElement) )
+        }
+    }
+
+
+    updateBeatCircles(timeOfCurrentLoop)
+    {
+
+        for( let i = 0 ; i < this.beatCircles_Array.length ; i++)
+        {
+            let cir = this.beatCircles_Array[i];
+            if(!this.audio.paused){cir.updatePosition(timeOfCurrentLoop)}
+            cir.draw(this.ctx);
+            cir.checkForRemoval();
+        }
+    }
+
+
+   draw() {
+        // draw the arc
+        this.ctx.beginPath();
+        this.ctx.arc(this.position.x,this.position.y, this.radius, 0, Math.PI * 2, false);
+        this.ctx.strokeStyle = this.color;
+        this.ctx.lineWidth = this.thickness;
+        this.ctx.stroke();
+        this.ctx.closePath();
+
+      
+        this.ctx.font = "20px Arial";
+        //this.ctx.strokeText(Math.trunc(this.radius), -this.position.x-11, this.position.y+5);
+        this.ctx.strokeText(Math.trunc(this.radius),this.position.x-9, this.position.y+5);
+      //  this.ctx.restore();
+    }
+
+    is_hand_inside(hand_position) 
+    {
+        if (hand_position) 
+        {
+            const dist = Math.sqrt((this.position.x - hand_position.x) ** 2 + (this.position.y - hand_position.y) ** 2);
+            this.handInside = true;
+            return dist <= this.radius;
+        }
+        this.handInside=false;
+        return false;
+    }
+
+
+
 
     randomizeColor(bright = false) {
         const colArr = ['rgb(0, 0, 255)', 'rgb(0, 255, 0)', 'rgb(255, 0, 0)', 'rgb(255, 255, 0)', 'rgb(255, 0, 255)', 'rgb(0, 255, 255)'];
@@ -48,35 +101,7 @@ export default class Circle {
         this.position = {x: xx, y: yy};
     }
 
-    draw() {
-        // draw the arc
-        this.ctx.beginPath();
-        this.ctx.arc(this.position.x,this.position.y, this.radius, 0, Math.PI * 2, false);
-        this.ctx.strokeStyle = this.color;
-        this.ctx.lineWidth = this.thickness;
-        this.ctx.stroke();
-        this.ctx.closePath();
-
-        // draw radius at center
-       // this.ctx.save();
-       // this.ctx.scale(1, 1);
-        this.ctx.font = "20px Arial";
-        //this.ctx.strokeText(Math.trunc(this.radius), -this.position.x-11, this.position.y+5);
-        this.ctx.strokeText(Math.trunc(this.radius),this.position.x-9, this.position.y+5);
-      //  this.ctx.restore();
-    }
-
-    is_hand_inside(hand_position) 
-    {
-        if (hand_position) 
-        {
-            const dist = Math.sqrt((this.position.x - hand_position.x) ** 2 + (this.position.y - hand_position.y) ** 2);
-            this.handInside = true;
-            return dist <= this.radius;
-        }
-        this.handInside=false;
-        return false;
-    }
+ 
 
     randomizePosition() 
     {

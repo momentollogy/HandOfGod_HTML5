@@ -79,10 +79,10 @@ export default class UIManager
         const timerYPosition = this.buttons.startStopButton.yRatio * canvasHeight - 60;
 
         // Calculate the x-position with an offset (adjust as needed)
-        const offset = -700; // This will move the text 50 pixels to the right
+        const offset = -775; // higher neg = move timer text left
         const timerXPosition = (canvasWidth / 2) + offset;
 
-        ctx.fillStyle = "#000";  // Text color
+        ctx.fillStyle = "rgb(0,255,0)";  // Text color
         ctx.font = "24px Arial"; 
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
