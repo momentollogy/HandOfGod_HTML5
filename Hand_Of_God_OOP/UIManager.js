@@ -76,10 +76,8 @@ export default class UIManager
         });
 
         // Draw timer above the start/stop button
-        const timerYPosition = this.buttons.startStopButton.yRatio * canvasHeight - 60;
-
-        // Calculate the x-position with an offset (adjust as needed)
-        const offset = -775; // higher neg = move timer text left
+        const timerYPosition = this.buttons.startStopButton.yRatio * canvasHeight - 35;//lower y value lowers the timer text
+        const offset = -760; // higher neg = move timer text left        
         const timerXPosition = (canvasWidth / 2) + offset;
 
         ctx.fillStyle = "rgb(0,255,0)";  // Text color

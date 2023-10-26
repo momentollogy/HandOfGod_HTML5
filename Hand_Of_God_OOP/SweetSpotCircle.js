@@ -1,3 +1,6 @@
+import BeatCircle from './BeatCircle.js';
+
+
 export default class SweetSpotCircle {
     constructor(canvas, ctx, color='rgb(0, 255, 0)', position = {x:800,y:200}, radius = 80, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
      {
@@ -14,13 +17,17 @@ export default class SweetSpotCircle {
         this.newCircleMade=false;
         this.beatCircles_Array = [];
         this.beatArray=[];
+        this.audio;
     }
 
-    populateBeatCircles(){
+    populateBeatCircles(beatArray){
+
         this.beatCircles_Array = [];
-        for(let timemarker of this.beatArray){
-            this.beatCircles_Array.push( new BeatCircle(timemarker,this.velocity,this.audio,this.canvasElement) )
+        for(let timemarker of beatArray){
+            this.beatCircles_Array.push(new BeatCircle(timemarker,this.velocity,this.audio,this.canvasElement) )
         }
+        console.log("BC array=",beatArray, this.beatCircles_Array)
+
     }
 
 
@@ -37,7 +44,8 @@ export default class SweetSpotCircle {
     }
 
 
-   draw() {
+   draw(currentTimeSinceAppStart) 
+    {
         // draw the arc
         this.ctx.beginPath();
         this.ctx.arc(this.position.x,this.position.y, this.radius, 0, Math.PI * 2, false);
@@ -51,6 +59,7 @@ export default class SweetSpotCircle {
         //this.ctx.strokeText(Math.trunc(this.radius), -this.position.x-11, this.position.y+5);
         this.ctx.strokeText(Math.trunc(this.radius),this.position.x-9, this.position.y+5);
       //  this.ctx.restore();
+        this.updateBeatCircles(currentTimeSinceAppStart)
     }
 
     is_hand_inside(hand_position) 

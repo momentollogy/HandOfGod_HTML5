@@ -6,6 +6,7 @@
 
 
 
+
 export default class Level_05
 {
     constructor(mp,canvasElement)
@@ -26,6 +27,8 @@ export default class Level_05
         this.SweetSpotCircleArray[0] = new SweetSpotCircle(canvasElement, this.ctx);  // Create a single circle instance
         this.SweetSpotCircleArray[1] = new SweetSpotCircle(canvasElement, this.ctx);  // Create a single circle instance
        
+
+
         //set/override default color
         this.SweetSpotCircleArray[1].color = 'rgb(255, 0, 0)';  // Set color to bright orange
  
@@ -45,6 +48,7 @@ export default class Level_05
         this.recordedMoments_Array=[];
         this.audio = new Audio();
         this.audio.volume = 0.03; 
+        this.SweetSpotCircleArray[0].audio=this.audio;
         this.fileInput = document.getElementById('fileInput');
 
         this.uiManager = new UIManager(this.canvas, this.audio);
@@ -268,9 +272,8 @@ level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
             {
                 this.audio.play();
                 this.playing=true;
-              // this.populateBeatCircles();
                for (let sweetSpot of this.SweetSpotCircleArray) {
-                sweetSpot.populateBeatCircles();
+                sweetSpot.populateBeatCircles(this.beatArray);
             }
                
             }
@@ -343,12 +346,10 @@ level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
         // Update and draw the circle on every frame, regardless of beat timing
        // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-
-
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {
             sweetspotcircle.update(); 
-            sweetspotcircle.draw();
+            sweetspotcircle.draw(currentTimeSinceAppStart);
         }
     
 
@@ -357,102 +358,12 @@ level_loop(results,canvasElement,canvasCtx,currentTimeSinceAppStart)
         
         this.uiManager.drawAll(this.ctx, this.canvas.width, this.canvas.height);
       
-        for(let beatcircle of this.beatCircles_Array)
-        {beatcircle.draw(canvasCtx);}
+     
         }
-
-        // this.drawUI(); 
+ 
     }
     
 
 }
 
-
-
-
-
-
-/*
-class BeatCircle 
-{
-    constructor(timestamp,beatCircleSpeed,_audio,canvasElement) {
-        this.timestamp = timestamp;
-        this.color = "green"; // Default color
-        this.radius = 40;
-        this.lastTimeOfCurrentLoop;
-        this.alpha = 1.0;
-        this.SWEET_SPOT_Y = 540;
-        this.audio=_audio;
-        this.canvasElement = canvasElement;
-        this.x = canvasElement.width / 2; //insread of whats there center sweetspotcircle.x circle
-        this.elapsedTime=0;
-        this.lastTimeOfCurrentLoop;
-        this.distance;
-        this.velocity = 200;
-        this.y = this.calculateStartingPosition(timestamp); 
-
-
-        
-    }
-
-    isNearSweetSpot(currentTimeMs) {
-        const difference = Math.abs(this.timestamp - currentTimeMs);
-        return difference <= 75;
-    }
-
-    updatePosition(timeOfCurrentLoop){
-        if(!this.lastTimeOfCurrentLoop){this.lastTimeOfCurrentLoop = timeOfCurrentLoop;}
-        this.elapsedTime = timeOfCurrentLoop - this.lastTimeOfCurrentLoop;
-        this.distance = (this.velocity/1000) * this.elapsedTime;  // This line is fine
-        this.y = this.calculateStartingPosition(this.timestamp);
-        this.lastTimeOfCurrentLoop = timeOfCurrentLoop;
-    }
-
-    draw(ctx){
-
-            // set the alpha of beatcircle
-        if (this.y > this.SWEET_SPOT_Y + 5) {this.alpha -=.01}; if(this.alpha<0){this.alpha=0};
-        ctx.globalAlpha = this.alpha;
-        
-            // Determine the color based on the position
-        if (this.isNearSweetSpot(this.audio.currentTime * 1000)) {
-            this.color = "red";
-        } else {
-            this.color = "rgb(0,255,0)";
-        }
-
-            // Draw the BeatCircle
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-        ctx.fillText(this.timestamp, this.x + 40, this.y);
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-    }
-
-    killSelf(){
-        this.beatCircles_Array.splice(this.beatCircles_Array.indexOf(this),1);
-    }
-
-    checkForRemoval()
-    {
-        // Remove BeatCircle if it's too far past the sweet spot
-       // if (this.alpha <= 0) {
-       //     this.killSelf();
-           // console.log(this.killSelf)
-       // }
-        
-    }
-    
-
-calculateStartingPosition(timestamp)
- {
-    const timeUntilBeat = timestamp - this.audio.currentTime * 1000;  // Assuming audio.currentTime is in seconds
-    const initialOffset = (timeUntilBeat / 1000) * this.velocity;
-    return this.SWEET_SPOT_Y - initialOffset;
- }
-
-
-}
-*/
 
