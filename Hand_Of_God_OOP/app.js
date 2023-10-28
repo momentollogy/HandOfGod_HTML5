@@ -1,30 +1,33 @@
 import MediaPipeTracker from './MediaPipeTracker.js';
-import VanillaCanvasDrawEngine from './VanillaCanvasDrawEngine.js';
+import DrawEngine from './DrawEngine.js';
 import GameManager from './GameManager.js';
 
 // reference all the things on the browser page
 const enableWebcamButton = document.getElementById("webcamButton");;
 const fullButton = document.getElementById("fullButton");;
-//const trackingButton = document.getElementById("trackerButton");;
-//const loopButton = document.getElementById("loopButton");;
 const video = document.getElementById("webcam");
-const mpCanvasElement = document.getElementById("mediaPipe_canvas");
-const canvasElement = document.getElementById("output_canvas");
+const mpcanvas = document.getElementById("mediaPipe_canvas");
+const canvas = document.getElementById("output_canvas");
 const container = document.getElementById("container");
 
-// Instatiate the MediaPipe / CVProcessor Class  and send it the video tag in it's constructor
-let mediaPipe = new MediaPipeTracker(video);
-mpCanvasElement.width=1920;
-mpCanvasElement.height=1080;
-canvasElement.width=1920;
-canvasElement.height=1080;
 
-let gm = new GameManager(canvasElement,mediaPipe)
+mpcanvas.width=1920;
+mpcanvas.height=1080;
+canvas.width=1920;
+canvas.height=1080;
 
-// instantiate the vanilla Draw engine
-let de = new VanillaCanvasDrawEngine(mpCanvasElement, canvasElement,mediaPipe, video, gm)
 
-gm.setDrawEngine(de); // tell the game manager about the draw engine
+
+let gm = new GameManager()
+
+let mp = MediaPipeTracker.getInstance();
+mp.setVid(video);
+mp.createLandmarks();
+
+let de = DrawEngine.getInstance();
+de.setGameManager(gm);
+
+
 
 // Check if webcam access is supported.  If not: disable the button and change it's text 
 const hasGetUserMedia = () => { var _a; return !!((_a = navigator.mediaDevices) === null || _a === void 0 ? void 0 : _a.getUserMedia); };
@@ -56,14 +59,14 @@ function onEnableCamButtonClicked(event) {
 // when the camera finally starts up
 function onCamStartup(event)
 {
-    container.style.width = "50%";
+    container.style.width = "75%";
     video.style.width = "100%";
-    mpCanvasElement.width = video.videoWidth;
-    mpCanvasElement.height = video.videoHeight;
-    canvasElement.width = video.videoWidth;
-    canvasElement.height = video.videoHeight;
-    canvasElement.style.width = "100%";
-    mpCanvasElement.style.width = "100%";
+    mpcanvas.width = video.videoWidth;
+    mpcanvas.height = video.videoHeight;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.style.width = "100%";
+    mpcanvas.style.width = "100%";
     fullButton.style.display="inline";
 
     // when the fullScreenButon is pressed..  it tells the container div to go full screen, then runs the setMirroring() function
@@ -78,7 +81,7 @@ function onCamStartup(event)
 // sets the video & canvas to be in "mirror mode"
 function setMirroring()
 {
-    mpCanvasElement.style.transform = 'scaleX(-1)';
+    mpcanvas.style.transform = 'scaleX(-1)';
     video.style.transform = 'scaleX(-1)';
 }
 

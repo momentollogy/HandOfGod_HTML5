@@ -4,26 +4,9 @@ import Level_03 from './Level_03.js'
 import Level_04 from './Level_04.js'
 import Level_05 from './Level_05.js'
 
-
-
 export default class GameManager {
-    constructor(_canvas, _mediaPipe) {
-        this.canvasElement = _canvas;
-        this.canvasCtx = this.canvasElement.getContext("2d");
-        this.mediaPipe = _mediaPipe;
-        
-        this.currentLevel = new Level_05(this.mediaPipe.getResults(), this.canvasElement)
-    }
-
-    setDrawEngine(_drawEngine){
-        this.de = _drawEngine;
-    }
-
-    nextLevel()
+    constructor() 
     {
-        let audio = new Audio('sound2/pop.mp3');
-        audio.play();
-        this.de.setLabel("Level 03 - line draw ( no win condition )  :)");
-        this.currentLevel = new Level_03(this.mediaPipe.getResults(), this.canvasElement, this.canvasCtx)
-    }
+        this.currentLevel = new Level_05()
+    }    
 }

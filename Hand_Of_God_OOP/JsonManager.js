@@ -2,39 +2,53 @@ export default class JsonManager
 {
     constructor()
     {
-        this.loadedBeats= [];
-       // this.chooseFileButton = document.getElementById('chooseFileButtonId');
-       this.hiddenFileInput = document.getElementById('hiddenFileInput');
-
-
+        this.loadedBeats = [];
+        this.selectedFile = null;
+                
+        this.hiddenFileInput = document.getElementById('hiddenFileInput');
+        
+        this.hiddenFileInput.addEventListener('change', (event) => {
+            this.selectedFile = event.target.files[0];
+            if (this.selectedFile) {
+                this.loadAndParseJsonFile();
+            }
+        });
     }
 
-
     promptForFile() {
-        // Programmatically "click" the hidden file input
         this.hiddenFileInput.click();
     }
 
-    loadBeatTimes() {
-        console.log("load pressed");
-        const file = this.hiddenFileInput.files[0];
-        if (!file) {
-            alert('Please select a JSON file to load.');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (event) => {  // Using arrow function to keep the context
-            const jsonData = JSON.parse(event.target.result);
-            if (jsonData && jsonData.beatTimes) {
-                this.loadedBeats = jsonData.beatTimes;
-                // populateBeatCircles();
-                // console.log("Loaded beats:", this.loadedBeats);
-            } else {
-                alert('Invalid JSON format.');
-            }
-        };
-        reader.readAsText(file);
-        return this.loadedBeats;
+    loadJsonFileByPath(filePath){
+        fetch(filePath)
+            .then((response) => response.json())
+            .then((jsonData) => {
+                this.processJsonData(jsonData);
+            })
+            .catch((error) => {
+                console.error('Error loading JSON file:', error);
+            });
     }
+
+    loadAndParseJsonFile() {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const jsonContent = event.target.result;
+            const jsonData = JSON.parse(jsonContent);
+            this.processJsonData(jsonData);
+          } catch (error) {
+            console.error('Error parsing JSON file:', error);
+          }
+        };
+        reader.readAsText(this.selectedFile);
+      }
+    
+      processJsonData(jsonData) {
+        // Handle the parsed JSON data here
+        this.loadedBeats = jsonData.beatTimes; // For example, assuming jsonData is an array
+        console.log('Parsed JSON data:', this.loadedBeats);
+        const customEvent = new CustomEvent('beatTimeDataReady', { detail: { message: 'Hello, world!' } });
+        document.dispatchEvent(customEvent);
+      }
 }

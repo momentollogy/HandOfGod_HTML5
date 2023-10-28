@@ -6,6 +6,8 @@ export class Button
         this.widthRatio = widthRatio;
         this.heightRatio = heightRatio;
         this.text = text;
+        this.canvas =  document.getElementById("output_canvas");
+        this.ctx = this.canvas.getContext("2d");
     }
 
     // Draw the button on a canvas context
@@ -53,9 +55,9 @@ export class Button
 // Exported UIManager
 export default class UIManager
 {
-    constructor(_canvas, _audio) {
-        this.canvas = _canvas;
+    constructor(_audio) {
         this.audio = _audio;
+        this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
         this.buttons = {
             startStopButton: new Button(0.05, 0.9, 0.1, 0.05, "Start/Stop"),
@@ -68,27 +70,26 @@ export default class UIManager
         this.activeButton = null;
     }
 
-    drawAll(ctx, canvasWidth, canvasHeight) {
+    draw() {
         Object.values(this.buttons).forEach(btn => {
             const isHovered = btn === this.hoveredButton;
             const isActive = btn === this.activeButton;
-            btn.draw(ctx, canvasWidth, canvasHeight, isHovered, isActive);
+            btn.draw(this.ctx, this.canvas.width, this.canvas.height, isHovered, isActive);
         });
 
         // Draw timer above the start/stop button
-        const timerYPosition = this.buttons.startStopButton.yRatio * canvasHeight - 35;//lower y value lowers the timer text
+        const timerYPosition = this.buttons.startStopButton.yRatio * this.canvas.height - 35;//lower y value lowers the timer text
         const offset = -760; // higher neg = move timer text left        
-        const timerXPosition = (canvasWidth / 2) + offset;
+        const timerXPosition = (this.canvas.width / 2) + offset;
 
-        ctx.fillStyle = "rgb(0,255,0)";  // Text color
-        ctx.font = "24px Arial"; 
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        this.ctx.fillStyle = "rgb(0,255,0)";  // Text color
+        this.ctx.font = "24px Arial"; 
+        this.ctx.textAlign = "center";
+        this.ctx.textBaseline = "middle";
 
         // Format timer with two decimal places
         const formattedTimer = this.audio.currentTime ? this.audio.currentTime.toFixed(2) : 0.0;
-
-        ctx.fillText(`${formattedTimer}s`, timerXPosition, timerYPosition);
+        this.ctx.fillText(`${formattedTimer}s`, timerXPosition, timerYPosition);
     }
 
     handleCanvasClick(x, y, canvasWidth, canvasHeight) {
