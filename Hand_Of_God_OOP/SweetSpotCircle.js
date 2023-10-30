@@ -2,7 +2,7 @@ import BeatCircle from './BeatCircle.js';
 import DrawEngine from './DrawEngine.js';
 
 export default class SweetSpotCircle {
-    constructor(_audio, color='rgb(0, 255, 0)', position = {x:800,y:200}, radius = 80, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
+    constructor(_audio, color='rgb(0, 255, 0)', position = {x:1000,y:200}, radius = 110, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
      {
         this.audio = _audio;
         this.canvas = document.getElementById("output_canvas");
@@ -19,22 +19,48 @@ export default class SweetSpotCircle {
         this.newCircleMade=false;
         this.beatCircles_Array = [];
         this.beatArray=[];
+        this.dirArray=[];
         this.beatIndex = 0;
-        this.velocity=500;
+        this.velocity = 500;
         this.beatCirclePathDirectionAngle = -90;
         this.pulseOnBeats = true;
         this.puffy = false;
         this.slash;
+        this.swipeDirectionPos_arr = [];
+        this.recordMode = false;
+        this.recordedMomentsArr = [];
+        this.recordedTimesArr = [];
+        this.recordedDirectionsArr = [];
     }
 
-    populateBeatCircles(beatArray){
-        this.beatArray = beatArray;
+    setPlayMode(circleData){
         this.beatCircles_Array = [];
-        for(let timemarker of beatArray){
-            this.beatCircles_Array.push(new BeatCircle(timemarker, this.position) )
+
+        if(this.beatArray.length > 0){
+            this.beatArray = this.recordedTimesArr;
+            this.dirArray = this.recordedDirectionsArr;
+            //this.beatCircles_Array = this.recordedTimesArr;
+            for (let i=0 ; i< this.recordedTimesArr.length ; i++){
+                let data = {time:this.beatArray[i],dir:this.dirArray[i]};
+                this.beatCircles_Array.push(new BeatCircle(data,  this.position) )
+            }
+        }else{
+            for (let i=0 ; i< circleData.length ; i++){
+                this.beatArray.push(circleData[i].time);
+                this.dirArray.push(circleData[i].dir)
+                this.beatCircles_Array.push(new BeatCircle(circleData[i],  this.position) )
+            }
         }
-        //console.log("BC array=",beatArray, this.beatCircles_Array)
     }
+
+    setRecordMode(){
+        this.beatCircles_Array = [];
+        this.beatArray = this.recordedTimesArr;
+        this.dirArray = this.recordedDirectionsArr;
+        console.log(this.recordedMomentsArr);
+        //{time:this.audio.currentTime*1000, dir:vector }
+    }
+
 
     updateAndDrawBeatCircles()
     {
@@ -69,9 +95,9 @@ export default class SweetSpotCircle {
 
         this.ctx.globalAlpha = .25;
         this.ctx.beginPath();
-        this.ctx.arc(this.position.x,this.position.y, this.baseRadius-5, 0, Math.PI * 2, false);
+        this.ctx.arc(this.position.x,this.position.y, this.baseRadius-10, 0, Math.PI * 2, false);
         this.ctx.strokeStyle = this.color
-        this.ctx.lineWidth = 8;
+        this.ctx.lineWidth = 9;
         this.ctx.stroke();
         this.ctx.closePath();
         this.ctx.globalAlpha = 1.0;
@@ -182,12 +208,18 @@ export default class SweetSpotCircle {
 
     findNextBeatIndex() {
         for (let i = 0; i < this.beatArray.length; i++) {
-          if (this.beatArray[i] > this.audio.currentTime) {
+            if (this.beatArray[i] > this.audio.currentTime) {
             return i;
-          }
+            }
         }
         // If no beat is found, return a value that indicates all beats are in the past
         return -1;
-      }
+    }
+
+    recordedMoment(vector){
+        this.recordedMomentsArr.push( {time:this.audio.currentTime*1000, dir:vector }); 
+        this.recordedTimesArr.push(this.audio.currentTime*1000);
+        this.recordedDirectionsArr.push(vector);
+    }
 
 }

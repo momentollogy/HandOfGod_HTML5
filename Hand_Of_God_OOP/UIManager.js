@@ -8,34 +8,35 @@ export class Button
         this.text = text;
         this.canvas =  document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
+        this.recordMode = false;
     }
 
     // Draw the button on a canvas context
-    draw(ctx, canvasWidth, canvasHeight, isHovered = false, isActive = false) {
-        const x = this.xRatio * canvasWidth;
-        const y = this.yRatio * canvasHeight;
-        const width = this.widthRatio * canvasWidth;
-        const height = this.heightRatio * canvasHeight;
+    draw(isHovered = false, isActive = false, yPos) {
+        const x = this.xRatio * this.canvas.width;
+        const y = yPos * this.canvas.height;
+        const width = (this.widthRatio * this.canvas.width)// + (this.widthRatio * this.canvas.width)/4; // this addition adds a quarter of the button's width to it's drawable area.
+        const height = this.heightRatio * this.canvas.height;;
     
         if (isActive) {
-            ctx.fillStyle = "#ccccee";  // Active state color
-            ctx.shadowColor = 'transparent';  // No shadow when button is pressed
+            this.ctx.fillStyle = "#ccccee";  // Active state color
+            this.ctx.shadowColor = 'transparent';  // No shadow when button is pressed
         } else {
-            ctx.fillStyle = isHovered ? "#a0a0a0" : "#f0f0f0";  // Normal/Hover state color
-            ctx.shadowColor = "rgba(0, 0, 0, 0.3)"; 
-            ctx.shadowBlur = 5;
-            ctx.shadowOffsetX = 3;  
-            ctx.shadowOffsetY = 3;  
+            this.ctx.fillStyle = isHovered ? "#a0a0a0" : "#f0f0f0";  // Normal/Hover state color
+            this.ctx.shadowColor = "rgba(0, 0, 0, 0.3)"; 
+            this.ctx.shadowBlur = 5;
+            this.ctx.shadowOffsetX = 3;  
+            this.ctx.shadowOffsetY = 3;  
         }
     
-        ctx.fillRect(x, y, width, height);
-        ctx.shadowColor = 'transparent';  // Reset shadow after drawing button
+        this.ctx.fillRect(x, y, width, height);
+        this.ctx.shadowColor = 'transparent';  // Reset shadow after drawing button
     
-        ctx.fillStyle = "#000";  // Text color
-        ctx.font = "24px Arial"; 
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(this.text, x + width / 2, y + height / 2);
+        this.ctx.fillStyle = "#000";  // Text color
+        this.ctx.font = "24px Arial"; 
+        this.ctx.textAlign = "center";
+        this.ctx.textBaseline = "middle";
+        this.ctx.fillText(this.text, x + width / 2, y + height / 2);
     }
     
 
@@ -55,30 +56,50 @@ export class Button
 // Exported UIManager
 export default class UIManager
 {
-    constructor(_audio) {
+    constructor(_audio, _butts) {
         this.audio = _audio;
         this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
-        this.buttons = {
-            startStopButton: new Button(0.05, 0.9, 0.1, 0.05, "Start/Stop"),
-            resetButton: new Button(0.25, 0.9, 0.1, 0.05, "Reset"),
-            exportBeatsButton: new Button(0.45, 0.9, 0.1, 0.05, "Export Beats"),
-            loadBeatsButton: new Button(0.65, 0.9, 0.1, 0.05, "Load Beats"),
-            loadSongButton: new Button(0.85, 0.9, 0.1, 0.05, "Load Song")
-        };
+        
+        this.recordMode = false;
+        this.yPos = 0.9;
+        this.yTarget = this.yPos;
+        this.myButtons = _butts;// ["StartStop","Reset","ExportBeats","LoadBeats","LoadSong","RecordPlayMode"];
+        this.buttons = {};
+        let butWidth = 1 / (this.myButtons.length*2);
+        
+        for ( let i=0; i<this.myButtons.length; i++){
+            let but = new Button((butWidth/2)+butWidth*2*i, this.yPos, butWidth, butWidth/2, this.myButtons[i]);
+            //console.log(but.xRatio, but.yRatio);
+            this.buttons[this.myButtons[i]]=but;
+        }
+
+        //console.log("BUTTONS:  BUTTONS:  BUTTONS:");
+        //console.log(this.buttons);
+
         this.hoveredButton = null;
         this.activeButton = null;
     }
 
+    setY(num){
+        this.yTarget = num;
+    }
+
     draw() {
+
+
+        //console.log(this.yPos, this.yTarget, (this.yTarget - this.yPos), (this.yTarget - this.yPos) * .01 );
+        this.yPos += (this.yTarget - this.yPos) * .1;
+
+
         Object.values(this.buttons).forEach(btn => {
             const isHovered = btn === this.hoveredButton;
             const isActive = btn === this.activeButton;
-            btn.draw(this.ctx, this.canvas.width, this.canvas.height, isHovered, isActive);
+            btn.draw(isHovered, isActive, this.yPos);
         });
 
         // Draw timer above the start/stop button
-        const timerYPosition = this.buttons.startStopButton.yRatio * this.canvas.height - 35;//lower y value lowers the timer text
+        const timerYPosition = this.yPos * this.canvas.height - 20;//this.buttons.startStopButton.yRatio * this.canvas.height - 35;//lower y value lowers the timer text
         const offset = -760; // higher neg = move timer text left        
         const timerXPosition = (this.canvas.width / 2) + offset;
 
@@ -90,34 +111,26 @@ export default class UIManager
         // Format timer with two decimal places
         const formattedTimer = this.audio.currentTime ? this.audio.currentTime.toFixed(2) : 0.0;
         this.ctx.fillText(`${formattedTimer}s`, timerXPosition, timerYPosition);
+        
+        if(this.recordMode){
+            this.ctx.strokeStyle = "rgba(255,0,0,0.25)";
+            this.ctx.shadowColor = "red";
+            this.ctx.shadowBlur = 7;
+            this.ctx.beginPath();
+            this.ctx.lineWidth = 40;
+            this.ctx.rect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+            this.ctx.stroke();
+        }
     }
 
-    handleCanvasClick(x, y, canvasWidth, canvasHeight) {
+    handleCanvasClick(x, y, canvasWidth, canvasHeight) 
+    {
         let actualWidth = this.canvas.parentNode.offsetWidth;
         let actualHeight = actualWidth * 1080/1920;
          
         for (const [buttonName, button] of Object.entries(this.buttons)) {
             if (button.isInside(x, y, actualWidth, actualHeight)) {
-                if (buttonName === "startStopButton") 
-                {
-                    document.dispatchEvent(new Event("PLAY_PRESSED"));
-                    button.text = this.findStartStopLabelFromAudioState();
-                } else if (buttonName === "resetButton") 
-                {
-                    document.dispatchEvent(new Event("RESET_PRESSED"));
-                }
-                else if (buttonName === "exportBeatsButton") 
-                {
-                    document.dispatchEvent(new Event("EXPORT_PRESSED"));
-                }
-                else if (buttonName === "loadBeatsButton") 
-                {
-                    document.dispatchEvent(new Event("LOADBEATS_PRESSED"));
-                }
-                else if (buttonName === "loadSongButton")
-                {
-                    document.dispatchEvent(new Event("LOADSONG_PRESSED"));
-                }
+                document.dispatchEvent(new Event(buttonName));
             }
         }
     }
@@ -153,6 +166,7 @@ export default class UIManager
     handleMouseMove(e) {
         const pos = this.getPositionAndDimensions(e)
         this.hoveredButton = Object.values(this.buttons).find(btn => btn.isInside(pos.x, pos.y, pos.w, pos.h));
+        this.yTarget = 0.9;
     }
  
     handleMouseDown(e) {

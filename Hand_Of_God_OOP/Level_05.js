@@ -3,6 +3,7 @@ import UIManager, { Button } from './UIManager.js';
 import SweetSpotCircle from './SweetSpotCircle.js';
 import JsonManager from './JsonManager.js';
 import DrawEngine from './DrawEngine.js';
+import BackgroundManager from './BackgroundManager.js'
 
 export default class Level_05
 {
@@ -18,19 +19,18 @@ export default class Level_05
         this.audio.volume = 0.03; 
         
         this.jsonManager = new JsonManager();
-        this.jsonManager.promptForFile(); 
 
-        this.uiManager = new UIManager(this.audio);
+        this.uIButtons = ["StartStop","Reset","ExportBeats","LoadBeats","LoadSong","RecordPlayMode"];
+        this.uiManager = new UIManager(this.audio,this.uIButtons)
         this.initUI();
 
+        this.bkg = new BackgroundManager(this.audio);
+
         this.SweetSpotCircleArray=[];
-        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio);
-        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio);
+        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: 570, y: this.canvas.height/2}  );
+        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: 1350, y: this.canvas.height/2} );
         this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -135;
         this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -45;
-        this.SweetSpotCircleArray[1].color = 'rgb(0, 255, 200)';
-        this.SweetSpotCircleArray[0].position = { x: 570, y: this.canvas.height/2};
-        this.SweetSpotCircleArray[1].position = { x: 1350, y: this.canvas.height/2};
 
         this.beatArray=[];
         this.beatCircles_Array = [];
@@ -39,15 +39,19 @@ export default class Level_05
         this.handInsidePreviously = false;
         this.swipePositions = [];
         this.swipeDirectionPos_arr = [];
+        this.swipeHand = "";
         this.currentHandedness = null;
         this.recordedMoments_Array=[];
-        this.previousPositions_arr=[]
+        this.previousPositions_L_arr=[];
+        this.previousPositions_R_arr=[];
+        this.displayBkg = false;
+        this.recordMode = false;
 
         //////////////////////////////////////////////////////////////////////////////
         ////////Loading a song and beats on startup for testing purposes /////////////
         //////////////////////////////////////////////////////////////////////////////
         this.audio.src = "sound2/apache.mp3";          
-        this.jsonManager.loadJsonFileByPath('sound2/apache.json');
+        this.jsonManager.loadJsonFileByPath('sound2/testFile.json');
     }
 
     initUI(){
@@ -59,34 +63,40 @@ export default class Level_05
         // responds to when the JSON loaded and beat data is available on the JSON Manager
         document.addEventListener('beatTimeDataReady', event => {
             //console.log('beatTimeDataReady ready ready ready ready ready :', event.detail);
-            this.SweetSpotCircleArray[0].populateBeatCircles(this.jsonManager.loadedBeats);
-            this.SweetSpotCircleArray[1].populateBeatCircles(this.jsonManager.loadedBeats);
+            //parseJsonData();
+            this.SweetSpotCircleArray[0].setPlayMode(this.jsonManager.leftCircleData);
+            this.SweetSpotCircleArray[1].setPlayMode(this.jsonManager.rightCircleData);
         });
 
-        document.addEventListener('PLAY_PRESSED', (data) => {
+        document.addEventListener('StartStop', (data) => {
             //console.log("Play button!!");
             if(this.audio.paused){this.audio.play();
             }else{this.audio.pause();}
+            
+            this.drawEngine.toggleVideo();
+            this.drawEngine.toggleTracking();
+            this.uiManager.setY(1.09);
+            this.displayBkg = !this.displayBkg;
         });
         
-        document.addEventListener('RESET_PRESSED', (data) => {
+        document.addEventListener('Reset', (data) => {
             //console.log("Reset");
             this.audio.currentTime = 0;
             this.SweetSpotCircleArray[0].reset()
             this.SweetSpotCircleArray[1].reset()
         });
 
-        document.addEventListener('EXPORT_PRESSED', (data) => {
+        document.addEventListener('ExportBeats', (data) => {
             //console.log("export");
             this.exportRecordedMoments_Array();
         });
 
-        document.addEventListener('LOADBEATS_PRESSED', (data) => {
+        document.addEventListener('LoadBeats', (data) => {
             //console.log("load beats");
             this.jsonManager.promptForFile(); 
         });
 
-        document.addEventListener('LOADSONG_PRESSED', () => {
+        document.addEventListener('LoadSong', () => {
             //console.log("load Song pressed");
             
             // if there is no file input node on the HTML, then create one
@@ -107,11 +117,41 @@ export default class Level_05
             }
             this.songInput.click();
         });
+
+        document.addEventListener('RecordPlayMode', (data) => {
+            this.setRecordMode();
+        });
+
+    }
+
+    setRecordMode(){
+        //console.log("Record Mode");
+        this.uiManager.recordMode = !this.uiManager.recordMode;
+        this.recordMode = this.uiManager.recordMode;
+
+        if(this.recordMode)
+        {   this.SweetSpotCircleArray[0].setRecordMode();
+            this.SweetSpotCircleArray[1].setRecordMode();
+        }else{
+            this.SweetSpotCircleArray[0].setPlayMode(this.jsonManager.leftCircleData);
+            this.SweetSpotCircleArray[1].setPlayMode(this.jsonManager.rightCircleData);
+        }
+
+
     }
 
     exportRecordedMoments_Array() 
     {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({beatTimes: this.recordedMoments_Array}));
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify
+            ({
+                beatTimes:          this.recordedMoments_Array,
+                leftCircleData:     this.SweetSpotCircleArray[0].recordedMomentsArr,
+                rightCircleData:    this.SweetSpotCircleArray[1].recordedMomentsArr,
+                bkgPulses:          [500,1000,1500,2000],
+                mp3FileName:        "",
+                bmp:                60,
+                settings:           {}
+            }));
         const downloadAnchorNode = document.createElement('a');
         downloadAnchorNode.setAttribute("href", dataStr);
         downloadAnchorNode.setAttribute("download", "recordedMoments.json");
@@ -125,19 +165,24 @@ export default class Level_05
         let results = this.mediaPipe.results;
         if (results == undefined)   {return;}
         
-        for(let sweetspotcircle of this.SweetSpotCircleArray)
-        {
+        // draw background
+        if(this.displayBkg){this.bkg.draw();}
+
+        // draw Circle Stuff
+        for(let sweetspotcircle of this.SweetSpotCircleArray){
             sweetspotcircle.updateAndDraw(this.drawEngine.deltaTime);
         }
-        
-        this.checkForFingerTouch();
-        this.drawFingerSwipe();
-        this.getSlashDirection();9
+
+        // draw swipes and slashes
+        this.glowCirclesOnFingerTouch();
+        this.drawFingerSwipe("Left");
+        this.drawFingerSwipe("Right");
+        this.getSlashDirection();
 
         this.uiManager.draw();
     }
 
-    checkForFingerTouch()
+    glowCirclesOnFingerTouch()
     {
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {
@@ -155,93 +200,79 @@ export default class Level_05
         }
     }
 
-    drawFingerSwipe(){
-        if(this.mediaPipe.getPointOfIndex(8))
+    drawFingerSwipe(hand){
+        let handArr = hand == "Left" ? this.previousPositions_L_arr : this.previousPositions_R_arr;
+        let color = hand == "Left" ? 'rgb(0, 255, 200)' : 'rgb(255, 255, 128)';
+        if(this.mediaPipe.getPointOfIndex(hand, 8))
         {
-            let coords=this.mediaPipe.getPointOfIndex(8);
-            this.previousPositions_arr.push(coords)
-            if(this.previousPositions_arr.length > 8 ){this.previousPositions_arr.shift();}
+            let coords=this.mediaPipe.getPointOfIndex(hand, 8);
+            handArr.push(coords)
 
+            if(handArr.length > 8 ){handArr.shift();}
+            this.ctx.save()
             let strokeWidth = 1.5;
             this.ctx.lineJoin = 'round';
             this.ctx.lineCap = 'round';
         
-            for(let i=1; i<this.previousPositions_arr.length; i++){
-                //let distance = Math.sqrt(((this.previousPositions_arr[i-1].x-this.previousPositions_arr[i].x)**2)+((this.previousPositions_arr[i-1].y-this.previousPositions_arr[i].y)**2))
-                //strokeWidth = distance /5;
-                if( i < Math.round(this.previousPositions_arr.length / 2)+3 ){ strokeWidth += 1.25 }else{ strokeWidth -= 1.75 }
+            for(let i=1; i<handArr.length; i++){
+                if( i < Math.round(handArr.length / 2)+3 ){ strokeWidth += 1.25 }else{ strokeWidth -= 1.75 }
                 
-                this.ctx.beginPath();
-                this.ctx.strokeStyle = 'rgb(0, 255, 200)';
-                this.ctx.shadowColor =  'rgb(0, 255, 200)';
+                this.ctx.strokeStyle = color;
+                this.ctx.shadowColor = color;
                 this.ctx.shadowBlur = 12;
-                this.ctx.moveTo(this.previousPositions_arr[i-1].x, this.previousPositions_arr[i-1].y);
                 this.ctx.lineWidth = strokeWidth;
-                this.ctx.lineTo(this.previousPositions_arr[i].x , this.previousPositions_arr[i].y)
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(handArr[i-1].x, handArr[i-1].y);
+                this.ctx.lineTo(handArr[i].x , handArr[i].y);
                 this.ctx.stroke();
+                //this.ctx.quadraticCurveTo(     (handArr[i-1].x + handArr[i].x)/2 ,   (handArr[i-1].y + handArr[i].y)/2 ,    handArr[i].x ,   handArr[i].y   );
             }
+            this.ctx.restore();
         }
     }
 
 
-    getSlashDirection(handHandedness) {
-        //for(let sweetspotcircle of this.SweetSpotCircleArray)
-        //{
-            // this draws the vector on the screen if it exists on the sweetSpotCircle
-            if(this.SweetSpotCircleArray[0].slash){
-                // define begining and end points
-                let fromX = this.SweetSpotCircleArray[0].slash.start.x;
-                let fromY = this.SweetSpotCircleArray[0].slash.start.y;
-                let toX = this.SweetSpotCircleArray[0].slash.end.x
-                let toY = this.SweetSpotCircleArray[0].slash.end.y
-                let arrowSize = 16;
-
-                this.ctx.save();
-                this.ctx.beginPath();
-                this.ctx.strokeStyle = 'rgb(0, 0, 255)';
-                this.ctx.lineWidth = 5;
-                this.ctx.moveTo( fromX, fromY );
-                this.ctx.lineTo( toX, toY );
-                this.ctx.stroke();
-
-                // draw arrow head
-                const angle = Math.atan2(toY - fromY, toX - fromX);
-                const x1 = toX - arrowSize * Math.cos(angle - Math.PI / 6);
-                const y1 = toY - arrowSize * Math.sin(angle - Math.PI / 6);
-                const x2 = toX - arrowSize * Math.cos(angle + Math.PI / 6);
-                const y2 = toY - arrowSize * Math.sin(angle + Math.PI / 6);
-
-                this.ctx.beginPath();
-                this.ctx.moveTo(toX, toY);
-                this.ctx.lineTo(x1, y1);
-                this.ctx.lineTo(x2, y2);
-                this.ctx.closePath();
-                this.ctx.stroke();
-                this.ctx.restore();
-            }
-
-            let sweetspotcircle = this.SweetSpotCircleArray[0];
+    getSlashDirection() {
+        for(let sweetspotcircle of this.SweetSpotCircleArray)
+        {
+            this.drawSlashOnSweetSpotCircle(sweetspotcircle);
+            
             let handCircleTouchObj = this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8)
+        
             if (handCircleTouchObj.length>0){
-                this.swipeDirectionPos_arr.push(handCircleTouchObj);
+                //console.log(sweetspotcircle.color);   
+
+                sweetspotcircle.swipeHand = handCircleTouchObj[0].hand;
+                sweetspotcircle.swipeDirectionPos_arr.push(handCircleTouchObj);
+                
+                // draw entry dot
                 this.ctx.fillStyle = "red";
                 this.ctx.beginPath();
-                this.ctx.arc(this.swipeDirectionPos_arr[0][0].x, this.swipeDirectionPos_arr[0][0].y, 6, 0, 2 * Math.PI);
+                this.ctx.arc(sweetspotcircle.swipeDirectionPos_arr[0][0].x, sweetspotcircle.swipeDirectionPos_arr[0][0].y, 6, 0, 2 * Math.PI);
                 this.ctx.fill();
-            }else{
-                if(this.swipeDirectionPos_arr.length < 2){return;}
-                //console.log(this.swipeDirectionPos_arr[0][0],this.swipeDirectionPos_arr[this.swipeDirectionPos_arr.length-1][0]);
-                this.SweetSpotCircleArray[0].slash =    {   start:{ x:this.swipeDirectionPos_arr[0][0].x,
-                                                                    y:this.swipeDirectionPos_arr[0][0].y}, 
-                                                            end:{   x:this.swipeDirectionPos_arr[this.swipeDirectionPos_arr.length-1][0].x,
-                                                                    y:this.swipeDirectionPos_arr[this.swipeDirectionPos_arr.length-1][0].y}  
-                                                        }      
-                                                             
-                let vec = this.calculateNormalizedVector2(this.swipeDirectionPos_arr[0][0].x, this.swipeDirectionPos_arr[0][0].y, this.swipeDirectionPos_arr[this.swipeDirectionPos_arr.length-1][0].x, this.swipeDirectionPos_arr[this.swipeDirectionPos_arr.length-1][0].y);
-                console.log("Time and Vector:",this.audio.currentTime, vec);  
-                // this is where the slash and timestamp can be stored in the data object
-                this.swipeDirectionPos_arr = []
+            }else if(sweetspotcircle.swipeDirectionPos_arr.length > 1)
+            {
+                sweetspotcircle.slash ={    start:{ x:sweetspotcircle.swipeDirectionPos_arr[0][0].x,
+                                                    y:sweetspotcircle.swipeDirectionPos_arr[0][0].y}, 
+                                            end:  { x:sweetspotcircle.swipeDirectionPos_arr[sweetspotcircle.swipeDirectionPos_arr.length-1][0].x,
+                                                    y:sweetspotcircle.swipeDirectionPos_arr[sweetspotcircle.swipeDirectionPos_arr.length-1][0].y},
+                                            hand: sweetspotcircle.swipeHand
+                                        }      
+
+                let vec = this.calculateNormalizedVector2(sweetspotcircle.swipeDirectionPos_arr[0][0].x, sweetspotcircle.swipeDirectionPos_arr[0][0].y, sweetspotcircle.swipeDirectionPos_arr[sweetspotcircle.swipeDirectionPos_arr.length-1][0].x, sweetspotcircle.swipeDirectionPos_arr[sweetspotcircle.swipeDirectionPos_arr.length-1][0].y);
+                
+
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                /////////////////  Record Moment HERE  ////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                // this is where the slash and timestamp can be stored in the data object..  just logging for now
+                //console.log("Time and Vector:",this.audio.currentTime, vec, this.swipeHand ); 
+                if(this.recordMode){sweetspotcircle.recordedMoment(vec)} 
+                
+                sweetspotcircle.swipeDirectionPos_arr = []
             }
+        }
     }
 
     calculateNormalizedVector2(startX, startY, endX, endY) {
@@ -258,189 +289,39 @@ export default class Level_05
         return { x: normalizedX, y: normalizedY };
     }
 
-        //}
-        
+    drawSlashOnSweetSpotCircle(sweetspotcircle){
+        if(sweetspotcircle.slash){
+            // define begining and end points
+            let fromX = sweetspotcircle.slash.start.x;
+            let fromY = sweetspotcircle.slash.start.y;
+            let toX = sweetspotcircle.slash.end.x
+            let toY = sweetspotcircle.slash.end.y
+            let arrowSize = 16;
 
-        // if finger is touching circle
-        //   swiping = true
-        //   record positions
-        // if finger is NOT touching circle
-        //   swiping = false
-        //   check start and end positions
-        //   calculate vector
-        //   show line on screen
-        //   If in record mode
-        //        store vector in json data
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+            this.ctx.shadowBlur = 0;
+            this.ctx.strokeStyle = sweetspotcircle.slash.hand == "Left" ? 'rgb(0, 255, 255)' : 'rgb(255, 255, 0)';
+            this.ctx.lineWidth = 5;
+            this.ctx.moveTo( fromX, fromY );
+            this.ctx.lineTo( toX, toY );
+            this.ctx.stroke();
 
-        /*
-        const startPoint = this.swipeDirectionPos_arr[0];
-        const endPoint = this.swipeDirectionPos_arr[this.swipeDirectionPos_arr.length - 1];
-        const deltaVector = {
-            x: endPoint.x - startPoint.x,
-            y: endPoint.y - startPoint.y
-        };
-        
-        const magnitude = Math.sqrt(deltaVector.x**2 + deltaVector.y**2);
-        
-        const angleInRadians = Math.atan2(deltaVector.y, deltaVector.x);
-        const angleInDegrees = angleInRadians * (180 / Math.PI);
-        
-        let direction = '';
-    
-        // Using Difference Ratios:
-        const xRatio = Math.abs(deltaVector.x / magnitude);
-        const yRatio = Math.abs(deltaVector.y / magnitude);
-        
-        // Using Tolerance Angles:
-        const toleranceAngle = 15;  // 15 degrees tolerance
-    
-        if (angleInDegrees > -toleranceAngle && angleInDegrees < toleranceAngle) {
-            direction = 'RIGHT';
-        } else if (angleInDegrees > 180 - toleranceAngle || angleInDegrees < -180 + toleranceAngle) {
-            direction = 'LEFT';
-        } else if (angleInDegrees > 90 - toleranceAngle && angleInDegrees < 90 + toleranceAngle) {
-            direction = 'DOWN';
-        } else if (angleInDegrees > -90 - toleranceAngle && angleInDegrees < -90 + toleranceAngle) {
-            direction = 'UP';
-        } else if (xRatio > yRatio) {
-            direction = deltaVector.x > 0 ? 'Right' : 'Left';
-        } else {
-            direction = deltaVector.y > 0 ? 'Down' : 'Up';
+            // draw arrow head
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            const x1 = toX - arrowSize * Math.cos(angle - Math.PI / 6);
+            const y1 = toY - arrowSize * Math.sin(angle - Math.PI / 6);
+            const x2 = toX - arrowSize * Math.cos(angle + Math.PI / 6);
+            const y2 = toY - arrowSize * Math.sin(angle + Math.PI / 6);
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(toX, toY);
+            this.ctx.lineTo(x1, y1);
+            this.ctx.lineTo(x2, y2);
+            this.ctx.closePath();
+            this.ctx.stroke();
+            this.ctx.restore();
         }
-    
-        // Calculating average velocity
-        const averageVelocity = magnitude / this.swipeDirectionPos_arr.length;
-        let swipeProperites = {angle:angleInDegrees.toFixed(2),time:(Math.floor(this.audio.currentTime * 1000)),hand:handHandedness}
-       // this.recordedMoments_Array.push(Math.floor(this.audio.currentTime * 1000));
-        this.recordedMoments_Array.push(swipeProperites);
-
-        //console.log(`${handHandedness} Hand Swiped ${direction}. Angle = ${angleInDegrees.toFixed(2)}°. Velocity = ${averageVelocity.toFixed(2)}`);
-       //console.log(this.recordedMoments_Array);
-        return direction;
-        */
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    /*
-    
-    //In this modified version, this.handInsidePreviouslyArray is used to keep track of the 
-    //hand inside state for each circle individually. This way, the this.handInsidePreviouslyArray[i] 
-    //value for each circle is only updated based on the isHandInside value for that particular circle, 
-    //rather than being overwritten in each iteration of the loop.
-    handleSwipeDetection(handPosition, handedness) 
-    {
-                // Initialize an array to keep track of the hand inside state for each circle
-        this.handInsidePreviouslyArray = this.handInsidePreviouslyArray || Array(this.SweetSpotCircleArray.length).fill(false);
-
-        for(let i = 0; i < this.SweetSpotCircleArray.length; i++)
-        {
-            const sweetspotcircle = this.SweetSpotCircleArray[i];
-            const isHandInside = sweetspotcircle.is_hand_inside(handPosition);
-            
-            if (isHandInside) {
-                this.swipeDirectionPos_arr.push(handPosition);
-            }
-
-            // No need to check for hand inside again. We use handInsidePreviouslyArray for the leaving action.
-            if (!isHandInside && this.handInsidePreviouslyArray[i]) {
-                console.log(`${handedness} Hand Swiped: ${this.getSwipeDirection()}`);
-                this.swipeDirectionPos_arr = [];  // Reset the swipeDirectionPos_arr array when the hand leaves the circle
-            }
-
-            this.handInsidePreviouslyArray[i] = isHandInside;  // This will set the previous state for the next frame.
-        }
-
     }
-
-*/
-
-
 }
-
-
-
-
-
-// This crap used to be in the loop..  I'll sort through it and make sense of what was being attempted
-    /*
-    const currentTime = this.audio.currentTime * 1000;  // Get current time in milliseconds from the audio
-    const nextBeatTime = this.beatArray[this.nextBeatArrayIndex];  // beatArray values are in milliseconds
-
-    if (currentTime >= nextBeatTime && this.nextBeatArrayIndex < this.beatArray.length) {
-        this.pulseCircle();
-        this.nextBeatArrayIndex++;
-    }
-
-    // HAND IN CIRCLE STUFF
-    //if (results.handednesses && results.landmarks)
-    if(false)
-    {
-        let anyHandInside = false; 
-    
-        for (let i = 0; i < results.handednesses.length; i++) {
-            const handHandedness = results.handednesses[i][0].displayName; 
-            const landmarks = results.landmarks[i];
-    
-            for (const landmark of landmarks) {
-                const handPosition = {
-                    x: this.canvas.width - (landmark.x * this.canvas.width),
-                    y: landmark.y * this.canvas.height
-                };
-                
-                for(let sweetspotcircle of this.SweetSpotCircleArray) 
-                {
-                    if (sweetspotcircle.is_hand_inside(handPosition)) 
-                    {
-                        anyHandInside = true;
-                        this.currentHandedness = handHandedness; // Store the handedness
-                        if (!this.handInsidePreviously) 
-                        {
-                            this.handInsidePreviously = true;
-                            this.swipeDirectionPos_arr = [];
-                        }
-                        this.handleSwipeDetection(handPosition, this.currentHandedness);
-                    }
-                }
-            }
-        }
-        
-        if (!anyHandInside && this.handInsidePreviously) {
-            this.handInsidePreviously = false;
-            const swipeDirection = this.getSwipeDirection(this.currentHandedness);
-            if (swipeDirection) {
-            //  console.log(`Swipe direction: ${swipeDirection}`);
-            }
-            this.swipeDirectionPos_arr = [];
-        }
-        
-        this.SweetSpotCircleArray[0].handInside = anyHandInside;
-        this.SweetSpotCircleArray[0].anyHandInside ? "red" : "green";
-        this.SweetSpotCircleArray[1].handInside = anyHandInside;
-        this.SweetSpotCircleArray[1].anyHandInside ? "red" : "green";  
-    }
-    
-    //  Drawing/Displaying/applying calculations Screen
-    // Update and draw the circle on every frame, regardless of beat timing
-    // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    */

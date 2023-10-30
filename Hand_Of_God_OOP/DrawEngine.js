@@ -11,10 +11,15 @@ export default class DrawEngine {
         this.mpctx = this.mpCanvasElement.getContext("2d");
         this.ctx = this.canvas.getContext("2d");
 
-        this.tracking = true;
+        this.displayTracking = true;
         this.looping = true;
         this.lastTimeStamp = 0;
         this.deltaTime = 0;
+    }
+
+    static popup(str){
+        let de = this.getInstance();
+        de.setInfoText(str);
     }
 
     static getInstance() {
@@ -34,7 +39,7 @@ export default class DrawEngine {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    drawHands()
+    calculateHands()
     {
         // get the results and store them as a class member even though results is only used in this method
         
@@ -46,7 +51,10 @@ export default class DrawEngine {
             this.lastVideoTime = this.video.currentTime;
             this.mediaPipe.detectVideoResults();
         }
+    }
 
+    drawHands()
+    {
         if (this.mediaPipe.results.landmarks) {
             for (const landmarks of this.mediaPipe.results.landmarks) {
                 drawConnectors(this.mpctx, landmarks, HAND_CONNECTIONS, {
@@ -66,7 +74,7 @@ export default class DrawEngine {
 
     toggleTracking()
     {
-        this.tracking = !this.tracking
+        this.displayTracking = !this.displayTracking
     }
 
     toggleVideo()
@@ -94,10 +102,11 @@ export default class DrawEngine {
 
         this.clearCanvas() // clear canvas
 
-        if(this.tracking){this.drawHands()}  // draw hands
-        
+        this.calculateHands();
+    
         this.gm.currentLevel.level_loop(); // draw game level stuff
-
+        if(this.displayTracking){this.drawHands()}  // draw hands
+        
         this.lastTimestamp = timestamp
         if (this.looping) { requestAnimationFrame(this.loop.bind(this)); }
     }

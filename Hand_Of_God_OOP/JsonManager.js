@@ -2,7 +2,14 @@ export default class JsonManager
 {
     constructor()
     {
-        this.loadedBeats = [];
+        this.beatTimes = [];
+        this.leftCircleData = [];
+        this.rightCircleData = [];
+        this.bkgPulses = [];
+        this.mp3FileName = "";
+        this.bmp = 0.0;
+        this.settings = {};
+
         this.selectedFile = null;
                 
         this.hiddenFileInput = document.getElementById('hiddenFileInput');
@@ -46,8 +53,14 @@ export default class JsonManager
     
       processJsonData(jsonData) {
         // Handle the parsed JSON data here
-        this.loadedBeats = jsonData.beatTimes; // For example, assuming jsonData is an array
-        console.log('Parsed JSON data:', this.loadedBeats);
+        //this.beatTimes = jsonData.beatTimes;
+        this.leftCircleData = jsonData.leftCircleData;
+        this.rightCircleData = jsonData.rightCircleData;
+        this.bkgPulses = jsonData.bkgPulses;
+        this.mp3FileName = jsonData.mp3FileName;
+        this.bmp = jsonData.bmp;
+        this.settings = jsonData.settings;
+        //console.log('Parsed JSON data:', this.loadedBeats);
         const customEvent = new CustomEvent('beatTimeDataReady', { detail: { message: 'Hello, world!' } });
         document.dispatchEvent(customEvent);
       }

@@ -56,17 +56,21 @@ export default class MediaPipeTracker
         return this.results;
     }
 
-    getPointOfIndex(index)
+    getPointOfIndex(hand, index)
     {
         if (this.results.handednesses && this.results.landmarks) 
         {
-            if(this.results.landmarks[0]){
-                const coords = {
-                    x: this.canvas.width - (this.results.landmarks[0][index].x * this.canvas.width),
-                    y: this.results.landmarks[0][index].y * this.canvas.height,
-                    z: this.results.landmarks[0][index].z * 1000
+            for (let h = 0; h < this.results.handednesses.length; h++)
+            {
+                if(this.results.landmarks[h] && this.results.handednesses[h][0].displayName == hand)
+                {
+                    const coords = {
+                        x: this.canvas.width - (this.results.landmarks[h][index].x * this.canvas.width),
+                        y: this.results.landmarks[h][index].y * this.canvas.height,
+                        z: this.results.landmarks[h][index].z * 1000,
+                    }
+                    return coords;
                 }
-                return coords;
             }
         }
     }
