@@ -67,6 +67,8 @@ export default class UIManager
         this.myButtons = _butts;// ["StartStop","Reset","ExportBeats","LoadBeats","LoadSong","RecordPlayMode"];
         this.buttons = {};
         let butWidth = 1 / (this.myButtons.length*2);
+        this.scoreNumber=0;
+        this.comboNumber=0;
         
         for ( let i=0; i<this.myButtons.length; i++){
             let but = new Button((butWidth/2)+butWidth*2*i, this.yPos, butWidth, butWidth/2, this.myButtons[i]);
@@ -100,7 +102,7 @@ export default class UIManager
 
         // Draw timer above the start/stop button
         const timerYPosition = this.yPos * this.canvas.height - 20;//this.buttons.startStopButton.yRatio * this.canvas.height - 35;//lower y value lowers the timer text
-        const offset = -760; // higher neg = move timer text left        
+        const offset = -780; // higher neg = move timer text left        
         const timerXPosition = (this.canvas.width / 2) + offset;
 
         this.ctx.fillStyle = "rgb(0,255,0)";  // Text color
@@ -112,6 +114,42 @@ export default class UIManager
         const formattedTimer = this.audio.currentTime ? this.audio.currentTime.toFixed(2) : 0.0;
         this.ctx.fillText(`${formattedTimer}s`, timerXPosition, timerYPosition);
         
+        //DRAWING THE SCORE
+       // Positioning for the score and combo display
+        const baseXPosition = 10; // left padding
+        const baseYPosition = 10; // top padding
+        const lineWidth = 150; // width of the horizontal lines, adjust as needed
+
+        // Style for the text labels (e.g., "Combo")
+        this.ctx.fillStyle = "rgb(255,255,255)";  // Text color (white)
+
+        // Draw top line for Combo
+        this.ctx.fillRect(baseXPosition, baseYPosition, lineWidth, 2);
+
+        // Draw Combo text (centered)
+        const comboText = "Combo";
+        this.ctx.font = "24px Verdana"; // Font for the text labels
+        this.ctx.textAlign = "center";
+        const comboTextX = baseXPosition + (lineWidth / 2); // Centering the text
+        this.ctx.fillText(comboText, comboTextX, baseYPosition + 20); // Positioning just below the top line
+
+        // Draw Combo number (bigger and centered)
+        this.ctx.font = "30px Verdana"; 
+       // const comboNumber = 0; // Assuming you will update this dynamically later
+        const comboNumberX = baseXPosition + (lineWidth / 2); // Centering the number
+        this.ctx.fillText(this.comboNumber, comboNumberX, baseYPosition + 60); // Below the "Combo" text
+
+        // Draw bottom line (divider between Combo and Score)
+        this.ctx.fillRect(baseXPosition, baseYPosition + 120, lineWidth, 2);
+
+        // Draw Score number (centered)
+        this.ctx.font = "24px Verdana"; 
+       // const scoreNumber = 0; // Assuming you will update this dynamically later
+        const scoreNumberX = baseXPosition + (lineWidth / 2); // Centering the number
+        this.ctx.fillText(this.scoreNumber, scoreNumberX, baseYPosition + 160); // Below the divider line
+
+
+
         if(this.recordMode){
             this.ctx.strokeStyle = "rgba(255,0,0,0.25)";
             this.ctx.shadowColor = "red";
@@ -122,6 +160,16 @@ export default class UIManager
             this.ctx.stroke();
         }
     }
+
+
+        setScore(num)
+        {
+        console.log(num,this.scoreNumber);
+        }
+
+
+
+
 
     handleCanvasClick(x, y, canvasWidth, canvasHeight) 
     {

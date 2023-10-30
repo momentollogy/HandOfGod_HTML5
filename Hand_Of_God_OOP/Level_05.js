@@ -27,8 +27,8 @@ export default class Level_05
         this.bkg = new BackgroundManager(this.audio);
 
         this.SweetSpotCircleArray=[];
-        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: 770, y: this.canvas.height/2}  );
-        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: 1150, y: this.canvas.height/2} );
+        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: 820, y: this.canvas.height/2}  );
+        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: 1080, y: this.canvas.height/2} );
         this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -90;
         this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -90;
 
@@ -50,8 +50,8 @@ export default class Level_05
         //////////////////////////////////////////////////////////////////////////////
         ////////Loading a song and beats on startup for testing purposes /////////////
         //////////////////////////////////////////////////////////////////////////////
-        this.audio.src = "sound2/apache.mp3";          
-        this.jsonManager.loadJsonFileByPath('sound2/apache.json');
+        this.audio.src = "sound2/tool_short.mp3";          
+        this.jsonManager.loadJsonFileByPath('sound2/toolv1.json');
     }
 
     initUI(){
@@ -177,10 +177,24 @@ export default class Level_05
         this.glowCirclesOnFingerTouch();
        // this.drawFingerSwipe("Left");
       //  this.drawFingerSwipe("Right");
-        this.getSlashDirection();
+        this.checkHandTouchSweetSpotCircles();
 
         this.uiManager.draw();
     }
+
+
+    isCloseToBeat()
+    {
+        for(let sweetspotcircle of this.SweetSpotCircleArray)
+        {
+            let b=sweetspotcircle.beatIndex;
+            let differnce=Math.abs(sweetspotcircle.beatArray[sweetspotcircle.beatIndex] - (this.audio.currentTime * 1000));
+           // console.log ("beat index is",Math.round(sweetspotcircle.beatArray[b]),"current time is",Math.round(this.audio.currentTime * 1000),"diff is",Math.round(differnce));
+
+            return Math.abs(sweetspotcircle.beatArray[sweetspotcircle.beatIndex] - (this.audio.currentTime * 1000));
+        }
+    }
+    
 
     glowCirclesOnFingerTouch()
     {
@@ -233,7 +247,7 @@ export default class Level_05
     }
 
 
-    getSlashDirection() {
+    checkHandTouchSweetSpotCircles() {
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {
            // this.drawSlashOnSweetSpotCircle(sweetspotcircle);
@@ -244,10 +258,13 @@ export default class Level_05
                 if (sweetspotcircle.touched==false)
                 {
                     sweetspotcircle.touched=true;
-                    console.log ("hit detected");
+                    let touchTimeAccuracy = this.isCloseToBeat();
                     if(this.recordMode){sweetspotcircle.recordedMoment(0)} 
+                    let tempScore=Math.round(Math.max(0,100 * 1000/(1000-touchTimeAccuracy)))
+                    console.log ("temp",tempScore);
+                    this.uiManager.scoreNumber+=tempScore;
+                    this.uiManager.comboNumber=tempScore;
 
-                   
                 }
                
             }

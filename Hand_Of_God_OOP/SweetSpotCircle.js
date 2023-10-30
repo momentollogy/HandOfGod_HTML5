@@ -187,8 +187,9 @@ export default class SweetSpotCircle {
     }
 
     isCloseToBeat(){
-        return this.beatArray[this.beatIndex] - (this.audio.currentTime*1000)< this.drawEngine.deltaTime+(this.drawEngine.deltaTime/3) 
+        return Math.abs(this.beatArray[this.beatIndex] - (this.audio.currentTime * 1000)) < this.drawEngine.deltaTime + (this.drawEngine.deltaTime / 3);
     }
+    
 
 
     update() {
