@@ -13,9 +13,9 @@ export default class BeatCircle
         this.directionIndicatorColor = "rgb(128,0,255)";
         this.color;// = "Gray";
         this.lineWidth = 3;
-        this.radius = 75;
+        this.radius = 50;
         this.alpha = 1.0;
-        this.y = 100;
+        this.y = 0;
         this.angle = -90;
         this.distanceToSweetSpot = 0;
     }

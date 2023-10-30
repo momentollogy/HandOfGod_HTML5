@@ -20,17 +20,17 @@ export default class Level_05
         
         this.jsonManager = new JsonManager();
 
-        this.uIButtons = ["StartStop","Reset","ExportBeats","LoadBeats","LoadSong","RecordPlayMode"];
+        this.uIButtons = ["StartStop","Reset","ExportBeats","LoadBeats","LoadSong","Record"];
         this.uiManager = new UIManager(this.audio,this.uIButtons)
         this.initUI();
 
         this.bkg = new BackgroundManager(this.audio);
 
         this.SweetSpotCircleArray=[];
-        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: 570, y: this.canvas.height/2}  );
-        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: 1350, y: this.canvas.height/2} );
-        this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -135;
-        this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -45;
+        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: 770, y: this.canvas.height/2}  );
+        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: 1150, y: this.canvas.height/2} );
+        this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -90;
+        this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -90;
 
         this.beatArray=[];
         this.beatCircles_Array = [];
@@ -51,7 +51,7 @@ export default class Level_05
         ////////Loading a song and beats on startup for testing purposes /////////////
         //////////////////////////////////////////////////////////////////////////////
         this.audio.src = "sound2/apache.mp3";          
-        this.jsonManager.loadJsonFileByPath('sound2/testFile.json');
+        this.jsonManager.loadJsonFileByPath('sound2/apache.json');
     }
 
     initUI(){
@@ -73,10 +73,10 @@ export default class Level_05
             if(this.audio.paused){this.audio.play();
             }else{this.audio.pause();}
             
-            this.drawEngine.toggleVideo();
-            this.drawEngine.toggleTracking();
-            this.uiManager.setY(1.09);
-            this.displayBkg = !this.displayBkg;
+          //  this.drawEngine.toggleVideo();
+         //   this.drawEngine.toggleTracking();
+        // this.uiManager.setY(1.09);
+         //   this.displayBkg = !this.displayBkg;
         });
         
         document.addEventListener('Reset', (data) => {
@@ -118,7 +118,7 @@ export default class Level_05
             this.songInput.click();
         });
 
-        document.addEventListener('RecordPlayMode', (data) => {
+        document.addEventListener('Record', (data) => {
             this.setRecordMode();
         });
 
@@ -166,7 +166,7 @@ export default class Level_05
         if (results == undefined)   {return;}
         
         // draw background
-        if(this.displayBkg){this.bkg.draw();}
+      //  if(this.displayBkg){this.bkg.draw();}
 
         // draw Circle Stuff
         for(let sweetspotcircle of this.SweetSpotCircleArray){
@@ -175,8 +175,8 @@ export default class Level_05
 
         // draw swipes and slashes
         this.glowCirclesOnFingerTouch();
-        this.drawFingerSwipe("Left");
-        this.drawFingerSwipe("Right");
+       // this.drawFingerSwipe("Left");
+      //  this.drawFingerSwipe("Right");
         this.getSlashDirection();
 
         this.uiManager.draw();
@@ -236,10 +236,27 @@ export default class Level_05
     getSlashDirection() {
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {
-            this.drawSlashOnSweetSpotCircle(sweetspotcircle);
+           // this.drawSlashOnSweetSpotCircle(sweetspotcircle);
             
             let handCircleTouchObj = this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8)
-        
+            if (handCircleTouchObj.length >0)
+            {
+                if (sweetspotcircle.touched==false)
+                {
+                    sweetspotcircle.touched=true;
+                    console.log ("hit detected");
+                    if(this.recordMode){sweetspotcircle.recordedMoment(0)} 
+
+                   
+                }
+               
+            }
+            else
+            {
+                sweetspotcircle.touched=false;
+            }
+           
+            /*
             if (handCircleTouchObj.length>0){
                 //console.log(sweetspotcircle.color);   
 
@@ -251,6 +268,7 @@ export default class Level_05
                 this.ctx.beginPath();
                 this.ctx.arc(sweetspotcircle.swipeDirectionPos_arr[0][0].x, sweetspotcircle.swipeDirectionPos_arr[0][0].y, 6, 0, 2 * Math.PI);
                 this.ctx.fill();
+                if(this.recordMode){sweetspotcircle.recordedMoment(0)} 
             }else if(sweetspotcircle.swipeDirectionPos_arr.length > 1)
             {
                 sweetspotcircle.slash ={    start:{ x:sweetspotcircle.swipeDirectionPos_arr[0][0].x,
@@ -268,10 +286,11 @@ export default class Level_05
                 ///////////////////////////////////////////////////////////////////////////////////////////
                 // this is where the slash and timestamp can be stored in the data object..  just logging for now
                 //console.log("Time and Vector:",this.audio.currentTime, vec, this.swipeHand ); 
-                if(this.recordMode){sweetspotcircle.recordedMoment(vec)} 
+               // if(this.recordMode){sweetspotcircle.recordedMoment(vec)} 
                 
                 sweetspotcircle.swipeDirectionPos_arr = []
             }
+            */
         }
     }
 

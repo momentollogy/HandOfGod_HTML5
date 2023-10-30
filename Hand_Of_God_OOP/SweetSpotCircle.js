@@ -2,7 +2,7 @@ import BeatCircle from './BeatCircle.js';
 import DrawEngine from './DrawEngine.js';
 
 export default class SweetSpotCircle {
-    constructor(_audio, color='rgb(0, 255, 0)', position = {x:1000,y:200}, radius = 110, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
+    constructor(_audio, color='rgb(0, 255, 0)', position = {x:1000,y:200}, radius = 100, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
      {
         this.audio = _audio;
         this.canvas = document.getElementById("output_canvas");
@@ -21,7 +21,7 @@ export default class SweetSpotCircle {
         this.beatArray=[];
         this.dirArray=[];
         this.beatIndex = 0;
-        this.velocity = 500;
+        this.velocity = 300;
         this.beatCirclePathDirectionAngle = -90;
         this.pulseOnBeats = true;
         this.puffy = false;
@@ -31,6 +31,7 @@ export default class SweetSpotCircle {
         this.recordedMomentsArr = [];
         this.recordedTimesArr = [];
         this.recordedDirectionsArr = [];
+        this.touched=false;
     }
 
     setPlayMode(circleData){
