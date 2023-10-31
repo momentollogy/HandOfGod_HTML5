@@ -46,6 +46,8 @@ export default class Level_05
         this.previousPositions_R_arr=[];
         this.displayBkg = false;
         this.recordMode = false;
+        this.beatsMissed=0;
+        this.hasBeatBeenMissed=false;
 
         //////////////////////////////////////////////////////////////////////////////
         ////////Loading a song and beats on startup for testing purposes /////////////
@@ -172,21 +174,21 @@ export default class Level_05
     
         this.glowCirclesOnFingerTouch();
         this.checkHandTouchSweetSpotCircles();
-    
+        this.checkMissedBeats();
         this.uiManager.draw();
     }
     
+
+
     checkHandTouchSweetSpotCircles() {
         let currentTime = this.audio.currentTime * 1000;
 
-    console.log("SweetSpotCircleArray length: ", this.SweetSpotCircleArray.length);
 
         for (let sweetspotcircle of this.SweetSpotCircleArray) {
-            console.log("Iterating through a SweetSpotCircle. Current beatIndex:", sweetspotcircle.beatIndex);
 
-            if (sweetspotcircle.checkedForMiss === undefined) {
-                sweetspotcircle.checkedForMiss = false;
-            }
+          //  if (sweetspotcircle.checkedForMiss === undefined) {
+           //     sweetspotcircle.checkedForMiss = false;
+           // }
     
             let handCircleTouchObj = this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH, 8);
     
@@ -201,7 +203,15 @@ export default class Level_05
     
                 sweetspotcircle.touched = true;
                 sweetspotcircle.checkedForMiss = false; 
-            } else if (handCircleTouchObj.length == 0) {
+                
+            } 
+            else if(handCircleTouchObj.length > 0 && !sweetspotcircle.touched && touchTimeAccuracy > 500)
+            {
+            
+                console.log("miss");
+            }
+            
+            else if (handCircleTouchObj.length == 0) {
                 sweetspotcircle.touched = false;
             }
     
@@ -209,15 +219,8 @@ export default class Level_05
             if (sweetspotcircle.beatIndex != -1) {
                 nextBeatTime = sweetspotcircle.beatArray[sweetspotcircle.beatIndex];
             }
-    
-            if (nextBeatTime !== undefined && !sweetspotcircle.touched && currentTime > nextBeatTime + 500 && !sweetspotcircle.checkedForMiss) {
-                console.log("Missed the beat at time", nextBeatTime);
-                sweetspotcircle.checkedForMiss = true;
-                sweetspotcircle.reset(); // Move to the next beat
-            }
         }
     }
-    
     
     
     closeToBeatDifference(sweetspotcircle) {
@@ -225,7 +228,44 @@ export default class Level_05
         let difference = sweetspotcircle.beatArray[b] - (this.audio.currentTime * 1000);
         return difference;
     }
+
     
+
+    checkMissedBeats() {
+        let currentTime = this.audio.currentTime * 1000;
+    
+        for (let sweetspotcircle of this.SweetSpotCircleArray) {
+            let b = sweetspotcircle.beatIndex;
+            let beatTime = sweetspotcircle.beatArray[b];
+    
+            // Check if the beat has been missed
+            if (currentTime > beatTime && !sweetspotcircle.hasBeatBeenMissed) {
+                let timeDifference = Math.abs(beatTime - currentTime);
+    
+                if (timeDifference > 500 && !sweetspotcircle.touchedWithinThreshold) {
+                    console.log("beat missed");
+                    sweetspotcircle.hasBeatBeenMissed = true; // Mark this beat as missed
+                    this.beatsMissed++; // Increase the count of missed beats
+                }
+            }
+    
+            // Reset the flags
+            if (currentTime > beatTime + 500) {
+                sweetspotcircle.touchedWithinThreshold = false; 
+                // Assuming the next beat is set soon after the current one is missed/touched
+                sweetspotcircle.hasBeatBeenMissed = false; 
+            }
+        }
+    
+        if (this.beatsMissed > 6) {
+            console.log("GAME OVER");
+        }
+    }
+    
+    
+
+
+
 
 
 

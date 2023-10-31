@@ -34,6 +34,8 @@ de.setGameManager(gm);
 
 
 
+
+
 // Check if webcam access is supported.  If not: disable the button and change it's text 
 const hasGetUserMedia = () => { var _a; return !!((_a = navigator.mediaDevices) === null || _a === void 0 ? void 0 : _a.getUserMedia); };
 if (hasGetUserMedia()) {
@@ -92,8 +94,17 @@ function onCamStartup(event)
 }
 
 
+
+function requestCameraPermission() {
+    return navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        // Once we get the stream, we can close it. We only needed the permissions.
+        let tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+    });
+}
+
 function getAvailableWebcams() {
-    // Clear existing options first.
     webcamList.innerHTML = '';
 
     navigator.mediaDevices.enumerateDevices().then(devices => {
@@ -105,14 +116,30 @@ function getAvailableWebcams() {
                 webcamList.appendChild(option);
             }
         });
+
+        if (webcamList.options.length > 0) {
+            selectedCameraId = webcamList.options[0].value;
+        }
     });
 }
 
-// Call this function right after the page loads to populate the dropdown.
-getAvailableWebcams();
+
+
+
+requestCameraPermission()
+    .then(() => {
+        getAvailableWebcams();
+    })
+    .catch(error => {
+        console.error("Camera permissions not granted:", error);
+    });
+
+
 
 // Change event listener for dropdown to switch webcams.
-webcamList.addEventListener('change', onCameraSelectionChanged);
+webcamList.addEventListener('change', (event) => {
+    selectedCameraId = event.target.value;  // Store the selected camera ID
+});
 
 
 
