@@ -10,6 +10,11 @@ const mpcanvas = document.getElementById("mediaPipe_canvas");
 const canvas = document.getElementById("output_canvas");
 const container = document.getElementById("container");
 
+const selectCamButton = document.getElementById("selectCamButton");
+const webcamList = document.getElementById("webcamList");
+
+let selectedCameraId = null;
+
 
 mpcanvas.width=1920;
 mpcanvas.height=1080;
@@ -39,20 +44,28 @@ else {
     enableWebcamButton.innerText = "Camera Not Fuond";
 }
 
+function onCameraSelectionChanged(event) {
+    selectedCameraId = webcamList.value;  // Store the selected camera ID
+}
+
 // Enable the live webcam view and start detection.
 function onEnableCamButtonClicked(event) {
-    // If the webcam stream is NOT running then activate the webcam stream. This asks the user for permission to use the camera, if Granted the browser returns a MEDIASTREAM object
-    if(!video.srcObject)
-    {
-        const videoConstraints = { width: 1920, height: 1080 };
+    // If the webcam stream is NOT running then activate the webcam stream.
+    if(!video.srcObject) {
+        const videoConstraints = {
+            deviceId: selectedCameraId,  // use the selected camera
+            width: 1920, 
+            height: 1080 
+        };
 
-        navigator.mediaDevices.getUserMedia( {video:videoConstraints} ).then( (stream) => {
+        navigator.mediaDevices.getUserMedia({video: videoConstraints}).then((stream) => {
             video.srcObject = stream;
-            video.addEventListener("loadeddata", onCamStartup); // this event starts the loop
+            video.addEventListener("loadeddata", onCamStartup);  // this event starts the loop
         });
-    }else{  // this else statement toggles the video source's display once the stream has been created
-        if(video.style.display =="none"){video.style.display ="block"}
-        else{video.style.display ="none"}
+    } else { 
+        // this else statement toggles the video source's display once the stream has been created
+        if(video.style.display == "none") {video.style.display = "block"}
+        else {video.style.display = "none"}
     }
 }
 
@@ -77,6 +90,31 @@ function onCamStartup(event)
     setMirroring();
     de.loop();
 }
+
+
+function getAvailableWebcams() {
+    // Clear existing options first.
+    webcamList.innerHTML = '';
+
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+        devices.forEach(device => {
+            if (device.kind === 'videoinput') {
+                const option = document.createElement('option');
+                option.value = device.deviceId;
+                option.text = device.label || `Camera ${webcamList.length + 1}`;
+                webcamList.appendChild(option);
+            }
+        });
+    });
+}
+
+// Call this function right after the page loads to populate the dropdown.
+getAvailableWebcams();
+
+// Change event listener for dropdown to switch webcams.
+webcamList.addEventListener('change', onCameraSelectionChanged);
+
+
 
 // sets the video & canvas to be in "mirror mode"
 function setMirroring()

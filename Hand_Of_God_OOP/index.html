@@ -11,16 +11,18 @@
 
 
 <div id="liveView" class="videoView">
-
   <button id="webcamButton" class="mdc-button mdc-button--raised">
-    <span class="mdc-button__ripple"></span>
-    <span class="mdc-button__label">ENABLE WEBCAM</span>
+      <span class="mdc-button__ripple"></span>
+      <span class="mdc-button__label">ENABLE WEBCAM</span>
   </button>
   
   <button id="fullButton" class="mdc-button mdc-button--raised">
     <span class="mdc-button__ripple"></span>
     <span class="mdc-button__label">Full Screen</span>
   </button>
+  <select id="webcamList" class="mdc-button mdc-button--raised"></select>
+
+  
 
   <div id="container" style="position: relative;">
     <video id="webcam" style="position: absolute" autoplay playsinline></video>
