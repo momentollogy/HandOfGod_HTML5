@@ -141,7 +141,6 @@ export default class Level_05
             this.SweetSpotCircleArray[1].setPlayMode(this.jsonManager.rightCircleData);
         }
 
-
     }
 
     exportRecordedMoments_Array() 
@@ -171,13 +170,19 @@ export default class Level_05
         for(let sweetspotcircle of this.SweetSpotCircleArray) {
             sweetspotcircle.updateAndDraw(this.drawEngine.deltaTime);
         }
-    
         this.glowCirclesOnFingerTouch();
         this.checkHandTouchSweetSpotCircles();
         this.checkMissedBeats();
         this.uiManager.draw();
     }
     
+
+
+
+
+
+
+
     calculateBeatRanges(beatTime) {
         const beatRangeStart = beatTime - this.beatBufferTime;
         const beatRangeEnd = beatTime + this.beatBufferTime;
@@ -186,6 +191,11 @@ export default class Level_05
 
 
 
+
+
+
+
+    
 
     checkHandTouchSweetSpotCircles() {
         const currentTime = this.audio.currentTime * 1000;
@@ -217,18 +227,20 @@ export default class Level_05
         for (let sweetspotcircle of this.SweetSpotCircleArray) {
             const b = sweetspotcircle.beatIndex;
             const beatTime = sweetspotcircle.beatArray[b];
-            console.log('beatTime:', beatTime);  // Add this line
+          //  console.log('beatTime:', beatTime);  // Add this line
+            const beatRangeEnd = this.calculateBeatRanges(beatTime).beatRangeEnd;
 
-            const { beatRangeEnd } = this.calculateBeatRanges(beatTime);
-            console.log('beatRangeEnd:', beatRangeEnd);  // You already have this line
+            if (!this.audio.paused)
+            {
+                console.log("SSC", sweetspotcircle.color,"current time", currentTime, "b", b, "BEATime",beatTime,"beatRangeEnd", beatRangeEnd);  // You already have this line
+            }
 
-
-            if (currentTime > beatRangeEnd && !sweetspotcircle.touched) {
-            console.log('beatIndex:', sweetspotcircle.beatIndex, 'beatArray length:', sweetspotcircle.beatArray.length);  // Add this line
-
-              //  console.log("Beat missed");
+            if (currentTime > beatTime) //&&s !sweetspotcircle.touched) 
+            {
+                //console.log('beatIndex:', sweetspotcircle.beatIndex, 'beatArray length:', sweetspotcircle.beatArray.length);  // Add this line
+                console.log("Beat missed");
                 this.beatsMissed++;
-                sweetspotcircle.beatIndex++;
+               // sweetspotcircle.beatIndex++;
             }
         }
 
