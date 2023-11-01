@@ -48,10 +48,14 @@ export default class Level_05
         this.recordMode = false;
         this.beatsMissed=0;
         this.hasBeatBeenMissed=false;
+        
+        this.currentBeatIndex = 0;
+        this.beatBufferTime = 1000;  // set by user
+        this.accuracy = 0.05;  // adjustable accuracy for scoring
 
-        //////////////////////////////////////////////////////////////////////////////
+        
         ////////Loading a song and beats on startup for testing purposes /////////////
-        //////////////////////////////////////////////////////////////////////////////
+        
         this.audio.src = "sound2/tool_short.mp3";          
         this.jsonManager.loadJsonFileByPath('sound2/6beatstest.json');
     }
@@ -75,10 +79,6 @@ export default class Level_05
             if(this.audio.paused){this.audio.play();
             }else{this.audio.pause();}
             
-          //  this.drawEngine.toggleVideo();
-         //   this.drawEngine.toggleTracking();
-        // this.uiManager.setY(1.09);
-         //   this.displayBkg = !this.displayBkg;
         });
         
         document.addEventListener('Reset', (data) => {
@@ -178,50 +178,66 @@ export default class Level_05
         this.uiManager.draw();
     }
     
+    calculateBeatRanges(beatTime) {
+        const beatRangeStart = beatTime - this.beatBufferTime;
+        const beatRangeEnd = beatTime + this.beatBufferTime;
+        return { beatRangeStart, beatRangeEnd };
+    }
+
+
 
 
     checkHandTouchSweetSpotCircles() {
-        let currentTime = this.audio.currentTime * 1000;
-
-
+        const currentTime = this.audio.currentTime * 1000;
         for (let sweetspotcircle of this.SweetSpotCircleArray) {
+            const handCircleTouchObj = this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH, 8);
+            const touchDifference = this.closeToBeatDifference(sweetspotcircle);
+            const touchTimeAccuracy = Math.abs(touchDifference);
 
-          //  if (sweetspotcircle.checkedForMiss === undefined) {
-           //     sweetspotcircle.checkedForMiss = false;
-           // }
-    
-            let handCircleTouchObj = this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH, 8);
-    
-            let touchDifference = this.closeToBeatDifference(sweetspotcircle);
-            let touchTimeAccuracy = Math.abs(touchDifference);
-    
-            if (handCircleTouchObj.length > 0 && !sweetspotcircle.touched && touchTimeAccuracy <= 500) {
-                let tempScore = Math.round(Math.max(0, 100 * (500 - touchTimeAccuracy) / 500));
-    
+            if (handCircleTouchObj.length > 0 && !sweetspotcircle.touched && touchTimeAccuracy <= this.beatBufferTime) {
+                const tempScore = Math.round(Math.max(0, 100 * (this.beatBufferTime - touchTimeAccuracy) / this.beatBufferTime));
                 this.uiManager.scoreNumber += tempScore;
-                this.uiManager.comboNumber = tempScore;
-    
+                this.uiManager.comboNumber = tempScore;  // Assuming you want to keep the combo number logic
+
                 sweetspotcircle.touched = true;
-                sweetspotcircle.checkedForMiss = false; 
-                
-            } 
-            else if(handCircleTouchObj.length > 0 && !sweetspotcircle.touched && touchTimeAccuracy > 500)
-            {
-            
-                console.log("miss");
-            }
-            
-            else if (handCircleTouchObj.length == 0) {
+                sweetspotcircle.checkedForMiss = false;
+                console.log("Hit detected:", tempScore, "points awarded");
+            } else if (handCircleTouchObj.length > 0 && !sweetspotcircle.touched && touchTimeAccuracy > this.beatBufferTime) {
+               // console.log("Miss");
+            } else if (handCircleTouchObj.length == 0) {
                 sweetspotcircle.touched = false;
-            }
-    
-            let nextBeatTime;
-            if (sweetspotcircle.beatIndex != -1) {
-                nextBeatTime = sweetspotcircle.beatArray[sweetspotcircle.beatIndex];
             }
         }
     }
     
+
+
+    checkMissedBeats() {
+        const currentTime = this.audio.currentTime * 1000;
+        for (let sweetspotcircle of this.SweetSpotCircleArray) {
+            const b = sweetspotcircle.beatIndex;
+            const beatTime = sweetspotcircle.beatArray[b];
+            console.log('beatTime:', beatTime);  // Add this line
+
+            const { beatRangeEnd } = this.calculateBeatRanges(beatTime);
+            console.log('beatRangeEnd:', beatRangeEnd);  // You already have this line
+
+
+            if (currentTime > beatRangeEnd && !sweetspotcircle.touched) {
+            console.log('beatIndex:', sweetspotcircle.beatIndex, 'beatArray length:', sweetspotcircle.beatArray.length);  // Add this line
+
+              //  console.log("Beat missed");
+                this.beatsMissed++;
+                sweetspotcircle.beatIndex++;
+            }
+        }
+
+        if (this.beatsMissed > 6) {
+            console.log("GAME OVER");
+        }
+    }
+
+
     
     closeToBeatDifference(sweetspotcircle) {
         let b = sweetspotcircle.beatIndex;
@@ -229,171 +245,7 @@ export default class Level_05
         return difference;
     }
 
-    
 
-    checkMissedBeats() {
-        let currentTime = this.audio.currentTime * 1000;
-    
-        for (let sweetspotcircle of this.SweetSpotCircleArray) {
-            let b = sweetspotcircle.beatIndex;
-            let beatTime = sweetspotcircle.beatArray[b];
-    
-            // Check if the beat has been missed
-            if (currentTime > beatTime && !sweetspotcircle.hasBeatBeenMissed) {
-                let timeDifference = Math.abs(beatTime - currentTime);
-    
-                if (timeDifference > 500 && !sweetspotcircle.touchedWithinThreshold) {
-                    console.log("beat missed");
-                    sweetspotcircle.hasBeatBeenMissed = true; // Mark this beat as missed
-                    this.beatsMissed++; // Increase the count of missed beats
-                }
-            }
-    
-            // Reset the flags
-            if (currentTime > beatTime + 500) {
-                sweetspotcircle.touchedWithinThreshold = false; 
-                // Assuming the next beat is set soon after the current one is missed/touched
-                sweetspotcircle.hasBeatBeenMissed = false; 
-            }
-        }
-    
-        if (this.beatsMissed > 6) {
-            console.log("GAME OVER");
-        }
-    }
-    
-    
-
-
-
-
-
-
-
-/*
-    level_loop()
-    {
-        let results = this.mediaPipe.results;
-        if (results == undefined)   {return;}
-        
-        // draw background
-      //  if(this.displayBkg){this.bkg.draw();}
-
-        // draw Circle Stuff
-        for(let sweetspotcircle of this.SweetSpotCircleArray){
-            sweetspotcircle.updateAndDraw(this.drawEngine.deltaTime);
-        }
-
-        // draw swipes and slashes
-        this.glowCirclesOnFingerTouch();
-       // this.drawFingerSwipe("Left");
-      //  this.drawFingerSwipe("Right");
-        this.checkHandTouchSweetSpotCircles();
-        this.logMissedBeats();
-
-        this.uiManager.draw();
-    }
-
-
-    checkHandTouchSweetSpotCircles() {
-        let currentTime = this.audio.currentTime * 1000;
-    
-        for(let sweetspotcircle of this.SweetSpotCircleArray) {
-            if (sweetspotcircle.checkedForMiss === undefined) {
-                sweetspotcircle.checkedForMiss = false;
-            }
-    
-            let handCircleTouchObj = this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8);
-    
-            if (handCircleTouchObj.length > 0 && sweetspotcircle.touched == false) {
-                let touchDifference = this.closeToBeatDifference(sweetspotcircle); 
-                let touchTimeAccuracy = Math.abs(touchDifference);
-    
-                if (touchTimeAccuracy <= 500) { 
-                    let tempScore = Math.round(Math.max(0, 100 * (500 - touchTimeAccuracy) / 500));
-    
-                    this.uiManager.scoreNumber += tempScore;
-                    this.uiManager.comboNumber = tempScore;
-    
-                    sweetspotcircle.touched = true;
-                    sweetspotcircle.checkedForMiss = false; // Reset this flag so we can check for misses on the next beat
-                }
-            } else if (handCircleTouchObj.length == 0) {
-                sweetspotcircle.touched = false;
-            }
-    
-            // Check for misses
-            let nextBeatTime = sweetspotcircle.beatArray[sweetspotcircle.beatIndex];
-            if (!sweetspotcircle.checkedForMiss && currentTime > nextBeatTime + 500) {
-                console.log("Missed the beat");
-                sweetspotcircle.checkedForMiss = true; // We mark this beat as checked for a miss
-            }
-        }
-    }
-    
-    logMissedBeats() {
-        let currentTime = this.audio.currentTime * 1000;
-    
-        for(let sweetspotcircle of this.SweetSpotCircleArray) {
-            let nextBeatTime = sweetspotcircle.beatArray[sweetspotcircle.beatIndex];
-            if (currentTime > nextBeatTime + 500 && !sweetspotcircle.touched && !sweetspotcircle.checkedForMiss) {
-                console.log("Missed the beat at time", nextBeatTime);
-                sweetspotcircle.checkedForMiss = true;
-            }
-        }
-    }
-    
-
-    closeToBeatDifference(sweetspotcircle) {  // Accept sweetspotcircle as a parameter
-        let b = sweetspotcircle.beatIndex;
-        let difference = sweetspotcircle.beatArray[b] - (this.audio.currentTime * 1000);
-        return difference;
-    }
-
-
-*/
-
-    /*
-            if (handCircleTouchObj.length>0){
-                //console.log(sweetspotcircle.color);   
-
-                sweetspotcircle.swipeHand = handCircleTouchObj[0].hand;
-                sweetspotcircle.swipeDirectionPos_arr.push(handCircleTouchObj);
-                
-                // draw entry dot
-                this.ctx.fillStyle = "red";
-                this.ctx.beginPath();
-                this.ctx.arc(sweetspotcircle.swipeDirectionPos_arr[0][0].x, sweetspotcircle.swipeDirectionPos_arr[0][0].y, 6, 0, 2 * Math.PI);
-                this.ctx.fill();
-                if(this.recordMode){sweetspotcircle.recordedMoment(0)} 
-            }else if(sweetspotcircle.swipeDirectionPos_arr.length > 1)
-            {
-                sweetspotcircle.slash ={    start:{ x:sweetspotcircle.swipeDirectionPos_arr[0][0].x,
-                                                    y:sweetspotcircle.swipeDirectionPos_arr[0][0].y}, 
-                                            end:  { x:sweetspotcircle.swipeDirectionPos_arr[sweetspotcircle.swipeDirectionPos_arr.length-1][0].x,
-                                                    y:sweetspotcircle.swipeDirectionPos_arr[sweetspotcircle.swipeDirectionPos_arr.length-1][0].y},
-                                            hand: sweetspotcircle.swipeHand
-                                        }      
-
-                let vec = this.calculateNormalizedVector2(sweetspotcircle.swipeDirectionPos_arr[0][0].x, sweetspotcircle.swipeDirectionPos_arr[0][0].y, sweetspotcircle.swipeDirectionPos_arr[sweetspotcircle.swipeDirectionPos_arr.length-1][0].x, sweetspotcircle.swipeDirectionPos_arr[sweetspotcircle.swipeDirectionPos_arr.length-1][0].y);
-                
-
-                ///////////////////////////////////////////////////////////////////////////////////////////
-                /////////////////  Record Moment HERE  ////////////////////////////////////////////////////
-                ///////////////////////////////////////////////////////////////////////////////////////////
-                // this is where the slash and timestamp can be stored in the data object..  just logging for now
-                //console.log("Time and Vector:",this.audio.currentTime, vec, this.swipeHand ); 
-               // if(this.recordMode){sweetspotcircle.recordedMoment(vec)} 
-                
-                sweetspotcircle.swipeDirectionPos_arr = []
-            }
-            */
-
-
-
-
-
-    
     
 
     glowCirclesOnFingerTouch()
@@ -402,15 +254,9 @@ export default class Level_05
         {
             let handCircleTouchObj = this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8)
             if (handCircleTouchObj.length>0){
-                /*this.drawEngine.setInfoText(
-                    handCircleTouchObj[0].hand, 
-                    handCircleTouchObj[0].x.toFixed(0), 
-                    handCircleTouchObj[0].y.toFixed(0),
-                    this.drawEngine.deltaTime 
-                    );*/
+             
                 sweetspotcircle.puffy = true;
             }else{sweetspotcircle.puffy = false;}
-            //sweetspotcircle.updateAndDraw(this.drawEngine.deltaTime);
         }
     }
 
@@ -440,7 +286,6 @@ export default class Level_05
                 this.ctx.moveTo(handArr[i-1].x, handArr[i-1].y);
                 this.ctx.lineTo(handArr[i].x , handArr[i].y);
                 this.ctx.stroke();
-                //this.ctx.quadraticCurveTo(     (handArr[i-1].x + handArr[i].x)/2 ,   (handArr[i-1].y + handArr[i].y)/2 ,    handArr[i].x ,   handArr[i].y   );
             }
             this.ctx.restore();
         }
