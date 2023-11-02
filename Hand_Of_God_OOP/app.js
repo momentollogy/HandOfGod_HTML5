@@ -124,8 +124,6 @@ function getAvailableWebcams() {
 }
 
 
-
-
 requestCameraPermission()
     .then(() => {
         getAvailableWebcams();

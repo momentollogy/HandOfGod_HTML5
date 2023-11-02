@@ -8,8 +8,8 @@ export default class BeatCircle
         this.direction = _swipeData.dir;
         this.x = ss_pos.x;
         this.sweetSpotPos = ss_pos;
-        this.preBeatColor = "rgb(220,95,0)";
-        this.postBeatColor = "rgb(255,255,0)";
+        this.postBeatColor = "rgb(220,95,0)";
+        this.preBeatColor = "rgb(255,255,0)";
         this.directionIndicatorColor = "rgb(128,0,255)";
         this.color;// = "Gray";
         this.lineWidth = 3;
@@ -18,6 +18,7 @@ export default class BeatCircle
         this.y = 0;
         this.angle = -90;
         this.distanceToSweetSpot = 0;
+        this.fadeOut = true
     }
 
         // time * velocity = distance
@@ -30,16 +31,19 @@ export default class BeatCircle
         this.y = this.sweetSpotPos.y + this.distanceToSweetSpot * Math.sin(radian);
         this.x = this.sweetSpotPos.x + this.distanceToSweetSpot * Math.cos(radian);
 
-        this.checkForRemoval()
+        if(this.fadeOut){
+            this.checkForRemoval();
+        }else{
+            this.alpha = 1;this.color = this.preBeatColor;
+        }
     }
 
     draw(){
         this.ctx.save();
 
-        // direction indicator
         this.ctx.globalAlpha = Math.min(Math.max(this.alpha-.5, 0), 1);
         //this.ctx.lineWidth = 2;
-        //this.ctx.strokeStyle = 'yellow';
+        //this.ctx.strokeStyle = this.color;
         const startAngle = (2*Math.PI/8) * 1.1;
         const endAngle = (2*Math.PI/8) * 2.9;
         const flatTopX1 = this.x + this.radius * Math.cos(startAngle);
@@ -85,17 +89,16 @@ export default class BeatCircle
         this.ctx.restore();
     }
 
-    checkForRemoval()
-    {
-        if(this.distanceToSweetSpot <0)
-        {
-            this.color = this.preBeatColor
+    checkForRemoval(){
+        if(this.distanceToSweetSpot <0){
+            this.color = this.postBeatColor
 
             this.alpha = 1+this.distanceToSweetSpot/180;
             if (this.alpha < 0 ){this.alpha = 0;}
         }
-        else{this.alpha = 1;this.color = this.postBeatColor;}
+        else{
+            this.alpha = 1;this.color = this.preBeatColor;
+        }
     }
-
 }
 

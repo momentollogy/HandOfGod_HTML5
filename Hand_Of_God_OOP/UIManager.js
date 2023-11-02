@@ -53,6 +53,44 @@ export class Button
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Exported UIManager
 export default class UIManager
 {
@@ -69,7 +107,8 @@ export default class UIManager
         let butWidth = 1 / (this.myButtons.length*2);
         this.scoreNumber=0;
         this.comboNumber=0;
-        
+        this.missesNumber=0;
+
         for ( let i=0; i<this.myButtons.length; i++){
             let but = new Button((butWidth/2)+butWidth*2*i, this.yPos, butWidth, butWidth/2, this.myButtons[i]);
             //console.log(but.xRatio, but.yRatio);
@@ -123,6 +162,9 @@ export default class UIManager
         // Style for the text labels (e.g., "Combo")
         this.ctx.fillStyle = "rgb(255,255,255)";  // Text color (white)
 
+
+
+        // Combo stuff ///////////////////////////////////////////
         // Draw top line for Combo
         this.ctx.fillRect(baseXPosition, baseYPosition, lineWidth, 2);
 
@@ -135,18 +177,34 @@ export default class UIManager
 
         // Draw Combo number (bigger and centered)
         this.ctx.font = "30px Verdana"; 
-       // const comboNumber = 0; // Assuming you will update this dynamically later
         const comboNumberX = baseXPosition + (lineWidth / 2); // Centering the number
         this.ctx.fillText(this.comboNumber, comboNumberX, baseYPosition + 60); // Below the "Combo" text
 
+
+
+
+        // Score stuff ///////////////////////////////////////////
         // Draw bottom line (divider between Combo and Score)
         this.ctx.fillRect(baseXPosition, baseYPosition + 120, lineWidth, 2);
 
         // Draw Score number (centered)
         this.ctx.font = "24px Verdana"; 
-       // const scoreNumber = 0; // Assuming you will update this dynamically later
         const scoreNumberX = baseXPosition + (lineWidth / 2); // Centering the number
+        //if(this.scoreNumber>1000){console.log("add comma to the number") }
         this.ctx.fillText(this.scoreNumber, scoreNumberX, baseYPosition + 160); // Below the divider line
+
+
+
+
+
+        // Misses stuff ///////////////////////////////////////////
+        // Draw bottom line (divider between Score and misses)
+        this.ctx.fillRect(baseXPosition, baseYPosition + 200, lineWidth, 2);
+        // Draw Score number (centered)
+        this.ctx.font = "24px Verdana"; 
+        const missNumberX = baseXPosition + (lineWidth / 2); // Centering the number
+        this.ctx.fillText(this.missesNumber, scoreNumberX, baseYPosition + 250); // Below the divider line
+
 
 
 
