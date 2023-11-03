@@ -40,6 +40,16 @@ export default class SweetSpotCircle {
         this.name="";
     }
     
+    getBeatCircleData(){
+        let returnArray = [];
+        for (let i=0 ; i< this.beatCircles_Array.length ; i++)
+        {
+            returnArray.push({time:this.beatCircles_Array[i].beatTime,  dir:this.beatCircles_Array[i].direction});
+        } 
+        console.log(returnArray);
+        return returnArray;
+    }
+
     receiveAndProcessCircleData(circleData){
 
         // sort the incoming data to ensure the beat times line up with the time indexes

@@ -154,8 +154,8 @@ export default class Level_05
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify
             ({
                // beatTimes:          this.recordedMoments_Array,
-                leftCircleData:     this.SweetSpotCircleArray[0].recordedMomentsArr,
-                rightCircleData:    this.SweetSpotCircleArray[1].recordedMomentsArr
+                leftCircleData:     this.SweetSpotCircleArray[0].getBeatCircleData(),
+                rightCircleData:    this.SweetSpotCircleArray[1].getBeatCircleData()
                 //bkgPulses:          [500,1000,1500,2000],
                 //mp3FileName:        "",
                 //bmp:                60,
@@ -276,7 +276,7 @@ export default class Level_05
         ////////////////////////////////////////////////////////////////////
         ////////////// Touch Succesful. Receive Percent ////////////////////
         //////////////////////////////////////////////////////////////////// 
-       this.increaseComboNumer(); 
+        this.increaseComboNumer(); 
         this.scoreNumber += ( percentAccuracy + this.comboNumber );
         this.uiManager.scoreNumber = this.scoreNumber;
         this.removeMiss();
