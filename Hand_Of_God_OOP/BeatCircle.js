@@ -1,11 +1,11 @@
 
 export default class BeatCircle 
 {
-    constructor(_swipeData, ss_pos) {
+    constructor(_circleData, ss_pos) {
         this.canvas = document.getElementById("output_canvas");;
         this.ctx = this.canvas.getContext("2d");
-        this.beatTime = _swipeData.time;
-        this.direction = _swipeData.dir;
+        this.beatTime = _circleData.time;
+        this.direction = _circleData.dir;
         this.x = ss_pos.x;
         this.sweetSpotPos = ss_pos;
         this.postBeatColor = "rgb(220,95,0)";

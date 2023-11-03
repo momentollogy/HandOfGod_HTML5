@@ -2,7 +2,7 @@ import BeatCircle from './BeatCircle.js';
 import DrawEngine from './DrawEngine.js';
 
 export default class SweetSpotCircle {
-    constructor(_audio, color='rgb(0, 255, 0)', position = {x:1000,y:200}, radius = 65, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
+    constructor(_audio, color='rgb(0,0,255)', position = {x:1000,y:200}, radius = 65, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
      {
         this.audio = _audio;
         this.canvas = document.getElementById("output_canvas");
@@ -15,10 +15,8 @@ export default class SweetSpotCircle {
         this.baseRadius = radius;
         this.growth_rate = growth_rate;
         this.handInside = false;
-        //this.randomizePosition();
         this.newCircleMade=false;
         this.beatCircles_Array = [];
-        this.beatArray=[];
         this.dirArray=[];
         this.beatIndex = 0;
         this.velocity = 300;
@@ -37,48 +35,39 @@ export default class SweetSpotCircle {
         this.beatBufferTime = 320;
         this.beatsMissed = 0;
         this.touchable = false;
-        this.loadedCircleData;
+        //this.loadedCircleData;
         this.recordModeTouched=false;
-        //this.touchTime = 0.0;
+        this.name="";
     }
     
-    receiveAndProcessCircleDataFromJSON(circleData){
-        this.loadedCircleData = circleData;
-        this.beatCircles_Array = [];
+    receiveAndProcessCircleData(circleData){
 
-        // loop over the circle data and use it to populate the appropriate arrays
+        // sort the incoming data to ensure the beat times line up with the time indexes
+        circleData.sort((a, b) => a.time - b.time);
+
+        this.beatCircles_Array = [];
         for (let i=0 ; i< circleData.length ; i++)
         {
-            this.beatArray.push(circleData[i].time);
-            this.dirArray.push(circleData[i].dir)
             this.beatCircles_Array.push(new BeatCircle(circleData[i],  this.position) )
-            for(let bc of this.beatCircles_Array){bc.fadeOut=true}
-        }
+        }        
     }
 
     setRecordMode(recordMode){
+
+        // ENTER Record Mode
         if(recordMode){
+            this.recordMode = true;
             this.beatCircles_Array = [];
-            this.beatArray = [];
-            this.dirArray = [];
             this.recordedMomentsArr = [];
-            console.log("arrays should be empty");
-        }else{
-            if(this.recordedMomentsArr.length > 0)
-            {
-                this.beatCircles_Array = [];
-                for (let i=0 ; i< this.recordedMomentsArr.length ; i++)
-                {
-                    this.beatArray.push(this.recordedMomentsArr[i].time);
-                    this.dirArray.push(this.recordedMomentsArr[i].dir);
-                    this.beatCircles_Array.push(new BeatCircle(this.recordedMomentsArr[i],  this.position))
-                }
-                for(let bc of this.beatCircles_Array){bc.fadeOut=false}
-                this.loadedCircleData = this.recordedMomentsArr;
-            }
-            else{
-                this.receiveAndProcessCircleDataFromJSON(this.loadedCircleData);
-            }
+        }
+        
+        // EXIT Record Mode
+        else{
+            this.recordMode = false;
+            this.receiveAndProcessCircleData(this.recordedMomentsArr);
+            this.recordedMomentsArr = [];
+            //this.audio.currentTime = 0;
+            //this.beatIndex = 0;
         }
     }
 
@@ -88,7 +77,7 @@ export default class SweetSpotCircle {
             this.pulse();
             this.recordModeTouched = true;
             this.recordMoment(0);
-            this.setRecordMode();
+            this.receiveAndProcessCircleData(this.recordedMomentsArr);
         }
     }
 
@@ -97,67 +86,72 @@ export default class SweetSpotCircle {
     }
 
     recordMoment(vector){
-        this.recordedMomentsArr.push( {time:this.audio.currentTime*1000, dir:vector }); 
-        this.recordedTimesArr.push(this.audio.currentTime*1000);
-        this.recordedDirectionsArr.push(vector);
-        console.log(this.recordedMomentsArr);
+        this.recordedMomentsArr.push( {time:Math.round(this.audio.currentTime*1000), dir:vector }); 
     }
 
     updateAndDrawBeatCircles()
     {
         for( let i = 0 ; i < this.beatCircles_Array.length ; i++)
         {
-            let beatCircle = this.beatCircles_Array[i];
-
-            beatCircle.update(this.audio.currentTime, this.velocity, this.beatCirclePathDirectionAngle);
-            beatCircle.draw();
+            this.beatCircles_Array[i].update(this.audio.currentTime, this.velocity, this.beatCirclePathDirectionAngle);
+            this.beatCircles_Array[i].draw();
         }
     }
     
-    updateAndDraw(deltaTime){
-        this.update();
-        this.drawLine();
-        //this.drawBeatRanges();
-        this.draw();
-        this.updateAndDrawBeatCircles(deltaTime)
-        //this.drawEngine.setInfoText(Math.round(this.beatCircles_Array[0].y));
-    }
-
-    update(){
+    updateAndDraw(){
         // return radius to it's base size if it's larger ( this is basically restoring a pulse to it's normal size )
         if(this.radius > this.baseRadius){this.radius-=3}
+
+        if(!this.recordMode && this.beatCircles_Array.length > 0){
+            this.updateForPlay();
+            this.drawBeatRanges();
+        }else{
+            this.updateForRecording();
+        }
+
+        this.drawMotionIndicatorLine();        
+        this.draw();
+        this.updateAndDrawBeatCircles()
+    }
+
+    updateForRecording(){
         
+    }
+
+    updateForPlay(){        
         // pulse on the beats
         if(this.isCurrentTimeOnBeat() && !this.beatPassed){
             if(this.pulseOnBeats){this.pulse();}
             this.beatPassed = true;
         }
-        
+
         // advance to the next beatRange
         if(this.isCurrentTimeOnBeatRangeEnd()){
-            this.beatIndex++;
-            this.beatPassed = false;
-            if (!this.touched) {this.beatsMissed++;} // console.log("Beats Missed:",this.beatsMissed);}
-            this.touched=false;
-            this.touchable = false;
+            if(this.beatIndex < this.beatCircles_Array.length -1 ){
+                this.beatIndex++;
+                this.beatPassed = false;
+                if (!this.touched) {this.beatsMissed++;} // console.log("Beats Missed:",this.beatsMissed);}
+                this.touched=false;
+                this.touchable = false;
+            }else{
+                //////////////////////////////////////////////////////////////////////////
+                this.pulse(); // console.log("No more beats on this circle!", this.color);
+                //////////////////////////////////////////////////////////////////////////
+            }
         }
 
         // do this at the start of a range
         if(this.isCurrentTimeOnBeatRangeStart()){
             this.touchable = true
         }
-
-        //this.drawEngine.setInfoText("touchable:",this.touchable); // this is just some diagnostic stuff
     }
 
+    // this is where touches from the level are received during play mode
     touch(){
         let percentAccuracy = null;
         if(this.touchable){
             if(!this.touched){
-                // just calculates the percentage based on how close the swipe is to the center of the range.
-                // !!Warning!!  this doesn't account for adjusted range-starts or adjusted range-ends
-                let touchTimeDiff = Math.abs(this.beatArray[this.beatIndex] - this.audio.currentTime*1000 )
-                //console.log (this.beatArray[this.beatIndex],touchTimeDiff,this.audio.currentTime*1000 )
+                let touchTimeDiff = Math.abs(this.beatCircles_Array[this.beatIndex].beatTime - this.audio.currentTime*1000 )
                 percentAccuracy = (100 - Math.round(touchTimeDiff/this.beatBufferTime*100));
             }
             this.touched=true;
@@ -194,7 +188,7 @@ export default class SweetSpotCircle {
     }
 
     isCurrentTimeOnBeat(){
-        return (this.audio.currentTime * 1000) >= this.beatArray[this.beatIndex];
+        return (this.audio.currentTime * 1000) >= this.beatCircles_Array[this.beatIndex].beatTime;
     }
     
     isCurrentTimeOnBeatRangeStart(){
@@ -206,16 +200,29 @@ export default class SweetSpotCircle {
     }
 
     findBeatRangeEndForCurrentBeatRange(){
-        let beatTime = this.beatArray[this.beatIndex];
+        let beatTime = this.beatCircles_Array[this.beatIndex].beatTime;
         let beatRangeEnd = beatTime + this.beatBufferTime
-        //  we need to check for overlap and create an adjustment if necessary
+        
+        if(this.beatIndex < this.beatCircles_Array.length -1 ){ // if there are more beatIndexes ahead
+            let nextStart = this.beatCircles_Array[ this.beatIndex +1 ].beatTime - this.beatBufferTime;
+            if(nextStart < beatRangeEnd){
+                beatRangeEnd = (nextStart + beatRangeEnd) / 2; // average them together to find the new value for beatRangeEnd
+            }
+        }
         return beatRangeEnd
     }
 
     findBeatRangeStartForCurrentBeatRange(){
-        let beatTime = this.beatArray[this.beatIndex];
-        let beatRangeStart = beatTime - this.beatBufferTime
-        //  we need to check for overlap and create an adjustment if necessary
+        let beatTime = this.beatCircles_Array[this.beatIndex].beatTime;
+        let beatRangeStart = beatTime - this.beatBufferTime;
+        //let adjustment = 0;
+        if(this.beatIndex>0){
+            // check the previous beat to see if it's end needs averagaing with this start
+            let previousEnd = this.beatCircles_Array[ this.beatIndex -1 ].beatTime + this.beatBufferTime;
+            if(previousEnd > beatRangeStart){ 
+                beatRangeStart = (previousEnd + beatRangeStart) / 2; // average the positions to find the new beatRangeStart
+            }
+        }
         return beatRangeStart
     }
 
@@ -239,7 +246,7 @@ export default class SweetSpotCircle {
         this.ctx.restore();
     }
 
-    drawLine(){
+    drawMotionIndicatorLine(){
         let radians = (this.beatCirclePathDirectionAngle * Math.PI) / 180;
         const lineLength = Math.max(this.canvas.width, this.canvas.height); // Adjust for longer lines if needed
         const lineEndpointX = this.position.x + lineLength * Math.cos(radians);
@@ -254,7 +261,7 @@ export default class SweetSpotCircle {
         this.ctx.stroke();
         this.ctx.restore();
     }
-
+    
     isPointInside(hand_position){ return this.is_hand_inside(hand_position) }
 
     is_hand_inside(hand_position) 
@@ -268,7 +275,7 @@ export default class SweetSpotCircle {
         this.handInside=false;
         return false;
     }
-
+    
     // this is called from outside classes. Specifically: when the reset button is pressed
     reset()
     {

@@ -31,6 +31,8 @@ export default class Level_05
         this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: 1080, y: this.canvas.height/2} );
         this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -90;
         this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -90;
+        this.SweetSpotCircleArray[0].name="LeftSSCir";
+        this.SweetSpotCircleArray[1].name="RightSSCir";
 
         this.beatArray=[];
         this.beatCircles_Array = [];
@@ -65,8 +67,8 @@ export default class Level_05
         document.addEventListener('beatTimeDataReady', event => {
             //console.log('beatTimeDataReady ready ready ready ready ready :', event.detail);
             //parseJsonData();
-            this.SweetSpotCircleArray[0].receiveAndProcessCircleDataFromJSON(this.jsonManager.leftCircleData);
-            this.SweetSpotCircleArray[1].receiveAndProcessCircleDataFromJSON(this.jsonManager.rightCircleData);
+            this.SweetSpotCircleArray[0].receiveAndProcessCircleData(this.jsonManager.leftCircleData);
+            this.SweetSpotCircleArray[1].receiveAndProcessCircleData(this.jsonManager.rightCircleData);
         });
 
         document.addEventListener('StartStop', (data) => {
@@ -83,7 +85,7 @@ export default class Level_05
             this.SweetSpotCircleArray[0].reset();
             this.SweetSpotCircleArray[1].reset();
             this.uiManager.draw();
-            this.resetBeatsMissed();
+            this.resetVariables();
         });
 
         document.addEventListener('ExportBeats', (data) => {
@@ -124,8 +126,10 @@ export default class Level_05
 
     }
 
-    resetBeatsMissed(){
-        this.beatsMissed=0;
+    resetVariables(){
+        this.scoreNumber = 0;
+        this.comboNumber = 0;
+        this.beatsMissed = 0;
         this.beatsMissedPrevious=0;
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {
@@ -179,7 +183,7 @@ export default class Level_05
         }
 
         // update display stuff and process classes stuff
-        for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(this.drawEngine.deltaTime); }
+        for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
         this.uiManager.draw();
     }
     
@@ -272,7 +276,7 @@ export default class Level_05
         ////////////////////////////////////////////////////////////////////
         ////////////// Touch Succesful. Receive Percent ////////////////////
         //////////////////////////////////////////////////////////////////// 
-        this.increaseComboNumer();
+       this.increaseComboNumer(); 
         this.scoreNumber += ( percentAccuracy + this.comboNumber );
         this.uiManager.scoreNumber = this.scoreNumber;
         this.removeMiss();
@@ -287,7 +291,7 @@ export default class Level_05
         this.resetComboNumber();
         this.uiManager.missesNumber = this.beatsMissed;
         console.log(this.beatsMissed + " Beats Missed total");
-        if(this.beatsMissed > 5){
+        if(this.beatsMissed > 20){
             console.log("you lose");
             this.audio.pause();
             // show something in the UI perhaps?
