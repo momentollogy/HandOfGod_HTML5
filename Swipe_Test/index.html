@@ -6,126 +6,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slice Circle</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    // <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.14.2/matter.min.js"></script>
-
 </head>
 
 <body>
     <script>
-let circle;
-let isSliced = false;
-let sliceStart, sliceEnd;
-let slice1, slice2;
+        let circle;
+        let intersectionPoints = [];
 
-function setup() {
-  createCanvas(600, 600);
-  circle = {
-    x: width / 2,
-    y: height / 2,
-    r: 100,
-    velocity: createVector(0, 2)
-  };
-}
+        function setup() {
+            createCanvas(600, 600);
+            circle = {
+                x: width / 2,
+                y: height / 2,
+                r: 100
+            };
+        }
 
-function draw() {
-  background(220);
+        function draw() {
+            background(220);
 
-  if (!isSliced) {
-    ellipse(circle.x, circle.y, circle.r * 2, circle.r * 2);
-    if (mouseIsPressed) {
-      line(sliceStart.x, sliceStart.y, mouseX, mouseY);
-    }
-  } else {
-    handleSlices();
-  }
-}
+            ellipse(circle.x, circle.y, circle.r * 2, circle.r * 2);
 
-function mousePressed() {
-  sliceStart = createVector(mouseX, mouseY);
-}
+            if (mouseIsPressed) {
+                line(mouseX, mouseY, pmouseX, pmouseY);
+                calculateIntersection(mouseX, mouseY, pmouseX, pmouseY);
+            }
 
-function mouseReleased() {
-  sliceEnd = createVector(mouseX, mouseY);
-  if (!isSliced) {
-    isSliced = true;
-    sliceCircle();
-  }
-}
+            for (let point of intersectionPoints) {
+                fill(255, 0, 0);
+                noStroke();
+                ellipse(point.x, point.y, 10, 10);
+            }
+        }
 
-function sliceCircle() {
-  let angle1 = atan2(sliceStart.y - circle.y, sliceStart.x - circle.x);
-  let angle2 = atan2(sliceEnd.y - circle.y, sliceEnd.x - circle.x);
-
-  slice1 = {
-    x: circle.x,
-    y: circle.y,
-    r: circle.r,
-    start: angle1,
-    end: angle2,
-    velocity: createVector(1, 2)
-  };
-  
-  slice2 = {
-    x: circle.x,
-    y: circle.y,
-    r: circle.r,
-    start: angle2,
-    end: angle1 + TWO_PI,
-    velocity: createVector(-1, 2)
-  };
-}
-
-function handleSlices() {
-  fill(150);
-
-  // Calculate start and end points for slice 1
-  let slice1StartX = slice1.x + slice1.r * cos(slice1.start);
-  let slice1StartY = slice1.y + slice1.r * sin(slice1.start);
-  let slice1EndX = slice1.x + slice1.r * cos(slice1.end);
-  let slice1EndY = slice1.y + slice1.r * sin(slice1.end);
-
-  // Draw slice 1
-  beginShape();
-  vertex(slice1StartX, slice1StartY);
-  let numPoints = 20;  // Adjust this value to change the resolution of the arc
-  for (let i = 0; i <= numPoints; i++) {
-    let angle = lerp(slice1.start, slice1.end, i / numPoints);
-    let x = slice1.x + slice1.r * cos(angle);
-    let y = slice1.y + slice1.r * sin(angle);
-    vertex(x, y);
-  }
-  vertex(slice1EndX, slice1EndY);
-  endShape(CLOSE);
-
-  // Calculate start and end points for slice 2
-  let slice2StartX = slice2.x + slice2.r * cos(slice2.start);
-  let slice2StartY = slice2.y + slice2.r * sin(slice2.start);
-  let slice2EndX = slice2.x + slice2.r * cos(slice2.end);
-  let slice2EndY = slice2.y + slice2.r * sin(slice2.end);
-
-  // Draw slice 2
-  beginShape();
-  vertex(slice2StartX, slice2StartY);
-  for (let i = 0; i <= numPoints; i++) {
-    let angle = lerp(slice2.start, slice2.end, i / numPoints);
-    let x = slice2.x + slice2.r * cos(angle);
-    let y = slice2.y + slice2.r * sin(angle);
-    vertex(x, y);
-  }
-  vertex(slice2EndX, slice2EndY);
-  endShape(CLOSE);
-
-  // Update slice positions
-  slice1.x += slice1.velocity.x;
-  slice1.y += slice1.velocity.y;
-  
-  slice2.x += slice2.velocity.x;
-  slice2.y += slice2.velocity.y;
-}
-
-
-
-
+        function calculateIntersection(x1, y1, x2, y2) {
+            intersectionPoints = [];
+            let a = y2 - y1;
+            let b = x1 - x2;
+            let c = x2 * y1 - y2 * x1;
+            let d = abs(a * circle.x + b * circle.y + c) / sqrt(a * a + b * b);
+            if (d < circle.r) {
+                let delta = sqrt(circle.r * circle.r - d * d);
+                let xCenter = circle.x - a * d / (a * a + b * b);
+                let yCenter = circle.y - b * d / (a * a + b * b);
+                let xi1 = xCenter + b * delta / (a * a + b * b);
+                let yi1 = yCenter - a * delta / (a * a + b * b);
+                let xi2 = xCenter - b * delta / (a * a + b * b);
+                let yi2 = yCenter + a * delta / (a * a + b * b);
+                intersectionPoints.push(createVector(xi1, yi1));
+                intersectionPoints.push(createVector(xi2, yi2));
+            }
+        }
     </script>
 </body>
 
