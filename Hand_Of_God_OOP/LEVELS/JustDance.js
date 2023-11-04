@@ -9,7 +9,7 @@ import { db } from './firebase.js';
 
 
 
-export default class Level_05
+export default class JustDance
 {
     constructor()
     {
@@ -209,7 +209,7 @@ export default class Level_05
 
         // update display stuff and process classes stuff
         for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
-       // this.uiManager.draw();
+        this.uiManager.draw();
     }
     
     /* Only checks for landmark 8 - aka index finger point. 
@@ -355,93 +355,3 @@ export default class Level_05
 
 }
 
-
-    /*
-    closeToBeatDifference(sweetspotcircle) {
-        let b = sweetspotcircle.beatIndex;
-        let difference = sweetspotcircle.beatArray[b] - (this.audio.currentTime * 1000);
-        return difference;
-    }
-    
-    
-    drawFingerSwipe(hand){
-        let handArr = hand == "Left" ? this.previousPositions_L_arr : this.previousPositions_R_arr;
-        let color = hand == "Left" ? 'rgb(0, 255, 200)' : 'rgb(255, 255, 128)';
-        if(this.mediaPipe.getPointOfIndex(hand, 8))
-        {
-            let coords=this.mediaPipe.getPointOfIndex(hand, 8);
-            handArr.push(coords)
-
-            if(handArr.length > 8 ){handArr.shift();}
-            this.ctx.save()
-            let strokeWidth = 1.5;
-            this.ctx.lineJoin = 'round';
-            this.ctx.lineCap = 'round';
-        
-            for(let i=1; i<handArr.length; i++){
-                if( i < Math.round(handArr.length / 2)+3 ){ strokeWidth += 1.25 }else{ strokeWidth -= 1.75 }
-                
-                this.ctx.strokeStyle = color;
-                this.ctx.shadowColor = color;
-                this.ctx.shadowBlur = 12;
-                this.ctx.lineWidth = strokeWidth;
-
-                this.ctx.beginPath();
-                this.ctx.moveTo(handArr[i-1].x, handArr[i-1].y);
-                this.ctx.lineTo(handArr[i].x , handArr[i].y);
-                this.ctx.stroke();
-            }
-            this.ctx.restore();
-        }
-    }
-
-    calculateNormalizedVector2(startX, startY, endX, endY) {
-        const directionX = endX - startX;
-        const directionY = endY - startY;
-
-        // Calculate the magnitude (length) of the direction vector
-        const magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
-
-        // Normalize the direction vector
-        const normalizedX = directionX / magnitude;
-        const normalizedY = directionY / magnitude;
-
-        return { x: normalizedX, y: normalizedY };
-    }
-
-    drawSlashOnSweetSpotCircle(sweetspotcircle){
-        if(sweetspotcircle.slash){
-            // define begining and end points
-            let fromX = sweetspotcircle.slash.start.x;
-            let fromY = sweetspotcircle.slash.start.y;
-            let toX = sweetspotcircle.slash.end.x
-            let toY = sweetspotcircle.slash.end.y
-            let arrowSize = 16;
-
-            this.ctx.save();
-            this.ctx.beginPath();
-            this.ctx.shadowColor = 'rgba(0, 0, 0, 0)';
-            this.ctx.shadowBlur = 0;
-            this.ctx.strokeStyle = sweetspotcircle.slash.hand == "Left" ? 'rgb(0, 255, 255)' : 'rgb(255, 255, 0)';
-            this.ctx.lineWidth = 5;
-            this.ctx.moveTo( fromX, fromY );
-            this.ctx.lineTo( toX, toY );
-            this.ctx.stroke();
-
-            // draw arrow head
-            const angle = Math.atan2(toY - fromY, toX - fromX);
-            const x1 = toX - arrowSize * Math.cos(angle - Math.PI / 6);
-            const y1 = toY - arrowSize * Math.sin(angle - Math.PI / 6);
-            const x2 = toX - arrowSize * Math.cos(angle + Math.PI / 6);
-            const y2 = toY - arrowSize * Math.sin(angle + Math.PI / 6);
-
-            this.ctx.beginPath();
-            this.ctx.moveTo(toX, toY);
-            this.ctx.lineTo(x1, y1);
-            this.ctx.lineTo(x2, y2);
-            this.ctx.closePath();
-            this.ctx.stroke();
-            this.ctx.restore();
-        }
-    }
-    */

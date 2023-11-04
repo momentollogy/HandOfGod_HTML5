@@ -2,7 +2,7 @@ import BeatCircle from './BeatCircle.js';
 import DrawEngine from './DrawEngine.js';
 
 export default class SweetSpotCircle {
-    constructor(_audio, color='rgb(0,0,255)', position = {x:1000,y:200}, radius = 65, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
+    constructor(_audio, color='rgb(0,0,255)', position = {x:1000,y:200}, radius = 80, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
      {
         this.audio = _audio;
         this.canvas = document.getElementById("output_canvas");
@@ -104,12 +104,12 @@ export default class SweetSpotCircle {
 
         if(!this.recordMode && this.beatCircles_Array.length > 0){
             this.updateForPlay();
-            this.drawBeatRanges();
+          //  this.drawBeatRanges();
         }else{
             this.updateForRecording();
         }
 
-        this.drawMotionIndicatorLine();        
+      //  this.drawMotionIndicatorLine();        
         this.draw();
         this.updateAndDrawBeatCircles()
     }
