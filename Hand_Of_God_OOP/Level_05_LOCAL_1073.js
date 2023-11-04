@@ -4,10 +4,6 @@ import SweetSpotCircle from './SweetSpotCircle.js';
 import JsonManager from './JsonManager.js';
 import DrawEngine from './DrawEngine.js';
 import BackgroundManager from './BackgroundManager.js'
-import { testAddScore, getTopScores } from './Leaderboard.js'; // Update the path if necessary
-import { db } from './firebase.js';
-
-
 
 export default class Level_05
 {
@@ -31,8 +27,8 @@ export default class Level_05
         this.bkg = new BackgroundManager(this.audio);
 
         this.SweetSpotCircleArray=[];
-        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: this.canvas.width / 2 - 175 , y: this.canvas.height / 2 + 150});
-        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: this.canvas.width / 2 + 175, y: this.canvas.height / 2+ 150});
+        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: 820, y: this.canvas.height/2}  );
+        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: 1080, y: this.canvas.height/2} );
         this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -90;
         this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -90;
         this.SweetSpotCircleArray[0].name="LeftSSCir";
@@ -59,29 +55,10 @@ export default class Level_05
         this.comboNumber = 0;
         
         this.setInitialSongAndJson();
-<<<<<<< HEAD
         document.addEventListener("BeatMissed", (data) => {
             console.log("a miss has been detected!");
             this.beatMissed();
         });
-=======
-
-
-            // Listen for the 'ended' event
-            this.audio.addEventListener('ended', async () => {
-                console.log("Level Complete");
-                
-                // This will add a test score. You can remove it later after testing.
-                await testAddScore();
-            
-                // Fetch the top scores and log them
-                const topScores = await getTopScores();
-                console.log('Top Scores:', topScores);
-                
-                // You would typically have an end-level handling here
-                // this.endLevel(); // Make sure this method is defined
-            });
->>>>>>> matt-leaderboard
     }
 
     initUI(){
@@ -153,8 +130,6 @@ export default class Level_05
 
     }
 
-    
-
     resetVariables(){
         console.log("resseting variables etc..");
         this.scoreNumber = 0;
@@ -199,9 +174,6 @@ export default class Level_05
         downloadAnchorNode.remove();
     }
 
-
-       
-
     level_loop() {
         // mediapipe stuff
         let results = this.mediaPipe.results;
@@ -217,11 +189,9 @@ export default class Level_05
 
         // update display stuff and process classes stuff
         for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
-       // this.uiManager.draw();
+        this.uiManager.draw();
     }
     
-    /* Only checks for landmark 8 - aka index finger point. 
-
     checkForFingerTouchCircles(){
         for(let sweetspotcircle of this.SweetSpotCircleArray){
             if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8).length>0)
@@ -236,33 +206,6 @@ export default class Level_05
             }
         }
     }
-    */
-
-
-    //Same as above but USES ALL LANDMAKS
-    checkForFingerTouchCircles(){
-        for(let sweetspotcircle of this.SweetSpotCircleArray){
-            let anyLandmarkTouched = false;
-            for (let i = 0; i < 21; i++) { // Check all landmarks from 0 to 20
-                if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH, i).length > 0) {
-                    anyLandmarkTouched = true;
-                    break; // If any landmark touches, break the loop
-                }
-            }
-            if (anyLandmarkTouched) {
-                // No change to your existing code
-                sweetspotcircle.puffy = true;  
-                let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
-                if(percentAccuracyIfTouched){
-                    this.touchSuccesfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
-                }
-            } else {
-                // No change to your existing code
-                sweetspotcircle.puffy = false;
-            }
-        }
-    }
-    
 
     increaseComboNumer(){
         this.comboNumber += 1;
@@ -342,13 +285,8 @@ export default class Level_05
         ////////////////////////////////////////////////////////////////////
         ////////////// Touch Succesful. Receive Percent ////////////////////
         //////////////////////////////////////////////////////////////////// 
-<<<<<<< HEAD
         this.increaseComboNumer(); 
         this.scoreNumber += ( percentAccuracy + this.comboNumber );
-=======
-       this.increaseComboNumer(); 
-        this.scoreNumber += ( percentAccuracy + (this.comboNumber*2));
->>>>>>> matt-leaderboard
         this.uiManager.scoreNumber = this.scoreNumber;
         this.removeMiss();
         console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "score:", this.scoreNumber);

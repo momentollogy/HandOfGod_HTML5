@@ -9,7 +9,7 @@ import { db } from './firebase.js';
 
 
 
-export default class Level_05
+export default class JustDance
 {
     constructor()
     {
@@ -59,12 +59,6 @@ export default class Level_05
         this.comboNumber = 0;
         
         this.setInitialSongAndJson();
-<<<<<<< HEAD
-        document.addEventListener("BeatMissed", (data) => {
-            console.log("a miss has been detected!");
-            this.beatMissed();
-        });
-=======
 
 
             // Listen for the 'ended' event
@@ -81,7 +75,6 @@ export default class Level_05
                 // You would typically have an end-level handling here
                 // this.endLevel(); // Make sure this method is defined
             });
->>>>>>> matt-leaderboard
     }
 
     initUI(){
@@ -156,7 +149,6 @@ export default class Level_05
     
 
     resetVariables(){
-        console.log("resseting variables etc..");
         this.scoreNumber = 0;
         this.comboNumber = 0;
         this.beatsMissed = 0;
@@ -184,8 +176,8 @@ export default class Level_05
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify
             ({
                // beatTimes:          this.recordedMoments_Array,
-                leftCircleData:     this.SweetSpotCircleArray[0].getBeatCircleData(),
-                rightCircleData:    this.SweetSpotCircleArray[1].getBeatCircleData()
+                leftCircleData:     this.SweetSpotCircleArray[0].recordedMomentsArr,
+                rightCircleData:    this.SweetSpotCircleArray[1].recordedMomentsArr
                 //bkgPulses:          [500,1000,1500,2000],
                 //mp3FileName:        "",
                 //bmp:                60,
@@ -210,14 +202,14 @@ export default class Level_05
         if(!this.recordMode){
             // game interaction and score stuff
             this.checkForFingerTouchCircles();
-            //this.checkCirclesForMissesAndStuff();
+            this.checkCirclesForMissesAndStuff();
         }else{
             this.sendTouchesForRecording();
         }
 
         // update display stuff and process classes stuff
         for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
-       // this.uiManager.draw();
+        this.uiManager.draw();
     }
     
     /* Only checks for landmark 8 - aka index finger point. 
@@ -301,9 +293,6 @@ export default class Level_05
     }
 
     removeMiss(){
-        if(this.beatsMissed>0){this.beatsMissed -= 1;}
-        this.uiManager.missesNumber = this.beatsMissed;
-        /*
         // remove a miss from one circle, if that circle has none remove from the next circle etc..
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {
@@ -320,7 +309,6 @@ export default class Level_05
         }
         this.beatsMissedPrevious = this.beatsMissed;
         this.uiManager.missesNumber = this.beatsMissed;
-        */
     }
 
 
@@ -342,13 +330,8 @@ export default class Level_05
         ////////////////////////////////////////////////////////////////////
         ////////////// Touch Succesful. Receive Percent ////////////////////
         //////////////////////////////////////////////////////////////////// 
-<<<<<<< HEAD
-        this.increaseComboNumer(); 
-        this.scoreNumber += ( percentAccuracy + this.comboNumber );
-=======
        this.increaseComboNumer(); 
         this.scoreNumber += ( percentAccuracy + (this.comboNumber*2));
->>>>>>> matt-leaderboard
         this.uiManager.scoreNumber = this.scoreNumber;
         this.removeMiss();
         console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "score:", this.scoreNumber);
@@ -359,10 +342,9 @@ export default class Level_05
         ////////////////////////////////////////////////////////////////////
         ////////////// Beat Missed. Total Beats Tallied ////////////////////
         ////////////////////////////////////////////////////////////////////
-        this.beatsMissed += 1;
-        this.uiManager.missesNumber = this.beatsMissed;
         this.resetComboNumber();
-        //console.log(this.beatsMissed + " Beats Missed total");
+        this.uiManager.missesNumber = this.beatsMissed;
+        console.log(this.beatsMissed + " Beats Missed total");
         if(this.beatsMissed > 20){
             console.log("you lose");
             this.audio.pause();
@@ -373,93 +355,3 @@ export default class Level_05
 
 }
 
-
-    /*
-    closeToBeatDifference(sweetspotcircle) {
-        let b = sweetspotcircle.beatIndex;
-        let difference = sweetspotcircle.beatArray[b] - (this.audio.currentTime * 1000);
-        return difference;
-    }
-    
-    
-    drawFingerSwipe(hand){
-        let handArr = hand == "Left" ? this.previousPositions_L_arr : this.previousPositions_R_arr;
-        let color = hand == "Left" ? 'rgb(0, 255, 200)' : 'rgb(255, 255, 128)';
-        if(this.mediaPipe.getPointOfIndex(hand, 8))
-        {
-            let coords=this.mediaPipe.getPointOfIndex(hand, 8);
-            handArr.push(coords)
-
-            if(handArr.length > 8 ){handArr.shift();}
-            this.ctx.save()
-            let strokeWidth = 1.5;
-            this.ctx.lineJoin = 'round';
-            this.ctx.lineCap = 'round';
-        
-            for(let i=1; i<handArr.length; i++){
-                if( i < Math.round(handArr.length / 2)+3 ){ strokeWidth += 1.25 }else{ strokeWidth -= 1.75 }
-                
-                this.ctx.strokeStyle = color;
-                this.ctx.shadowColor = color;
-                this.ctx.shadowBlur = 12;
-                this.ctx.lineWidth = strokeWidth;
-
-                this.ctx.beginPath();
-                this.ctx.moveTo(handArr[i-1].x, handArr[i-1].y);
-                this.ctx.lineTo(handArr[i].x , handArr[i].y);
-                this.ctx.stroke();
-            }
-            this.ctx.restore();
-        }
-    }
-
-    calculateNormalizedVector2(startX, startY, endX, endY) {
-        const directionX = endX - startX;
-        const directionY = endY - startY;
-
-        // Calculate the magnitude (length) of the direction vector
-        const magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
-
-        // Normalize the direction vector
-        const normalizedX = directionX / magnitude;
-        const normalizedY = directionY / magnitude;
-
-        return { x: normalizedX, y: normalizedY };
-    }
-
-    drawSlashOnSweetSpotCircle(sweetspotcircle){
-        if(sweetspotcircle.slash){
-            // define begining and end points
-            let fromX = sweetspotcircle.slash.start.x;
-            let fromY = sweetspotcircle.slash.start.y;
-            let toX = sweetspotcircle.slash.end.x
-            let toY = sweetspotcircle.slash.end.y
-            let arrowSize = 16;
-
-            this.ctx.save();
-            this.ctx.beginPath();
-            this.ctx.shadowColor = 'rgba(0, 0, 0, 0)';
-            this.ctx.shadowBlur = 0;
-            this.ctx.strokeStyle = sweetspotcircle.slash.hand == "Left" ? 'rgb(0, 255, 255)' : 'rgb(255, 255, 0)';
-            this.ctx.lineWidth = 5;
-            this.ctx.moveTo( fromX, fromY );
-            this.ctx.lineTo( toX, toY );
-            this.ctx.stroke();
-
-            // draw arrow head
-            const angle = Math.atan2(toY - fromY, toX - fromX);
-            const x1 = toX - arrowSize * Math.cos(angle - Math.PI / 6);
-            const y1 = toY - arrowSize * Math.sin(angle - Math.PI / 6);
-            const x2 = toX - arrowSize * Math.cos(angle + Math.PI / 6);
-            const y2 = toY - arrowSize * Math.sin(angle + Math.PI / 6);
-
-            this.ctx.beginPath();
-            this.ctx.moveTo(toX, toY);
-            this.ctx.lineTo(x1, y1);
-            this.ctx.lineTo(x2, y2);
-            this.ctx.closePath();
-            this.ctx.stroke();
-            this.ctx.restore();
-        }
-    }
-    */

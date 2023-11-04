@@ -59,12 +59,6 @@ export default class Level_05
         this.comboNumber = 0;
         
         this.setInitialSongAndJson();
-<<<<<<< HEAD
-        document.addEventListener("BeatMissed", (data) => {
-            console.log("a miss has been detected!");
-            this.beatMissed();
-        });
-=======
 
 
             // Listen for the 'ended' event
@@ -81,7 +75,6 @@ export default class Level_05
                 // You would typically have an end-level handling here
                 // this.endLevel(); // Make sure this method is defined
             });
->>>>>>> matt-leaderboard
     }
 
     initUI(){
@@ -156,7 +149,6 @@ export default class Level_05
     
 
     resetVariables(){
-        console.log("resseting variables etc..");
         this.scoreNumber = 0;
         this.comboNumber = 0;
         this.beatsMissed = 0;
@@ -184,8 +176,8 @@ export default class Level_05
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify
             ({
                // beatTimes:          this.recordedMoments_Array,
-                leftCircleData:     this.SweetSpotCircleArray[0].getBeatCircleData(),
-                rightCircleData:    this.SweetSpotCircleArray[1].getBeatCircleData()
+                leftCircleData:     this.SweetSpotCircleArray[0].recordedMomentsArr,
+                rightCircleData:    this.SweetSpotCircleArray[1].recordedMomentsArr
                 //bkgPulses:          [500,1000,1500,2000],
                 //mp3FileName:        "",
                 //bmp:                60,
@@ -210,7 +202,7 @@ export default class Level_05
         if(!this.recordMode){
             // game interaction and score stuff
             this.checkForFingerTouchCircles();
-            //this.checkCirclesForMissesAndStuff();
+            this.checkCirclesForMissesAndStuff();
         }else{
             this.sendTouchesForRecording();
         }
@@ -301,9 +293,6 @@ export default class Level_05
     }
 
     removeMiss(){
-        if(this.beatsMissed>0){this.beatsMissed -= 1;}
-        this.uiManager.missesNumber = this.beatsMissed;
-        /*
         // remove a miss from one circle, if that circle has none remove from the next circle etc..
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {
@@ -320,7 +309,6 @@ export default class Level_05
         }
         this.beatsMissedPrevious = this.beatsMissed;
         this.uiManager.missesNumber = this.beatsMissed;
-        */
     }
 
 
@@ -342,13 +330,8 @@ export default class Level_05
         ////////////////////////////////////////////////////////////////////
         ////////////// Touch Succesful. Receive Percent ////////////////////
         //////////////////////////////////////////////////////////////////// 
-<<<<<<< HEAD
-        this.increaseComboNumer(); 
-        this.scoreNumber += ( percentAccuracy + this.comboNumber );
-=======
        this.increaseComboNumer(); 
         this.scoreNumber += ( percentAccuracy + (this.comboNumber*2));
->>>>>>> matt-leaderboard
         this.uiManager.scoreNumber = this.scoreNumber;
         this.removeMiss();
         console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "score:", this.scoreNumber);
@@ -359,10 +342,9 @@ export default class Level_05
         ////////////////////////////////////////////////////////////////////
         ////////////// Beat Missed. Total Beats Tallied ////////////////////
         ////////////////////////////////////////////////////////////////////
-        this.beatsMissed += 1;
-        this.uiManager.missesNumber = this.beatsMissed;
         this.resetComboNumber();
-        //console.log(this.beatsMissed + " Beats Missed total");
+        this.uiManager.missesNumber = this.beatsMissed;
+        console.log(this.beatsMissed + " Beats Missed total");
         if(this.beatsMissed > 20){
             console.log("you lose");
             this.audio.pause();

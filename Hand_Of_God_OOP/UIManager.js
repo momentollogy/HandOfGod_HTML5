@@ -55,42 +55,6 @@ export class Button
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Exported UIManager
 export default class UIManager
 {
@@ -115,8 +79,7 @@ export default class UIManager
             this.buttons[this.myButtons[i]]=but;
         }
 
-        //console.log("BUTTONS:  BUTTONS:  BUTTONS:");
-        //console.log(this.buttons);
+
 
         this.hoveredButton = null;
         this.activeButton = null;
