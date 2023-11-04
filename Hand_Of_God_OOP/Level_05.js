@@ -55,6 +55,10 @@ export default class Level_05
         this.comboNumber = 0;
         
         this.setInitialSongAndJson();
+        document.addEventListener("BeatMissed", (data) => {
+            console.log("a miss has been detected!");
+            this.beatMissed();
+        });
     }
 
     initUI(){
@@ -127,6 +131,7 @@ export default class Level_05
     }
 
     resetVariables(){
+        console.log("resseting variables etc..");
         this.scoreNumber = 0;
         this.comboNumber = 0;
         this.beatsMissed = 0;
@@ -177,7 +182,7 @@ export default class Level_05
         if(!this.recordMode){
             // game interaction and score stuff
             this.checkForFingerTouchCircles();
-            this.checkCirclesForMissesAndStuff();
+            //this.checkCirclesForMissesAndStuff();
         }else{
             this.sendTouchesForRecording();
         }
@@ -239,6 +244,9 @@ export default class Level_05
     }
 
     removeMiss(){
+        if(this.beatsMissed>0){this.beatsMissed -= 1;}
+        this.uiManager.missesNumber = this.beatsMissed;
+        /*
         // remove a miss from one circle, if that circle has none remove from the next circle etc..
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {
@@ -255,6 +263,7 @@ export default class Level_05
         }
         this.beatsMissedPrevious = this.beatsMissed;
         this.uiManager.missesNumber = this.beatsMissed;
+        */
     }
 
 
@@ -288,9 +297,10 @@ export default class Level_05
         ////////////////////////////////////////////////////////////////////
         ////////////// Beat Missed. Total Beats Tallied ////////////////////
         ////////////////////////////////////////////////////////////////////
-        this.resetComboNumber();
+        this.beatsMissed += 1;
         this.uiManager.missesNumber = this.beatsMissed;
-        console.log(this.beatsMissed + " Beats Missed total");
+        this.resetComboNumber();
+        //console.log(this.beatsMissed + " Beats Missed total");
         if(this.beatsMissed > 20){
             console.log("you lose");
             this.audio.pause();
