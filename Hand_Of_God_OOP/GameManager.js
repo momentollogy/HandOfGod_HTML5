@@ -12,8 +12,8 @@ import Level_StageSelect from './Level_StageSelect.js'
 export default class GameManager {
     constructor() 
     {
-       this.currentLevel = new Level_StageSelect()
-     //  this.currentLevel = new Level_05()
+      // this.currentLevel = new Level_StageSelect()
+       this.currentLevel = new Level_05()
        //this.currentLevel = new JustDance()
      //  document.addEventListener('levelChange', this.handleLevelChange.bind(this));
         document.addEventListener('levelChange', async (event) => {
