@@ -2,10 +2,76 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hello, World!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moody Gradient Background</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
 </head>
 <body>
-    <h1 id="greeting"></h1>
-    <script src="script.js"></script>
+    <canvas id="myCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        let colors = [
+            { start: [10, 24, 72], end: [5, 12, 36] },
+            { start: [25, 20, 70], end: [12, 10, 35] },
+            { start: [15, 30, 85], end: [8, 15, 45] }
+        ];
+        let colorIndices = [0, 1];
+        let gradientStep = 0;
+        let gradientSpeed = 0.002;
+
+        function updateGradient() {
+            if (gradientStep >= 1) {
+                gradientStep = 0;
+                colorIndices[0] = colorIndices[1];
+                colorIndices[1] = (colorIndices[1] + Math.floor(1 + Math.random() * (colors.length - 1))) % colors.length;
+            }
+
+            gradientStep += gradientSpeed;
+
+            const c0_0 = colors[colorIndices[0]].start;
+            const c0_1 = colors[colorIndices[0]].end;
+            const c1_0 = colors[colorIndices[1]].start;
+            const c1_1 = colors[colorIndices[1]].end;
+
+            const istart = c0_0.map((num, idx) => interpolate(num, c1_0[idx], gradientStep));
+            const iend = c0_1.map((num, idx) => interpolate(num, c1_1[idx], gradientStep));
+
+            gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, `rgb(${istart.join(',')})`);
+            gradient.addColorStop(1, `rgb(${iend.join(',')})`);
+        }
+
+        function interpolate(start, end, step) {
+            return start + (end - start) * step;
+        }
+
+        function animate() {
+            updateGradient();
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
 </body>
 </html>

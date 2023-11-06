@@ -21,8 +21,13 @@ export default class JustDance
         
         this.audio = new Audio();
         this.audio.volume = 0.03; 
-        
-        this.jsonManager = new JsonManager();
+      
+        this.audio.src = "sound2/JustDance.mp3";   
+        this.audio.play(); 
+        this.jsonManager.loadJsonFileByPath('sound2/6beatstest.json');
+    
+    
+        //this.jsonManager = new JsonManager();
 
         this.uIButtons = ["StartStop","Reset","ExportBeats","LoadBeats","LoadSong","Record"];
         this.uiManager = new UIManager(this.audio,this.uIButtons)
@@ -90,7 +95,7 @@ export default class JustDance
             this.SweetSpotCircleArray[0].receiveAndProcessCircleData(this.jsonManager.leftCircleData);
             this.SweetSpotCircleArray[1].receiveAndProcessCircleData(this.jsonManager.rightCircleData);
         });
-
+/*
         document.addEventListener('StartStop', (data) => {
             //console.log("Play button!!");
             if(this.audio.paused){this.audio.play();
@@ -98,6 +103,7 @@ export default class JustDance
             
         });
         
+        */
         document.addEventListener('Reset', (data) => {
             this.audio.currentTime = 0;
             this.uiManager.scoreNumber = 0;
@@ -316,15 +322,7 @@ export default class JustDance
 
 
 
-    setInitialSongAndJson()
-    {
-        ////////////////////////////////////////////////////////////////////
-        ///// Loading a song and beats on startup for testing purposes /////
-        ////////////////////////////////////////////////////////////////////
-        this.audio.src = "sound2/tool_short.mp3";          
-        this.jsonManager.loadJsonFileByPath('sound2/6beatstest.json');
-    }
-
+ 
     touchSuccesfulWithPercentage(percentAccuracy, sweetspotcircle)
     {
         ////////////////////////////////////////////////////////////////////
