@@ -1,5 +1,5 @@
 import MediaPipeTracker from './MediaPipeTracker.js';
-import UIManager, { Button } from './UIManager.js';
+import UIManager from './UIManager_Recorder.js';
 import LeaderBoardVisual from './LeaderBoardVisual.js';
 import PlayInfoBoxVisual from './PlayInfoBoxVisual.js';
 import LevelSelectVisual from './LevelSelectVisual.js';

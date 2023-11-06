@@ -1,5 +1,5 @@
 import MediaPipeTracker from './MediaPipeTracker.js';
-import UIManager, { Button } from './UIManager.js';
+import UIManager, { Button } from './UIManager_Recorder.js';
 import SweetSpotCircle from './SweetSpotCircle.js';
 import JsonManager from './JsonManager.js';
 import DrawEngine from './DrawEngine.js';
@@ -276,7 +276,10 @@ export default class Level_05
         ////////////////////////////////////////////////////////////////////
         ///// Loading a song and beats on startup for testing purposes /////
         ////////////////////////////////////////////////////////////////////
-        this.audio.src = "sound2/tool_short.mp3";          
+       // this.audio.src = "sound2/tool_short.mp3";          
+       // this.jsonManager.loadJsonFileByPath('sound2/6beatstest.json');
+
+        this.audio.src = "Level_Mp3AndJson/JustDance/JustDance.mp3";          
         this.jsonManager.loadJsonFileByPath('sound2/6beatstest.json');
     }
 

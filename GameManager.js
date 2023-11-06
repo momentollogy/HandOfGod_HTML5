@@ -1,19 +1,14 @@
 
-import Level_01 from './Level_01.js'
-import Level_02 from './Level_02.js'
-import Level_03 from './Level_03.js'
-import Level_04 from './Level_04.js'
-import Level_05 from './Level_05.js'
-import JustDance from './Level_JustDance.js'
 
-
+import Level_05 from './Level_05_Recorder.js'
+//import JustDance from './Level_JustDance.js'
 import Level_StageSelect from './Level_StageSelect.js'
 
 export default class GameManager {
     constructor() 
     {
-      // this.currentLevel = new Level_StageSelect()
-       this.currentLevel = new Level_05()
+    this.currentLevel = new Level_StageSelect()
+      // this.currentLevel = new Level_05()
        //this.currentLevel = new JustDance()
      //  document.addEventListener('levelChange', this.handleLevelChange.bind(this));
         document.addEventListener('levelChange', async (event) => {

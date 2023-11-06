@@ -43,7 +43,16 @@ export default class LevelSelectVisual {
 
         // Initialize the level array and selected index here
         this.levelArray = [
-            {fileName: "Level_JustDance", levelDisplayName: "Just Dance", fireBaseLevelLeaderBoard: "LINK", duration: "1min"},
+                        {
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "Just Dance", 
+                            fireBaseLevelLeaderBoard: "LINK",
+                            duration: "1min",
+                            mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
+                            jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
+                        },
+                        
+
             {fileName: "Level_Tool", levelDisplayName: "Tool", fireBaseLevelLeaderBoard: "LINK", duration: "2min"},
             {fileName: "Level_Wonder_Boy", levelDisplayName: "Wonder Boy", fireBaseLevelLeaderBoard: "LINK", duration: "2min"},
             {fileName: "Level_Green Day", levelDisplayName: "Green Day", fireBaseLevelLeaderBoard: "LINK", duration: "1:30"}
