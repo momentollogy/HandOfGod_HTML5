@@ -83,8 +83,8 @@ export default class LevelSelectVisual {
    }
 
    // Log after the index has been updated
-   console.log(`Selected Index: ${this.currentSelectedLevelIndex}`);
-   console.log('Selected Level:', this.levelArray[this.currentSelectedLevelIndex]);
+   //console.log(`Selected Index: ${this.currentSelectedLevelIndex}`);
+   //console.log('Selected Level:', this.levelArray[this.currentSelectedLevelIndex]);
 
    this.draw(); // Re-draw to update the visual selection
 }
@@ -102,7 +102,7 @@ handleMouseClick(event) {
  const Y_OFFSET = this.SCORE_LINE_HEIGHT / 2;
 
  // Log to see if the click is being registered with adjusted positions
- console.log(`Adjusted Click X: ${clickX}, Adjusted Click Y: ${clickY}`);
+ //console.log(`Adjusted Click X: ${clickX}, Adjusted Click Y: ${clickY}`);
 
  // Now we iterate over the levels and their bounding boxes
  this.levelArray.forEach((level, index) => {
@@ -127,8 +127,8 @@ handleMouseClick(event) {
 
 
      // Log to see which level was clicked
-     console.log(`Level ${level.levelDisplayName} was clicked!`);
-     console.log(`Selected Index: ${this.currentSelectedLevelIndex}`);
+     //console.log(`Level ${level.levelDisplayName} was clicked!`);
+     //console.log(`Selected Index: ${this.currentSelectedLevelIndex}`);
 
      this.draw(); // Re-draw to update the visual selection
      this.dispatchLevelSelectedEvent(); // Notify that a level was selected
