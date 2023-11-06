@@ -26,3 +26,31 @@ video {
     right:0;*/
     display:none;
 }
+
+
+
+button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition-duration: 0.4s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+}*/

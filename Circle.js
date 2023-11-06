@@ -58,11 +58,12 @@ export default class Circle {
         this.ctx.closePath();
 
         // draw radius at center
-        this.ctx.save();
-        this.ctx.scale(-1, 1);
+       // this.ctx.save();
+       // this.ctx.scale(1, 1);
         this.ctx.font = "20px Arial";
-        this.ctx.strokeText(Math.trunc(this.radius), -this.position.x-11, this.position.y+5);
-        this.ctx.restore();
+        //this.ctx.strokeText(Math.trunc(this.radius), -this.position.x-11, this.position.y+5);
+        this.ctx.strokeText(Math.trunc(this.radius),this.position.x-9, this.position.y+5);
+      //  this.ctx.restore();
     }
 
     is_hand_inside(hand_position) 
@@ -72,7 +73,6 @@ export default class Circle {
             const dist = Math.sqrt((this.position.x - hand_position.x) ** 2 + (this.position.y - hand_position.y) ** 2);
             this.handInside = true;
             return dist <= this.radius;
-           
         }
         this.handInside=false;
         return false;

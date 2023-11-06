@@ -1,27 +1,40 @@
 import MediaPipeTracker from './MediaPipeTracker.js';
-import VanillaCanvasDrawEngine from './VanillaCanvasDrawEngine.js';
+import DrawEngine from './DrawEngine.js';
 import GameManager from './GameManager.js';
 
 // reference all the things on the browser page
 const enableWebcamButton = document.getElementById("webcamButton");;
 const fullButton = document.getElementById("fullButton");;
-//const trackingButton = document.getElementById("trackerButton");;
-//const loopButton = document.getElementById("loopButton");;
 const video = document.getElementById("webcam");
-const canvasElement = document.getElementById("output_canvas");
+const mpcanvas = document.getElementById("mediaPipe_canvas");
+const canvas = document.getElementById("output_canvas");
 const container = document.getElementById("container");
 
-// Instatiate the MediaPipe / CVProcessor Class  and send it the video tag in it's constructor
-let mediaPipe = new MediaPipeTracker(video);
- canvasElement.width=1920;
- canvasElement.height=1080;;
+const selectCamButton = document.getElementById("selectCamButton");
+const webcamList = document.getElementById("webcamList");
 
-let gm = new GameManager(canvasElement,mediaPipe)
+let selectedCameraId = null;
 
-// instantiate the vanilla Draw engine
-let de = new VanillaCanvasDrawEngine(canvasElement,mediaPipe, video, gm)
 
-gm.setDrawEngine(de); // tell the game manager about the draw engine
+mpcanvas.width=1920;
+mpcanvas.height=1080;
+canvas.width=1920;
+canvas.height=1080;
+
+
+
+let gm = new GameManager()
+
+let mp = MediaPipeTracker.getInstance();
+mp.setVid(video);
+mp.createLandmarks();
+
+let de = DrawEngine.getInstance();
+de.setGameManager(gm);
+
+
+
+
 
 // Check if webcam access is supported.  If not: disable the button and change it's text 
 const hasGetUserMedia = () => { var _a; return !!((_a = navigator.mediaDevices) === null || _a === void 0 ? void 0 : _a.getUserMedia); };
@@ -33,31 +46,42 @@ else {
     enableWebcamButton.innerText = "Camera Not Fuond";
 }
 
+function onCameraSelectionChanged(event) {
+    selectedCameraId = webcamList.value;  // Store the selected camera ID
+}
+
 // Enable the live webcam view and start detection.
 function onEnableCamButtonClicked(event) {
-    // If the webcam stream is NOT running then activate the webcam stream. This asks the user for permission to use the camera, if Granted the browser returns a MEDIASTREAM object
-    if(!video.srcObject)
-    {
-        const videoConstraints = { width: 1920, height: 1080 };
+    // If the webcam stream is NOT running then activate the webcam stream.
+    if(!video.srcObject) {
+        const videoConstraints = {
+            deviceId: selectedCameraId,  // use the selected camera
+            width: 1920, 
+            height: 1080 
+        };
 
-        navigator.mediaDevices.getUserMedia( {video:videoConstraints} ).then( (stream) => {
+        navigator.mediaDevices.getUserMedia({video: videoConstraints}).then((stream) => {
             video.srcObject = stream;
-            video.addEventListener("loadeddata", onCamStartup); // this event starts the loop
+            video.addEventListener("loadeddata", onCamStartup);  // this event starts the loop
         });
-    }else{  // this else statement toggles the video source's display once the stream has been created
-        if(video.style.display =="none"){video.style.display ="block"}
-        else{video.style.display ="none"}
+    } else { 
+        // this else statement toggles the video source's display once the stream has been created
+        if(video.style.display == "none") {video.style.display = "block"}
+        else {video.style.display = "none"}
     }
 }
 
 // when the camera finally starts up
 function onCamStartup(event)
 {
-    canvasElement.width = video.videoWidth;
-    canvasElement.height = video.videoHeight;
-    container.style.width = "50%";
+    container.style.width = "75%";
     video.style.width = "100%";
-    canvasElement.style.width = "100%";
+    mpcanvas.width = video.videoWidth;
+    mpcanvas.height = video.videoHeight;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.style.width = "100%";
+    mpcanvas.style.width = "100%";
     fullButton.style.display="inline";
 
     // when the fullScreenButon is pressed..  it tells the container div to go full screen, then runs the setMirroring() function
@@ -69,10 +93,58 @@ function onCamStartup(event)
     de.loop();
 }
 
+
+
+function requestCameraPermission() {
+    return navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        // Once we get the stream, we can close it. We only needed the permissions.
+        let tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+    });
+}
+
+function getAvailableWebcams() {
+    webcamList.innerHTML = '';
+
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+        devices.forEach(device => {
+            if (device.kind === 'videoinput') {
+                const option = document.createElement('option');
+                option.value = device.deviceId;
+                option.text = device.label || `Camera ${webcamList.length + 1}`;
+                webcamList.appendChild(option);
+            }
+        });
+
+        if (webcamList.options.length > 0) {
+            selectedCameraId = webcamList.options[0].value;
+        }
+    });
+}
+
+
+requestCameraPermission()
+    .then(() => {
+        getAvailableWebcams();
+    })
+    .catch(error => {
+        console.error("Camera permissions not granted:", error);
+    });
+
+
+
+// Change event listener for dropdown to switch webcams.
+webcamList.addEventListener('change', (event) => {
+    selectedCameraId = event.target.value;  // Store the selected camera ID
+});
+
+
+
 // sets the video & canvas to be in "mirror mode"
 function setMirroring()
 {
-    canvasElement.style.transform = 'scaleX(-1)';
+    mpcanvas.style.transform = 'scaleX(-1)';
     video.style.transform = 'scaleX(-1)';
 }
 

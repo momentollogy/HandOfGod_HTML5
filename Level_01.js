@@ -3,17 +3,26 @@ import Circle from './Circle.js';  // Adjust the path to match the location of y
 
 export default class Level_01
 {
-    constructor(mp,canvasElement, canvasCtx){
+    constructor(mp,canvasElement){
         this.xpos = 0;
         this.ypos = 0;
         this.canvas = canvasElement;  // Fixed here
-        this.ctx = canvasCtx;  // Fixed here
+        this.ctx = this.canvas.getContext("2d");
         this.win = false;
         this.lose= false;
 
         //console.log("MATTS",canvasElement, canvasCtx);
         this.circle = new Circle(this.canvas, this.ctx, "red", {x:320,y:240}, 40);
+
+        this.canvas.addEventListener('click', this.logClickCoords.bind(this));
     }
+
+    logClickCoords(event) {
+      const rect = this.canvas.getBoundingClientRect(); // Get the canvas's position relative to the viewport
+      const x = event.clientX - rect.left; // Calculate the X coordinate
+      const y = event.clientY - rect.top;  // Calculate the Y coordinate
+      console.log(`Clicked at (${x}, ${y})`);
+  }
 
     level_loop(results,canvasElement,canvasCtx)
     {
@@ -28,7 +37,7 @@ export default class Level_01
               // Convert landmark coordinates to canvas coordinates
               const handPosition = 
               {
-                  x: landmark.x * this.canvas.width,
+                  x: this.canvas.width - (landmark.x * this.canvas.width),
                   y: landmark.y * this.canvas.height
               };
               
@@ -52,8 +61,10 @@ export default class Level_01
 
         // if hand is out do this  ( I used a toggle because of the for loop on the landmarks )
         if(inside){
-         // this.circle.color = 'blue';
+          // this.circle.color = 'blue';
+          //console.log("inside");
           this.circle.grow(.1);
+          this.circle.color = 'blue';
         }else{
           this.circle.color = 'green';
           this.circle.shrink();
