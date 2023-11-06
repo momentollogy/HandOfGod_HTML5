@@ -21,7 +21,6 @@ export default class Level_05
         
         this.audio = new Audio();
         this.audio.volume = 0.03; 
-        console.log("LEVEL5start")
         
         this.jsonManager = new JsonManager();
 
@@ -60,10 +59,29 @@ export default class Level_05
         this.comboNumber = 0;
         
         this.setInitialSongAndJson();
+<<<<<<< HEAD
         document.addEventListener("BeatMissed", (data) => {
             console.log("a miss has been detected!");
             this.beatMissed();
         });
+=======
+
+
+            // Listen for the 'ended' event
+            this.audio.addEventListener('ended', async () => {
+                console.log("Level Complete");
+                
+                // This will add a test score. You can remove it later after testing.
+                await testAddScore();
+            
+                // Fetch the top scores and log them
+                const topScores = await getTopScores();
+                console.log('Top Scores:', topScores);
+                
+                // You would typically have an end-level handling here
+                // this.endLevel(); // Make sure this method is defined
+            });
+>>>>>>> matt-leaderboard
     }
 
     initUI(){
@@ -199,12 +217,14 @@ export default class Level_05
 
         // update display stuff and process classes stuff
         for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
-        this.uiManager.draw();
+       // this.uiManager.draw();
     }
     
+    /* Only checks for landmark 8 - aka index finger point. 
+
     checkForFingerTouchCircles(){
         for(let sweetspotcircle of this.SweetSpotCircleArray){
-            if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20).length>0)
+            if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8).length>0)
             {
                 sweetspotcircle.puffy = true;  
                 let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
@@ -216,7 +236,34 @@ export default class Level_05
             }
         }
     }
+    */
+
+
+    //Same as above but USES ALL LANDMAKS
+    checkForFingerTouchCircles(){
+        for(let sweetspotcircle of this.SweetSpotCircleArray){
+            let anyLandmarkTouched = false;
+            for (let i = 0; i < 21; i++) { // Check all landmarks from 0 to 20
+                if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH, i).length > 0) {
+                    anyLandmarkTouched = true;
+                    break; // If any landmark touches, break the loop
+                }
+            }
+            if (anyLandmarkTouched) {
+                // No change to your existing code
+                sweetspotcircle.puffy = true;  
+                let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
+                if(percentAccuracyIfTouched){
+                    this.touchSuccesfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                }
+            } else {
+                // No change to your existing code
+                sweetspotcircle.puffy = false;
+            }
+        }
+    }
     
+
     increaseComboNumer(){
         this.comboNumber += 1;
         this.uiManager.comboNumber = this.comboNumber;
@@ -238,10 +285,47 @@ export default class Level_05
         }
     }
 
+    checkCirclesForMissesAndStuff(){
+        this.beatsMissed = 0;
+        for(let sweetspotcircle of this.SweetSpotCircleArray)
+        {   //console.log(sweetspotcircle.beatsMissed)
+            if(!sweetspotcircle.touched){
+                this.beatsMissed += sweetspotcircle.beatsMissed;
+                if(this.beatsMissed > this.beatsMissedPrevious){
+                    this.beatMissed();
+                    this.beatsMissedPrevious = this.beatsMissed;
+                }
+            }
+        }
+        this.uiManager.missesNumber = this.beatsMissed;
+    }
+
     removeMiss(){
         if(this.beatsMissed>0){this.beatsMissed -= 1;}
         this.uiManager.missesNumber = this.beatsMissed;
+        /*
+        // remove a miss from one circle, if that circle has none remove from the next circle etc..
+        for(let sweetspotcircle of this.SweetSpotCircleArray)
+        {
+            if(sweetspotcircle.beatsMissed > 0){
+                sweetspotcircle.beatsMissed -=1; 
+                break;
+            }
+        }
+        // tally the adjusted misses and set the miss tracking variables in all the appropriate places
+        this.beatsMissed = 0;
+        for(let sweetspotcircle of this.SweetSpotCircleArray)
+        {
+            this.beatsMissed += sweetspotcircle.beatsMissed;
+        }
+        this.beatsMissedPrevious = this.beatsMissed;
+        this.uiManager.missesNumber = this.beatsMissed;
+        */
     }
+
+
+
+
 
 
     setInitialSongAndJson()
@@ -258,8 +342,13 @@ export default class Level_05
         ////////////////////////////////////////////////////////////////////
         ////////////// Touch Succesful. Receive Percent ////////////////////
         //////////////////////////////////////////////////////////////////// 
+<<<<<<< HEAD
         this.increaseComboNumer(); 
         this.scoreNumber += ( percentAccuracy + this.comboNumber );
+=======
+       this.increaseComboNumer(); 
+        this.scoreNumber += ( percentAccuracy + (this.comboNumber*2));
+>>>>>>> matt-leaderboard
         this.uiManager.scoreNumber = this.scoreNumber;
         this.removeMiss();
         console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "score:", this.scoreNumber);
@@ -281,17 +370,96 @@ export default class Level_05
         }
     }
 
-    dispose()
-    {
-    this.canvas.removeEventListener('click', () => this.handleCanvasClick());
-    this.leadboardvisual = null;
-    this.mediaPipe = null;
-    this.canvas =  null;
-    this.ctx = null;
-    }
-
 
 }
 
 
-   
+    /*
+    closeToBeatDifference(sweetspotcircle) {
+        let b = sweetspotcircle.beatIndex;
+        let difference = sweetspotcircle.beatArray[b] - (this.audio.currentTime * 1000);
+        return difference;
+    }
+    
+    
+    drawFingerSwipe(hand){
+        let handArr = hand == "Left" ? this.previousPositions_L_arr : this.previousPositions_R_arr;
+        let color = hand == "Left" ? 'rgb(0, 255, 200)' : 'rgb(255, 255, 128)';
+        if(this.mediaPipe.getPointOfIndex(hand, 8))
+        {
+            let coords=this.mediaPipe.getPointOfIndex(hand, 8);
+            handArr.push(coords)
+
+            if(handArr.length > 8 ){handArr.shift();}
+            this.ctx.save()
+            let strokeWidth = 1.5;
+            this.ctx.lineJoin = 'round';
+            this.ctx.lineCap = 'round';
+        
+            for(let i=1; i<handArr.length; i++){
+                if( i < Math.round(handArr.length / 2)+3 ){ strokeWidth += 1.25 }else{ strokeWidth -= 1.75 }
+                
+                this.ctx.strokeStyle = color;
+                this.ctx.shadowColor = color;
+                this.ctx.shadowBlur = 12;
+                this.ctx.lineWidth = strokeWidth;
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(handArr[i-1].x, handArr[i-1].y);
+                this.ctx.lineTo(handArr[i].x , handArr[i].y);
+                this.ctx.stroke();
+            }
+            this.ctx.restore();
+        }
+    }
+
+    calculateNormalizedVector2(startX, startY, endX, endY) {
+        const directionX = endX - startX;
+        const directionY = endY - startY;
+
+        // Calculate the magnitude (length) of the direction vector
+        const magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
+
+        // Normalize the direction vector
+        const normalizedX = directionX / magnitude;
+        const normalizedY = directionY / magnitude;
+
+        return { x: normalizedX, y: normalizedY };
+    }
+
+    drawSlashOnSweetSpotCircle(sweetspotcircle){
+        if(sweetspotcircle.slash){
+            // define begining and end points
+            let fromX = sweetspotcircle.slash.start.x;
+            let fromY = sweetspotcircle.slash.start.y;
+            let toX = sweetspotcircle.slash.end.x
+            let toY = sweetspotcircle.slash.end.y
+            let arrowSize = 16;
+
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+            this.ctx.shadowBlur = 0;
+            this.ctx.strokeStyle = sweetspotcircle.slash.hand == "Left" ? 'rgb(0, 255, 255)' : 'rgb(255, 255, 0)';
+            this.ctx.lineWidth = 5;
+            this.ctx.moveTo( fromX, fromY );
+            this.ctx.lineTo( toX, toY );
+            this.ctx.stroke();
+
+            // draw arrow head
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            const x1 = toX - arrowSize * Math.cos(angle - Math.PI / 6);
+            const y1 = toY - arrowSize * Math.sin(angle - Math.PI / 6);
+            const x2 = toX - arrowSize * Math.cos(angle + Math.PI / 6);
+            const y2 = toY - arrowSize * Math.sin(angle + Math.PI / 6);
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(toX, toY);
+            this.ctx.lineTo(x1, y1);
+            this.ctx.lineTo(x2, y2);
+            this.ctx.closePath();
+            this.ctx.stroke();
+            this.ctx.restore();
+        }
+    }
+    */

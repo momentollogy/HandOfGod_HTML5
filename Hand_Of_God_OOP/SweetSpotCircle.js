@@ -40,6 +40,16 @@ export default class SweetSpotCircle {
         this.name="";
     }
     
+    getBeatCircleData(){
+        let returnArray = [];
+        for (let i=0 ; i< this.beatCircles_Array.length ; i++)
+        {
+            returnArray.push({time:this.beatCircles_Array[i].beatTime,  dir:this.beatCircles_Array[i].direction});
+        } 
+        console.log(returnArray);
+        return returnArray;
+    }
+
     receiveAndProcessCircleData(circleData){
 
         // sort the incoming data to ensure the beat times line up with the time indexes
@@ -130,7 +140,10 @@ export default class SweetSpotCircle {
             if(this.beatIndex < this.beatCircles_Array.length -1 ){
                 this.beatIndex++;
                 this.beatPassed = false;
-                if (!this.touched) {this.beatsMissed++;} // console.log("Beats Missed:",this.beatsMissed);}
+                if (!this.touched) {
+                    this.beatsMissed++;
+                    document.dispatchEvent(new Event("BeatMissed"));
+                }
                 this.touched=false;
                 this.touchable = false;
             }else{
@@ -281,6 +294,7 @@ export default class SweetSpotCircle {
     {
         // this assumes that reset will reset the audio to currentTime = 0 so it makes sense to set the beatIndex to 0 also
         this.beatIndex = 0;
+        this.beatsMissed = 0;
         this.pulse();
     }
 
