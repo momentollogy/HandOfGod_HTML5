@@ -10,12 +10,14 @@ export default class UIManager
         this.scoreNumber=0;
         this.comboNumber=0;
         this.missesNumber=0; 
-
+        this.rect = this.canvas.getBoundingClientRect();
         this.isMouseDown = false;
         this.volumeSliderX = 30; // Closer to the left edge
         this.volumeSliderY = this.canvas.height / 2 - 40; // Adjust Y to lower the slider
         this.volumeSliderHeight = 300;
         this.volumeSliderWidth = 20; // A thinner rectangle
+        this.mouseCanvasX = 0;
+        this.mouseCanvasY = 0;
 
          // Bind event listeners for mouse interactions
         this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this), false);
@@ -78,88 +80,73 @@ export default class UIManager
         
         this.drawVolumeSlider();
 
-
     }
 
+    drawVolumeSlider() {
+        this.volumeSliderX = 30; // Closer to the left edge
+        //const volumeSliderY = 100;
+        //this.volumeSliderY = this.canvas.height / 2 - 40; // Adjust Y to lower the slider
 
-    // Inside UIManager class
+        this.volumeSliderHeight = 300;
+        this.volumeSliderWidth = 20; // A thinner rectangle
 
-drawVolumeSlider() {
-    this.volumeSliderX = 30; // Closer to the left edge
-    //const volumeSliderY = 100;
-    this.volumeSliderY = this.canvas.height / 2 - 40; // Adjust Y to lower the slider
+        // Draw the background rectangle for the volume slider
+        this.ctx.fillStyle = '#333'; // A darker color for the background
+        this.ctx.fillRect(this.volumeSliderX, this.volumeSliderY, this.volumeSliderWidth, this.volumeSliderHeight);
 
-    this.volumeSliderHeight = 300;
-    this.volumeSliderWidth = 20; // A thinner rectangle
-
-    // Draw the background rectangle for the volume slider
-    this.ctx.fillStyle = '#333'; // A darker color for the background
-    this.ctx.fillRect(this.volumeSliderX, this.volumeSliderY, this.volumeSliderWidth, this.volumeSliderHeight);
-
-    // Draw the filled part of the volume slider based on the current volume
-    this.ctx.fillStyle = '#00FF00'; // A bright color for the filled part
-    const filledHeight = this.audio.volume * this.volumeSliderHeight; // Calculate filled height
-    this.ctx.fillRect(this.volumeSliderX, this.volumeSliderY + this.volumeSliderHeight - filledHeight, this.volumeSliderWidth, filledHeight);
-}
-
-handleMouseDown(event) {
-    // Check if we are within the slider
-    if (this.isClickWithinSlider(event)) {
-        this.isMouseDown = true;
-        this.handleVolumeClick(event); // Set the initial volume
+        // Draw the filled part of the volume slider based on the current volume
+        this.ctx.fillStyle = '#00FF00'; // A bright color for the filled part
+        const filledHeight = this.audio.volume * this.volumeSliderHeight; // Calculate filled height
+        this.ctx.fillRect(this.volumeSliderX, this.volumeSliderY + this.volumeSliderHeight - filledHeight, this.volumeSliderWidth, filledHeight);
     }
-}
 
-handleMouseMove(event) {
-    if (this.isMouseDown) {
-        this.handleVolumeClick(event); // Adjust the volume while dragging
+    handleMouseDown(event) {
+        // Check if we are within the slider
+        //console.log("down",this.isClickWithinSlider());
+        if (this.isClickWithinSlider()) {
+            this.isMouseDown = true;
+            this.handleVolumeClick(event); // Set the initial volume
+        }
     }
-}
 
-handleMouseUp(event) {
-    this.isMouseDown = false;
-}
+    handleMouseMove(event) {
+        //console.log("move",this.isClickWithinSlider());
+        this.setMouseCoords(event);
+        if (this.isMouseDown) {
+            this.handleVolumeClick(event); // Adjust the volume while dragging
+        }
+    }
 
-handleVolumeClick(event) {
-    const rect = this.canvas.getBoundingClientRect();
-    const y = event.clientY - rect.top; // Y position of the click
-  
-    // Constants for the slider position and dimensions
-    const volumeSliderY = this.canvas.height / 2;
-    const volumeSliderHeight = 300;
+    handleMouseUp(event) {
+        //console.log("up",this.isClickWithinSlider());
+        this.isMouseDown = false;
+    }
 
-    // Calculate the new volume based on where the slider was clicked
-    // The top of the slider (y = volumeSliderY) is 100% volume
-    // The bottom of the slider (y = volumeSliderY + volumeSliderHeight) is 0% volume
-  //  let newVolume = (volumeSliderY + volumeSliderHeight - y) / volumeSliderHeight;
-    let newVolume = (volumeSliderY + volumeSliderHeight - y) / volumeSliderHeight;
+    handleVolumeClick(event) {
+        //console.log("changing volume in UIManager.handleVolumeClick()");
+        let newVolume = (this.volumeSliderY + this.volumeSliderHeight - this.mouseCanvasY) / this.volumeSliderHeight;
     
-    // Invert the volume, because the canvas Y coordinate increases downwards
-    newVolume = 1 - newVolume;
+        // Ensure the volume is within the 0 to 1 range
+        newVolume = Math.max(0, Math.min(newVolume, 1));
 
-    // Ensure the volume is within the 0 to 1 range
-    newVolume = Math.max(0, Math.min(newVolume, 1));
+        // Set the audio volume
+        this.audio.volume = newVolume;
 
-    // Set the audio volume
-    this.audio.volume = newVolume;
+        // Redraw the slider to reflect the new volume
+        this.drawVolumeSlider();
+    }
 
-    // Redraw the slider to reflect the new volume
-    this.drawVolumeSlider();
-}
+    setMouseCoords(event){
+        var scaleX = this.canvas.width / this.rect.width;
+        var scaleY = this.canvas.height / this.rect.height;
 
+        this.mouseCanvasX = (event.clientX - this.rect.left) * scaleX;
+        this.mouseCanvasY = (event.clientY - this.rect.top) * scaleY;
+    }
 
-isClickWithinSlider(event) {
-    const rect = this.canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    const volumeSliderX = 30;
-    const volumeSliderY = this.canvas.height / 2;
-    const volumeSliderWidth = 20;
-    const volumeSliderHeight = 300;
-
-    return x >= volumeSliderX && x <= volumeSliderX + volumeSliderWidth &&
-           y >= volumeSliderY && y <= volumeSliderY + volumeSliderHeight;
-}
+    isClickWithinSlider() {
+        return this.mouseCanvasX > this.volumeSliderX && this.mouseCanvasX < this.volumeSliderX + this.volumeSliderWidth && this.mouseCanvasY > this.volumeSliderY && this.mouseCanvasY < this.volumeSliderY + this.volumeSliderHeight
+    }
 
         
 }

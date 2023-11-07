@@ -65,12 +65,12 @@ export default class Level_BasicTouch
             this.beatMissed();
         });
 
-
+        /*
         //event listner for volume knob
         this.canvas.addEventListener('click', (event) => {
             this.uiManager.handleVolumeClick(event);
         });
-
+        */
         
         // load mp3, json, and play
         this.audio.src = this.mp3Path;          
