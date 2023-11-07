@@ -45,19 +45,19 @@ export default class LevelSelectVisual {
         this.levelArray = [
                         {
                             fileName: "Level_BasicTouch", 
-                            levelDisplayName: "Just Dance", 
+                            levelDisplayName: "'Just Dance' Lady Gaga", 
                             fireBaseLevelLeaderBoard: "LINK",
-                            duration: "1min",
+                            duration: "1:07",
                             mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
                             jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
                         },
                         {   
                             fileName: "Level_BasicTouch", 
-                            levelDisplayName: "Tool-Short", 
+                            levelDisplayName: "'Pneuma' Tool", 
                             fireBaseLevelLeaderBoard: "LINK", 
-                            duration: "2min",
+                            duration: ":56",
                             mp3Path:"Level_Mp3AndJson/Tool/tool_short.mp3", 
-                            jsonPath:"Level_Mp3AndJson/Tool/6beatstest.json"
+                            jsonPath:"Level_Mp3AndJson/Tool/toolv3.json"
                         },
 
 

@@ -3,9 +3,8 @@ import UIManager from './UIManager.js';
 import SweetSpotCircle from './SweetSpotCircle.js';
 import JsonManager from './JsonManager.js';
 import DrawEngine from './DrawEngine.js';
-//import BackgroundManager from './BackgroundManager.js'
 
-export default class Level_05
+export default class Level_BasicTouch
 {
     constructor(_mp3Path,_jsonPath)
     {
@@ -24,13 +23,10 @@ export default class Level_05
         
         this.uIButtons = []
         this.uiManager = new UIManager(this.audio,this.uIButtons)
-        // this.initUI();
-
-        // this.bkg = new BackgroundManager(this.audio);
 
         this.SweetSpotCircleArray=[];
-        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: 820, y: this.canvas.height/2}  );
-        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: 1080, y: this.canvas.height/2} );
+        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: this.canvas.width /2 -125, y: this.canvas.height/2+200}  );
+        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: this.canvas.width /2 +125, y: this.canvas.height/2+200} );
         this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -90;
         this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -90;
         this.SweetSpotCircleArray[0].name="LeftSSCir";
@@ -69,120 +65,20 @@ export default class Level_05
             this.beatMissed();
         });
 
+
+        //event listner for volume knob
+        this.canvas.addEventListener('click', (event) => {
+            this.uiManager.handleVolumeClick(event);
+        });
+
+        
         // load mp3, json, and play
         this.audio.src = this.mp3Path;          
         this.jsonManager.loadJsonFileByPath(this.jsonPath);
         this.audio.play();
     }
 
-    /*
-    initUI(){
-        this.canvas.addEventListener('click', this.uiManager.handleClick.bind(this.uiManager));
-        this.canvas.addEventListener('mousemove', this.uiManager.handleMouseMove.bind(this.uiManager));
-        this.canvas.addEventListener('mousedown', this.uiManager.handleMouseDown.bind(this.uiManager));
-        this.canvas.addEventListener('mouseup', this.uiManager.handleMouseUp.bind(this.uiManager));
-        
-        // responds to when the JSON loaded and beat data is available on the JSON Manager
-      
-        document.addEventListener('StartStop', (data) => {
-            //console.log("Play button!!");
-            if(this.audio.paused){this.audio.play();
-            }else{this.audio.pause();}
-            
-        });
-        
-        document.addEventListener('Reset', (data) => {
-            this.audio.currentTime = 0;
-            this.uiManager.scoreNumber = 0;
-            this.uiManager.comboNumber = 0;
-            this.SweetSpotCircleArray[0].reset();
-            this.SweetSpotCircleArray[1].reset();
-            this.uiManager.draw();
-            this.resetVariables();
-        });
-
-        document.addEventListener('ExportBeats', (data) => {
-            //console.log("export");
-            this.exportRecordedMoments_Array();
-        });
-
-        document.addEventListener('LoadBeats', (data) => {
-            //console.log("load beats");
-            this.jsonManager.promptForFile(); 
-        });
-
-        document.addEventListener('LoadSong', () => {
-            //console.log("load Song pressed");
-            
-            // if there is no file input node on the HTML, then create one
-            if(!this.songInput){
-                this.songInput = document.createElement('input');
-                this.songInput.type = 'file';
-                this.songInput.accept = '.mp3,.wav';
-                this.songInput.style.display = 'none';
-                document.body.appendChild(this.songInput);
-                // when the file is loaded use it as the new src for the audio object
-                this.songInput.addEventListener('change', () => {
-                    const selectedFile = this.songInput.files[0];
-                    if (selectedFile) {
-                        this.audio.src = URL.createObjectURL(selectedFile)
-                        //this.audio.load();
-                    }
-                });
-            }
-            this.songInput.click();
-        });
-
-        document.addEventListener('Record', (data) => {
-            this.setRecordMode();
-        });
-
-    }
     
-    resetVariables(){
-        console.log("resseting variables etc..");
-        this.scoreNumber = 0;
-        this.comboNumber = 0;
-        this.beatsMissed = 0;
-        this.beatsMissedPrevious=0;
-        for(let sweetspotcircle of this.SweetSpotCircleArray)
-        {
-            sweetspotcircle.beatsMissed = 0;
-        }
-    }
-
-    setRecordMode(){
-        this.recordMode = !this.recordMode;
-        this.uiManager.recordMode = this.recordMode;
-        for (let sweetspotcircle of this.SweetSpotCircleArray){
-            if(this.recordMode){
-                sweetspotcircle.setRecordMode(true);
-            }else{
-                sweetspotcircle.setRecordMode(false);
-            }
-        }
-    }
-
-    exportRecordedMoments_Array() 
-    {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify
-            ({
-               // beatTimes:          this.recordedMoments_Array,
-                leftCircleData:     this.SweetSpotCircleArray[0].getBeatCircleData(),
-                rightCircleData:    this.SweetSpotCircleArray[1].getBeatCircleData()
-                //bkgPulses:          [500,1000,1500,2000],
-                //mp3FileName:        "",
-                //bmp:                60,
-                //settings:           {}
-            }));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "recordedMoments.json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-    }
-*/
     level_loop() {
         // mediapipe stuff
         let results = this.mediaPipe.results;
@@ -230,36 +126,8 @@ export default class Level_05
         if(this.beatsMissed>0){this.beatsMissed -= 1;}
         this.uiManager.missesNumber = this.beatsMissed;
     }
-    /*
-    sendTouchesForRecording(){
-        for(let sweetspotcircle of this.SweetSpotCircleArray){
-            if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8).length>0)
-            {
-                sweetspotcircle.touchingInRecordModeSTART();
-            }else{
-                sweetspotcircle.touchingInRecordModeEND();
-            }        
-        }
-    }
-
-    checkCirclesForMissesAndStuff(){
-        this.beatsMissed = 0;
-        for(let sweetspotcircle of this.SweetSpotCircleArray)
-        {   //console.log(sweetspotcircle.beatsMissed)
-            if(!sweetspotcircle.touched){
-                this.beatsMissed += sweetspotcircle.beatsMissed;
-                if(this.beatsMissed > this.beatsMissedPrevious){
-                    this.beatMissed();
-                    this.beatsMissedPrevious = this.beatsMissed;
-                }
-            }
-        }
-        this.uiManager.missesNumber = this.beatsMissed;
-    }
-    */
     
-
-
+    
 
 
     touchSuccesfulWithPercentage(percentAccuracy, sweetspotcircle)
@@ -283,7 +151,7 @@ export default class Level_05
         this.uiManager.missesNumber = this.beatsMissed;
         this.resetComboNumber();
         //console.log(this.beatsMissed + " Beats Missed total");
-        if(this.beatsMissed > 20){
+        if(this.beatsMissed > 1){
             console.log("you lose");
             this.audio.pause();
             // show something in the UI perhaps?
