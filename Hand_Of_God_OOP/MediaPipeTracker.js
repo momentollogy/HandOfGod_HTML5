@@ -33,7 +33,7 @@ export default class MediaPipeTracker
 
     createLandmarks(){
         this.createHandLandmarker().then(() => {
-            console.log("Hand Landmark model loaded!");
+            //console.log("Hand Landmark model loaded!");
         });
     }
 

@@ -5,13 +5,13 @@ import BoxUI from './BoxUI.js';
 export default class LevelSelectVisual {
  
     constructor(playInfoBoxVisual) {
-     this.playInfoBoxVisual = playInfoBoxVisual;
-     console.log(this.playInfoBoxVisual);
+    this.playInfoBoxVisual = playInfoBoxVisual;
+    //console.log(this.playInfoBoxVisual);
 
    
     
-     this.canvas = document.getElementById("output_canvas");
-     this.ctx = this.canvas.getContext("2d");
+    this.canvas = document.getElementById("output_canvas");
+    this.ctx = this.canvas.getContext("2d");
 
 
         // Define the box properties, ensuring they can be modified dynamically
@@ -51,11 +51,18 @@ export default class LevelSelectVisual {
                             mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
                             jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
                         },
-                        
+                        {   
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "Tool-Short", 
+                            fireBaseLevelLeaderBoard: "LINK", 
+                            duration: "2min",
+                            mp3Path:"Level_Mp3AndJson/Tool/tool_short.mp3", 
+                            jsonPath:"Level_Mp3AndJson/Tool/6beatstest.json"
+                        },
 
-            {fileName: "Level_Tool", levelDisplayName: "Tool", fireBaseLevelLeaderBoard: "LINK", duration: "2min"},
-            {fileName: "Level_Wonder_Boy", levelDisplayName: "Wonder Boy", fireBaseLevelLeaderBoard: "LINK", duration: "2min"},
-            {fileName: "Level_Green Day", levelDisplayName: "Green Day", fireBaseLevelLeaderBoard: "LINK", duration: "1:30"}
+
+            //{fileName: "Level_Wonder_Boy", levelDisplayName: "Wonder Boy", fireBaseLevelLeaderBoard: "LINK", duration: "2min"},
+            //{fileName: "Level_Green Day", levelDisplayName: "Green Day", fireBaseLevelLeaderBoard: "LINK", duration: "1:30"}
         ];
         this.currentSelectedLevelIndex = 0;
         this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[0]);

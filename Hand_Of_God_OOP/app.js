@@ -10,7 +10,7 @@ const mpcanvas = document.getElementById("mediaPipe_canvas");
 const canvas = document.getElementById("output_canvas");
 const container = document.getElementById("container");
 
-const selectCamButton = document.getElementById("selectCamButton");
+//const selectCamButton = document.getElementById("selectCamButton");
 const webcamList = document.getElementById("webcamList");
 
 let selectedCameraId = null;
@@ -45,11 +45,11 @@ else {
     enableWebcamButton.removeEventListener("click", onEnableCamButtonClicked);
     enableWebcamButton.innerText = "Camera Not Fuond";
 }
-
+/*
 function onCameraSelectionChanged(event) {
     selectedCameraId = webcamList.value;  // Store the selected camera ID
 }
-
+*/
 // Enable the live webcam view and start detection.
 function onEnableCamButtonClicked(event) {
     // If the webcam stream is NOT running then activate the webcam stream.
@@ -74,6 +74,7 @@ function onEnableCamButtonClicked(event) {
 // when the camera finally starts up
 function onCamStartup(event)
 {
+    console.log("camera starting up!!");
     container.style.width = "75%";
     video.style.width = "100%";
     mpcanvas.width = video.videoWidth;

@@ -21,14 +21,12 @@ export default class Level_05
         this.jsonManager = new JsonManager();
         this.mp3Path=_mp3Path;
         this.jsonPath=_jsonPath;
-        console.log(this.mp3Path,this.jsonPath)
-
-
+        
         this.uIButtons = []
-       this.uiManager = new UIManager(this.audio,this.uIButtons)
-       // this.initUI();
+        this.uiManager = new UIManager(this.audio,this.uIButtons)
+        // this.initUI();
 
-       // this.bkg = new BackgroundManager(this.audio);
+        // this.bkg = new BackgroundManager(this.audio);
 
         this.SweetSpotCircleArray=[];
         this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: 820, y: this.canvas.height/2}  );
@@ -38,6 +36,13 @@ export default class Level_05
         this.SweetSpotCircleArray[0].name="LeftSSCir";
         this.SweetSpotCircleArray[1].name="RightSSCir";
 
+        this.recordedMoments_Array=[];
+        this.recordMode = false;
+        this.beatsMissed=0;
+        this.scoreNumber = 0;
+        this.comboNumber = 0;
+
+        this.beatsMissedPrevious=0;
         this.beatArray=[];
         this.beatCircles_Array = [];
         this.lastfingerposition;
@@ -47,34 +52,30 @@ export default class Level_05
         this.swipeDirectionPos_arr = [];
         this.swipeHand = "";
         this.currentHandedness = null;
-        this.recordedMoments_Array=[];
         this.previousPositions_L_arr=[];
         this.previousPositions_R_arr=[];
         this.displayBkg = false;
-        this.recordMode = false;
-        this.beatsMissed=0;
-        this.beatsMissedPrevious=0;
         this.hasBeatBeenMissed=false;
-        this.scoreNumber = 0;
-        this.comboNumber = 0;
-
-
-        document.addEventListener('beatTimeDataReady', event => {
-            console.log('beatTimeDataReady ready ready ready ready ready :', event.detail);
-                //parseJsonData();
-                this.SweetSpotCircleArray[0].receiveAndProcessCircleData(this.jsonManager.leftCircleData);
-                this.SweetSpotCircleArray[1].receiveAndProcessCircleData(this.jsonManager.rightCircleData);
-            });
-    
-
         
-        this.setInitialSongAndJson();
-        document.addEventListener("BeatMissed", (data) => {
-            console.log("a miss has been detected!");
+
+        // event handler for when json is fully loaded
+        document.addEventListener('beatTimeDataReady', event => {
+            this.SweetSpotCircleArray[0].receiveAndProcessCircleData(this.jsonManager.leftCircleData);
+            this.SweetSpotCircleArray[1].receiveAndProcessCircleData(this.jsonManager.rightCircleData);
+        });
+        
+        // event handler for when beat missed ( this is dispatched from SweetSpotCircles )
+        document.addEventListener("BeatMissed", (data) => {;
             this.beatMissed();
         });
+
+        // load mp3, json, and play
+        this.audio.src = this.mp3Path;          
+        this.jsonManager.loadJsonFileByPath(this.jsonPath);
+        this.audio.play();
     }
 
+    /*
     initUI(){
         this.canvas.addEventListener('click', this.uiManager.handleClick.bind(this.uiManager));
         this.canvas.addEventListener('mousemove', this.uiManager.handleMouseMove.bind(this.uiManager));
@@ -137,7 +138,7 @@ export default class Level_05
         });
 
     }
-
+    
     resetVariables(){
         console.log("resseting variables etc..");
         this.scoreNumber = 0;
@@ -181,7 +182,7 @@ export default class Level_05
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
     }
-
+*/
     level_loop() {
         // mediapipe stuff
         let results = this.mediaPipe.results;
@@ -225,6 +226,11 @@ export default class Level_05
         this.uiManager.comboNumber = this.comboNumber;
     }
 
+    removeMiss(){
+        if(this.beatsMissed>0){this.beatsMissed -= 1;}
+        this.uiManager.missesNumber = this.beatsMissed;
+    }
+    /*
     sendTouchesForRecording(){
         for(let sweetspotcircle of this.SweetSpotCircleArray){
             if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8).length>0)
@@ -250,27 +256,11 @@ export default class Level_05
         }
         this.uiManager.missesNumber = this.beatsMissed;
     }
-
-    removeMiss(){
-        if(this.beatsMissed>0){this.beatsMissed -= 1;}
-        this.uiManager.missesNumber = this.beatsMissed;
-     
-    }
+    */
+    
 
 
 
-
-
-
-    setInitialSongAndJson()
-    {
-        ////////////////////////////////////////////////////////////////////
-        ///// Loading a song and beats on startup for testing purposes /////
-        ////////////////////////////////////////////////////////////////////
-        this.audio.src = this.mp3Path;          
-        this.jsonManager.loadJsonFileByPath(this.jsonPath);
-        this.audio.play();
-    }
 
     touchSuccesfulWithPercentage(percentAccuracy, sweetspotcircle)
     {
@@ -281,7 +271,7 @@ export default class Level_05
         this.scoreNumber += ( percentAccuracy + this.comboNumber );
         this.uiManager.scoreNumber = this.scoreNumber;
         this.removeMiss();
-        console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "score:", this.scoreNumber);
+        //console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "score:", this.scoreNumber);
     }
 
     beatMissed()

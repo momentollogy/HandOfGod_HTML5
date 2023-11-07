@@ -166,11 +166,11 @@ export default class PlayInfoBoxVisual {
      onMouseMove(event) 
      {
       const rect = this.canvas.getBoundingClientRect();
-  const scaleX = this.canvas.width / rect.width;   // relationship bitmap vs. element for X
-  const scaleY = this.canvas.height / rect.height; // relationship bitmap vs. element for Y
+      const scaleX = this.canvas.width / rect.width;   // relationship bitmap vs. element for X
+      const scaleY = this.canvas.height / rect.height; // relationship bitmap vs. element for Y
 
-  const mouseX = (event.clientX - rect.left) * scaleX; // scale mouseX from event
-  const mouseY = (event.clientY - rect.top) * scaleY; // scale mouseY from event
+      const mouseX = (event.clientX - rect.left) * scaleX; // scale mouseX from event
+      const mouseY = (event.clientY - rect.top) * scaleY; // scale mouseY from event
 
       // Check if the mouse is over the button
       this.isButtonHovered = mouseX >= this.BUTTON_X && mouseX <= this.BUTTON_X + this.BUTTON_WIDTH &&
@@ -182,9 +182,9 @@ export default class PlayInfoBoxVisual {
     // Event handler for mouse button down
     onMouseDown(event) 
     {
-      console.log(event.clientX,event.clientY, this.BOX_X,this.BOX_Y, this.BUTTON_X, this.BUTTON_Y);
+      //console.log(event.clientX,event.clientY, this.BOX_X,this.BOX_Y, this.BUTTON_X, this.BUTTON_Y);
       if (this.isButtonHovered) {
-       console.log('Button should be pressed down'); // For debugging
+       //console.log('Button should be pressed down'); // For debugging
 
         this.isButtonPressed = true;
         this.draw(); // Redraw the canvas to reflect the button pressed state
@@ -201,7 +201,7 @@ export default class PlayInfoBoxVisual {
     const mouseY = (event.clientY - rect.top) * scaleY; // scale mouseY from event
 
     if (this.isButtonHovered) {
-      console.log('Button should be released'); // For debugging
+      //console.log('Button should be released'); // For debugging
 
       // Simulate a button click when mouse button goes up while hovering the button
       this.onPlayButtonClick({ offsetX: mouseX, offsetY: mouseY });
@@ -217,27 +217,21 @@ export default class PlayInfoBoxVisual {
      const mouseY = event.offsetY;
    
      // Check if the click is inside the button area
-     if (mouseX >= this.BUTTON_X && mouseX <= this.BUTTON_X + this.BUTTON_WIDTH &&
-         mouseY >= this.BUTTON_Y && mouseY <= this.BUTTON_Y + this.BUTTON_HEIGHT) {
-       console.log("Play Button clicked");
-   
+     if ( mouseX >= this.BUTTON_X && mouseX <= this.BUTTON_X + this.BUTTON_WIDTH &&
+          mouseY >= this.BUTTON_Y && mouseY <= this.BUTTON_Y + this.BUTTON_HEIGHT) {
+
        // Ensure that the currentLevelData is available
        if (this.currentLevelData) {
-         // Dispatch the custom event with the filename of the current level
-         const levelName = this.currentLevelData.fileName;
-         console.log(`Dispatching level change for: ${levelName}`);
-         document.dispatchEvent(new CustomEvent('levelChange', { detail: { levelName: levelName } }));
+         const detailData = {levelName:this.currentLevelData.fileName, mp3Path:this.currentLevelData.mp3Path, jsonPath:this.currentLevelData.jsonPath };
+         document.dispatchEvent(new CustomEvent('levelChange', { detail: detailData }));
        }
      }
    }
    
 
-
-
-
-   dispose() 
-   {
+  dispose() 
+  {
     window.removeEventListener('levelSelected', this.boundUpdateCurrentLevel);
     // ... other cleanup code ...
-   }
+  }
 }
