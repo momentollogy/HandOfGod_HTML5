@@ -16,7 +16,7 @@ export default class GameManager {
         try {
           const module = await import(`./${levelName}.js`);
           const LevelClass = module.default; // Assumes the class is the default export
-          const levelInstance = new LevelClass(event.detail.mp3Path, event.detail.jsonPath);
+          const levelInstance = new LevelClass(event.detail);
           this.currentLevel.dispose();
           this.currentLevel = null;
           this.currentLevel=levelInstance;

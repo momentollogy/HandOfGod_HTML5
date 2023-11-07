@@ -46,11 +46,12 @@ export default class LevelSelectVisual {
                         {
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "'Just Dance' Lady Gaga", 
-                            fireBaseLevelLeaderBoard: "JustDance_Easy",//refers to my collection name
+                            fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",
                             duration: "1:07",
                             mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
                             jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
                         },
+                        
                         {   
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "'Pneuma' Tool", 
@@ -70,11 +71,12 @@ export default class LevelSelectVisual {
                         {   
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "Level_3NoteTest", 
-                            fireBaseLevelLeaderBoard: "TBD", 
-                            duration: "",
+                            fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard", 
+                            duration: "1:23",
                             mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
                             jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"
                         },
+                        
 
 
             //{fileName: "Level_Wonder_Boy", levelDisplayName: "Wonder Boy", fireBaseLevelLeaderBoard: "LINK", duration: "2min"},

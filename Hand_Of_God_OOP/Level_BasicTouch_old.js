@@ -10,7 +10,7 @@ import { addScore } from './Leaderboard.js';
 
 export default class Level_BasicTouch
 {
-    constructor(_levelArrayDataObject)
+    constructor(_mp3Path,_jsonPath)
     {
         this.mediaPipe = MediaPipeTracker.getInstance()
         this.canvas = document.getElementById("output_canvas");;
@@ -22,12 +22,9 @@ export default class Level_BasicTouch
         this.audio.volume = 0.03; 
         
         this.jsonManager = new JsonManager();
-
-        this.levelArrayDataObject= _levelArrayDataObject;
-        this.mp3Path= this.levelArrayDataObject.mp3Path;
-        this.jsonPath=this.levelArrayDataObject.jsonPath;
-        this.fireBaseLevelLeaderBoard = this.levelArrayDataObject.fireBaseLevelLeaderBoard;
-
+        this.mp3Path=_mp3Path;
+        this.jsonPath=_jsonPath;
+        
         this.uIButtons = []
         this.uiManager = new UIManager(this.audio,this.uIButtons)
 
@@ -79,6 +76,14 @@ export default class Level_BasicTouch
         // listen for when song ends to log level complete
         this.audio.addEventListener('ended', this.audioEnded.bind(this));
 
+        
+
+        /*
+        //event listner for volume knob
+        this.canvas.addEventListener('click', (event) => {
+            this.uiManager.handleVolumeClick(event);
+        });
+        */
         
         // load mp3, json, and play
         this.audio.src = this.mp3Path;          
@@ -171,7 +176,7 @@ export default class Level_BasicTouch
         console.log('Level Complete');
         console.log('Score is:', this.scoreNumber);
     
-        addScore(this.playerName, this.scoreNumber,this.levelArrayDataObject).then(() => {
+        addScore(this.playerName, this.scoreNumber).then(() => {
             this.leaderBoardVisualInstance.populateAndDraw();
         }).catch(error => {
             console.error("Error adding score: ", error);

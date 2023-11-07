@@ -3,12 +3,15 @@
 // Import db from firebase initialization module
 import { db } from './firebase.js';
 
+
 import { collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 
 // Function to add a score
-export async function addScore(name, score) {
+export async function addScore(name, score,levelArrayDataObject) {
+  console.log(levelArrayDataObject.length)
+
   try {
-    const docRef = await addDoc(collection(db, "leaderboards"), {
+    const docRef = await addDoc(collection(db,"JustDance_easy_LeaderBoard"), {
       name: name,
       score: score,
       timestamp: new Date() // Firestore will convert this into its Timestamp type
