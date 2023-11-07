@@ -24,6 +24,7 @@ export default class Level_BasicTouch
         this.jsonManager = new JsonManager();
         this.mp3Path=_mp3Path;
         this.jsonPath=_jsonPath;
+        this.fireBaseLevelLeaderBoard = _fireBaseLevelLeaderBoard;
         
         this.uIButtons = []
         this.uiManager = new UIManager(this.audio,this.uIButtons)
