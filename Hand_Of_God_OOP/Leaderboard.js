@@ -5,7 +5,10 @@ import { db } from './firebase.js';
 
 import { collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0f6651c558a7239e42243293f28fec9cbbd7f739
 // Function to add a score
 export async function addScore(name, score) {
   try {

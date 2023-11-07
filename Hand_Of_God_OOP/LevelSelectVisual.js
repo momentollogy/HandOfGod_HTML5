@@ -46,8 +46,12 @@ export default class LevelSelectVisual {
                         {
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "'Just Dance' Lady Gaga", 
+<<<<<<< HEAD
                             fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",
                           //  fireBaseLevelLeaderBoard1: "JustDance_normal_LeaderBoard",//refers to my collection name
+=======
+                            fireBaseLevelLeaderBoard: "JustDance_Easy",//refers to my collection name
+>>>>>>> 0f6651c558a7239e42243293f28fec9cbbd7f739
                             duration: "1:07",
                             mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
                             jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
