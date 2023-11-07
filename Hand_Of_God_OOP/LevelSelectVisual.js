@@ -46,7 +46,7 @@ export default class LevelSelectVisual {
                         {
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "'Just Dance' Lady Gaga", 
-                            fireBaseLevelLeaderBoard: "LINK",
+                            fireBaseLevelLeaderBoard: "JustDance_Easy",//refers to my collection name
                             duration: "1:07",
                             mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
                             jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
@@ -54,10 +54,26 @@ export default class LevelSelectVisual {
                         {   
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "'Pneuma' Tool", 
-                            fireBaseLevelLeaderBoard: "LINK", 
+                            fireBaseLevelLeaderBoard: "Pneuma_Easy", 
                             duration: ":56",
                             mp3Path:"Level_Mp3AndJson/Tool/tool_short.mp3", 
                             jsonPath:"Level_Mp3AndJson/Tool/toolv3.json"
+                        },
+                        {   
+                            fileName: "Level_05_Recorder", 
+                            levelDisplayName: "Level_Recorder", 
+                            fireBaseLevelLeaderBoard: "TBD", 
+                            duration: "",
+                            mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
+                            jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"
+                        },
+                        {   
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "Level_3NoteTest", 
+                            fireBaseLevelLeaderBoard: "TBD", 
+                            duration: "",
+                            mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
+                            jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"
                         },
 
 

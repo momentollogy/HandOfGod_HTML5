@@ -40,7 +40,7 @@ export async function getTopScores(limitCount = 10) {
 // Test function to add a score
 export async function testAddScore() {
   try {
-    await addScore('Yorgo', 12030); // Use a test name and score
+    await addScore('momentology', 19600); // Use a test name and score
     console.log('Test score added successfully');
   } catch (error) {
     console.error('Error adding test score:', error);

@@ -3,6 +3,10 @@ import UIManager from './UIManager.js';
 import SweetSpotCircle from './SweetSpotCircle.js';
 import JsonManager from './JsonManager.js';
 import DrawEngine from './DrawEngine.js';
+import LeaderBoardVisual from './LeaderBoardVisual.js';
+import { addScore } from './Leaderboard.js';
+ 
+
 
 export default class Level_BasicTouch
 {
@@ -52,7 +56,11 @@ export default class Level_BasicTouch
         this.previousPositions_R_arr=[];
         this.displayBkg = false;
         this.hasBeatBeenMissed=false;
-        
+
+        this.playerName = 'momentology'; // Add this line with a default test player name
+      //  const leaderBoardVisual = new LeaderBoardVisual();
+        this.leaderBoardVisualInstance = new LeaderBoardVisual();
+
 
         // event handler for when json is fully loaded
         document.addEventListener('beatTimeDataReady', event => {
@@ -64,6 +72,11 @@ export default class Level_BasicTouch
         document.addEventListener("BeatMissed", (data) => {;
             this.beatMissed();
         });
+
+        // listen for when song ends to log level complete
+        this.audio.addEventListener('ended', this.audioEnded.bind(this));
+
+        
 
         /*
         //event listner for volume knob
@@ -151,13 +164,25 @@ export default class Level_BasicTouch
         this.uiManager.missesNumber = this.beatsMissed;
         this.resetComboNumber();
         //console.log(this.beatsMissed + " Beats Missed total");
-        if(this.beatsMissed > 1){
+        if(this.beatsMissed > 20){
             console.log("you lose");
             this.audio.pause();
             // show something in the UI perhaps?
         }
     }
 
+
+    audioEnded() {
+        console.log('Level Complete');
+        console.log('Score is:', this.scoreNumber);
+    
+        addScore(this.playerName, this.scoreNumber).then(() => {
+            this.leaderBoardVisualInstance.populateAndDraw();
+        }).catch(error => {
+            console.error("Error adding score: ", error);
+        });
+    }
+    
 
 }
 

@@ -79,7 +79,6 @@ export default class PlayInfoBoxVisual {
  
  
 
-
   updateCurrentLevel(event) {
    // Make sure to modify this to handle the event object
    //this.currentLevelData = event.detail;
