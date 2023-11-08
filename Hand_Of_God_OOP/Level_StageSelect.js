@@ -15,11 +15,24 @@ export default class Level_StageSelect
     
         this.playInfoBoxVisual = new PlayInfoBoxVisual();
         this.levelselectvisual = new LevelSelectVisual(this.playInfoBoxVisual);
-        this.leadboardvisual = new LeaderBoardVisual();
         this.playInfoBoxVisual.levelselectvisual=this.levelselectvisual;
         this.playInfoBoxVisual.currentLevelData=this.levelselectvisual.levelArray;
         this.playInfoBoxVisual.updateCurrentLevel(this.levelselectvisual.levelArray[0]);
+        this.leaderboardvisual = new LeaderBoardVisual();
+       // this.leaderboardvisual = new LeaderBoardVisual();
 
+
+        setTimeout(() => 
+        {
+            if (this.levelselectvisual.levelArray && this.levelselectvisual.levelArray.length > 0) {
+                const initialLeaderboardId = this.levelselectvisual.levelArray[0].fireBaseLevelLeaderBoard;
+                this.leaderboardvisual.populateAndDraw(initialLeaderboardId);
+            } else {
+                console.error('Level array is not initialized.');
+            }
+        }, 0); // A timeout of 0 ms means execute as soon as the stack is clear
+
+       
 
     }
 
@@ -38,7 +51,7 @@ export default class Level_StageSelect
         let results = this.mediaPipe.results;
         if (results == undefined) { return; }
        // console.log("select level")
-       this.leadboardvisual.draw(); 
+       this.leaderboardvisual.draw(); 
        this.levelselectvisual.draw();  
       this.playInfoBoxVisual.draw(); 
 
@@ -49,7 +62,7 @@ export default class Level_StageSelect
     {
    // console.log("dispose ran!!!!")
     this.canvas.removeEventListener('click', () => this.handleCanvasClick());
-    this.leadboardvisual = null;
+    this.leaderboardvisual = null;
     this.mediaPipe = null;
     this.canvas =  null;
     this.ctx = null;

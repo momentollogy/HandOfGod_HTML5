@@ -10,6 +10,10 @@ export default class LeaderBoardVisual {
         this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
 
+
+        this.boundLevelSelected = this.levelSelected.bind(this);
+        window.addEventListener('levelSelected', this.boundLevelSelected);
+
         // Box properties
         this.RESIZE_FACTOR = 0.8;
         this.POSITION_OFFSET_X = -610;
@@ -21,7 +25,7 @@ export default class LeaderBoardVisual {
         this.LEADERBOARD_RADIUS = 100;
         
         // Header and score styling variables
-        this.HEADER_HEIGHT = 80;
+        this.HEADER_HEIGHT = 155;
         this.HEADER_FONT_SIZE = 50;
         this.SCORE_FONT_SIZE = 30;
         this.SCORE_LINE_HEIGHT = 50;
@@ -41,6 +45,7 @@ export default class LeaderBoardVisual {
 
         // Immediately attempt to populate and draw the leaderboard
         this.populateAndDraw();
+        
     }
 
     draw() {
@@ -58,7 +63,7 @@ export default class LeaderBoardVisual {
         this.ctx.fillText(
             "HIGHSCORES", 
             this.LEADERBOARD_X + (this.LEADERBOARD_WIDTH / 2), 
-            this.LEADERBOARD_Y + this.HEADER_HEIGHT / 2 + 10
+            this.LEADERBOARD_Y + this.HEADER_HEIGHT / 2 + 37
         );
 
         // Draw the scores
@@ -89,9 +94,17 @@ export default class LeaderBoardVisual {
         this.ctx.restore();
     }
 
-    async populateAndDraw() {
+    // Handle the levelSelected event
+    levelSelected(event) 
+    {
+        const selectedLevelLeaderboard = event.detail.fireBaseLevelLeaderBoard;
+        this.populateAndDraw(selectedLevelLeaderboard);
+    }
+  
+
+    async populateAndDraw(leaderboardId) {
         // Fetch the top scores
-        let topScores = await getTopScores();
+        let topScores = await getTopScores(leaderboardId); // Adjust getTopScores to accept an id
         
         // Transform the scores to match what the draw function expects
        let transformedScores = topScores.map(score => ({
@@ -106,4 +119,9 @@ export default class LeaderBoardVisual {
     update(newScores) {
         this.scores = newScores;
     }
+
+    dispose() {
+        window.removeEventListener('levelSelected', this.boundLevelSelected);
+        // ... other cleanup code ...
+      }
 }

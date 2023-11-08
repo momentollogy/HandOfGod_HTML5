@@ -5,6 +5,8 @@ import JsonManager from './JsonManager.js';
 import DrawEngine from './DrawEngine.js';
 import LeaderBoardVisual from './LeaderBoardVisual.js';
 import { addScore } from './Leaderboard.js';
+import BlueButton from './BlueButton.js';
+
  
 
 
@@ -61,6 +63,53 @@ export default class Level_BasicTouch
         this.displayBkg = false;
         this.hasBeatBeenMissed=false;
 
+        // Button positions (You may need to adjust these positions to fit your layout)
+        const leftButtonX = 100; // for example, 100 pixels from the left
+        const rightButtonX = this.canvas.width - 300; // for example, 300 pixels from the right edge
+        const buttonY = this.canvas.height / 2 + 400; // vertical center for demonstration
+        const buttonWidth = 150;
+        const buttonHeight = 50;
+        const buttonRadius = 10;
+
+        
+
+            // Create 'Restart' button instance
+        this.restartButton = new BlueButton(
+            this.ctx,
+            leftButtonX,
+            buttonY,
+            buttonWidth,
+            buttonHeight,
+            buttonRadius,
+            "#00008B", // deep blue color
+            "#0000CD", // lighter blue for hover effect
+            "Restart",
+            "rgba(0, 0, 0, 0.5)",
+            () => console.log("Restart Button clicked") // Pass a function directly
+        );
+
+        
+        
+        // Create 'Level Select' button instance
+        this.levelSelectButton = new BlueButton(
+            this.ctx,
+            rightButtonX,
+            buttonY,
+            buttonWidth,
+            buttonHeight,
+            buttonRadius,
+            "#00008B", // deep blue color
+            "#0000CD", // lighter blue for hover effect
+            "Level Select",
+            "rgba(0, 0, 0, 0.5)",
+            () => console.log("Left Button clicked") // Pass a function directly
+        );
+
+
+
+
+        
+
         this.playerName = 'momentology'; // Add this line with a default test player name
       //  const leaderBoardVisual = new LeaderBoardVisual();
         this.leaderBoardVisualInstance = new LeaderBoardVisual();
@@ -104,6 +153,8 @@ export default class Level_BasicTouch
         // update display stuff and process classes stuff
         for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
         this.uiManager.draw();
+       this.restartButton.draw();
+        this.levelSelectButton.draw();
     }
     
     checkForFingerTouchCircles(){

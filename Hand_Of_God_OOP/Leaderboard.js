@@ -2,8 +2,6 @@
 
 // Import db from firebase initialization module
 import { db } from './firebase.js';
-
-
 import { collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 
 // Function to add a score
@@ -23,8 +21,8 @@ export async function addScore(name, score,levelArrayDataObject) {
 }
 
 // Function to retrieve top scores
-export async function getTopScores(limitCount = 10) {
-  const scoresCollectionRef = collection(db, "leaderboards");
+export async function getTopScores(leaderboardId,limitCount = 10) {
+  const scoresCollectionRef = collection(db, leaderboardId);
   const scoresQuery = query(scoresCollectionRef, orderBy("score", "desc"), limit(limitCount));
 
   try {

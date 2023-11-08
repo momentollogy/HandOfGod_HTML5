@@ -1,11 +1,9 @@
 // PlayInfoBoxVisual.js
 import BoxUI from './BoxUI.js'; // Assuming BoxUI.js exists and is in the same directory
 
-
 export default class PlayInfoBoxVisual {
 
  
-
   constructor() 
   {
 
@@ -21,7 +19,7 @@ export default class PlayInfoBoxVisual {
 
     // Box properties
     this.RESIZE_FACTOR = 0.65; // Smaller size for the play info box
-    this.POSITION_OFFSET_X = 600;
+    this.POSITION_OFFSET_X = 680;
     this.POSITION_OFFSET_Y = -200;
     this.BOX_WIDTH = 800 * this.RESIZE_FACTOR;
     this.BOX_HEIGHT = 400 * this.RESIZE_FACTOR;
