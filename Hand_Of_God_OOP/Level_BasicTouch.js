@@ -12,6 +12,8 @@ export default class Level_BasicTouch
 {
     constructor(_levelArrayDataObject)
     {
+        console.log('Level_BasicTouch constructor - levelArrayDataObject:', _levelArrayDataObject);
+
         this.mediaPipe = MediaPipeTracker.getInstance()
         this.canvas = document.getElementById("output_canvas");;
         this.ctx = this.canvas.getContext("2d");
@@ -26,7 +28,6 @@ export default class Level_BasicTouch
         this.levelArrayDataObject= _levelArrayDataObject;
         this.mp3Path= this.levelArrayDataObject.mp3Path;
         this.jsonPath=this.levelArrayDataObject.jsonPath;
-        this.fireBaseLevelLeaderBoard = this.levelArrayDataObject.fireBaseLevelLeaderBoard;
 
         this.uIButtons = []
         this.uiManager = new UIManager(this.audio,this.uIButtons)
@@ -170,7 +171,8 @@ export default class Level_BasicTouch
     audioEnded() {
         console.log('Level Complete');
         console.log('Score is:', this.scoreNumber);
-    
+
+        console.log('audioEnded - levelArrayDataObject:', this.levelArrayDataObject);
         addScore(this.playerName, this.scoreNumber,this.levelArrayDataObject).then(() => {
             this.leaderBoardVisualInstance.populateAndDraw();
         }).catch(error => {

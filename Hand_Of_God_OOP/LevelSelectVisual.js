@@ -55,7 +55,7 @@ export default class LevelSelectVisual {
                         {   
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "'Pneuma' Tool", 
-                            fireBaseLevelLeaderBoard: "Pneuma_Easy", 
+                            fireBaseLevelLeaderBoard: "Pneuma_easy_LeaderBoard", 
                             duration: ":56",
                             mp3Path:"Level_Mp3AndJson/Tool/tool_short.mp3", 
                             jsonPath:"Level_Mp3AndJson/Tool/toolv3.json"
