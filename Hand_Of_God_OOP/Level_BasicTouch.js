@@ -6,6 +6,8 @@ import DrawEngine from './DrawEngine.js';
 import LeaderBoardVisual from './LeaderBoardVisual.js';
 import { addScore } from './Leaderboard.js';
 import BlueButton from './BlueButton.js';
+import { OverlayText } from './OverlayText.js';
+
 
  
 
@@ -14,7 +16,7 @@ export default class Level_BasicTouch
 {
     constructor(_levelArrayDataObject)
     {
-        console.log('Level_BasicTouch constructor - levelArrayDataObject:', _levelArrayDataObject);
+       // console.log('Level_BasicTouch constructor - levelArrayDataObject:', _levelArrayDataObject);
 
         this.mediaPipe = MediaPipeTracker.getInstance()
         this.canvas = document.getElementById("output_canvas");;
@@ -27,7 +29,8 @@ export default class Level_BasicTouch
         
         this.jsonManager = new JsonManager();
 
-        this.levelArrayDataObject= _levelArrayDataObject;
+        this.levelArrayDataObject = _levelArrayDataObject; //important
+
         this.mp3Path= this.levelArrayDataObject.mp3Path;
         this.jsonPath=this.levelArrayDataObject.jsonPath;
 
@@ -63,6 +66,9 @@ export default class Level_BasicTouch
         this.displayBkg = false;
         this.hasBeatBeenMissed=false;
 
+        this.overlayText = new OverlayText();
+
+
         // Button positions (You may need to adjust these positions to fit your layout)
         const leftButtonX = 100; // for example, 100 pixels from the left
         const rightButtonX = this.canvas.width - 300; // for example, 300 pixels from the right edge
@@ -73,22 +79,87 @@ export default class Level_BasicTouch
 
         
 
-            // Create 'Restart' button instance
-        this.restartButton = new BlueButton(
-            this.ctx,
-            leftButtonX,
-            buttonY,
-            buttonWidth,
-            buttonHeight,
-            buttonRadius,
-            "#00008B", // deep blue color
-            "#0000CD", // lighter blue for hover effect
-            "Restart",
-            "rgba(0, 0, 0, 0.5)",
-            () => console.log("Restart Button clicked") // Pass a function directly
-        );
+/*
 
-        
+//TAKE 1 - passing direct data like how play button did it
+
+this.restartButton = new BlueButton(
+    this.ctx,
+    leftButtonX,
+    buttonY,
+    buttonWidth,
+    buttonHeight,
+    buttonRadius,
+    "#00008B", // deep blue color
+    "#0000CD", // lighter blue for hover effect
+    "Restart",
+    "rgba(0, 0, 0, 0.5)",
+    () => {
+        console.log("Restart Button action function, current level data:", this.levelArrayDataObject);
+
+        // First, call the cleanup method
+        this.cleanup();
+
+        // Then, construct the level data to dispatch with the event
+        const detailData = {
+            levelName: this.levelArrayDataObject.fileName,
+            levelDisplayName: this.levelArrayDataObject.levelDisplayName,
+            fireBaseLevelLeaderBoard: this.levelArrayDataObject.fireBaseLevelLeaderBoard,
+            duration: this.levelArrayDataObject.duration,
+            mp3Path: this.levelArrayDataObject.mp3Path,
+            jsonPath: this.levelArrayDataObject.jsonPath
+            // Add other properties from this.levelArrayDataObject as needed
+        };
+
+        // Dispatch the levelChange event with the detailData
+        document.dispatchEvent(new CustomEvent('levelChange', { detail: detailData }));
+    }
+);
+*/
+
+//TAKE 2 - passing object
+
+//const LevelSelectVisual = this.levelArrayDataObject.event.detail.levelName;
+
+/*
+this.restartButton = new BlueButton(
+    this.ctx,
+    leftButtonX,
+    buttonY,
+    buttonWidth,
+    buttonHeight,
+    buttonRadius,
+    "#00008B", // Deep blue color
+    "#0000CD", // Lighter blue for hover effect
+    "Restart",
+    "rgba(0, 0, 0, 0.5)",
+   // this.levelArrayDataObject.event.detail.levelName // Pass the level data object here
+    // LevelSelectVisual
+);
+
+/*
+
+
+//TAKE 3 - function wrapped in arrow
+this.restartButton = new BlueButton(
+    this.ctx,
+    leftButtonX,
+    buttonY,
+    buttonWidth,
+    buttonHeight,
+    buttonRadius,
+    "#00008B", // Deep blue color
+    "#0000CD", // Lighter blue for hover effect
+    "Restart",
+    "rgba(0, 0, 0, 0.5)",
+    () => { // Pass an anonymous function that calls cleanup and then dispatches the event
+        this.cleanup(); // Call the cleanup method
+        // Dispatch the levelChange event with the level data
+        document.dispatchEvent(new CustomEvent('levelChange', { detail: this.levelArrayDataObject }));
+    }
+);
+
+    
         
         // Create 'Level Select' button instance
         this.levelSelectButton = new BlueButton(
@@ -102,13 +173,15 @@ export default class Level_BasicTouch
             "#0000CD", // lighter blue for hover effect
             "Level Select",
             "rgba(0, 0, 0, 0.5)",
-            () => console.log("Left Button clicked") // Pass a function directly
+           // "Level_StageSelect", // Pass the level data object here
+
+          //  () => console.log("Left Button clicked") // Pass a function directly
         );
 
 
 
 
-        
+           */ 
 
         this.playerName = 'momentology'; // Add this line with a default test player name
       //  const leaderBoardVisual = new LeaderBoardVisual();
@@ -153,8 +226,13 @@ export default class Level_BasicTouch
         // update display stuff and process classes stuff
         for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
         this.uiManager.draw();
-       this.restartButton.draw();
-        this.levelSelectButton.draw();
+        //this.restartButton.draw();
+        //this.levelSelectButton.draw();
+        // Now update and draw the overlay texts
+        this.overlayText.update(); // This will update positions and fade out texts
+        this.overlayText.draw(this.ctx); // This will draw texts to the canvas
+
+
     }
     
     checkForFingerTouchCircles(){
@@ -164,6 +242,7 @@ export default class Level_BasicTouch
                 sweetspotcircle.puffy = true;  
                 let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
                 if(percentAccuracyIfTouched){
+
                     this.touchSuccesfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
                 }
             }else{
@@ -192,14 +271,18 @@ export default class Level_BasicTouch
 
     touchSuccesfulWithPercentage(percentAccuracy, sweetspotcircle)
     {
+        console.log('touchSuccesfulWithPercentage called with:', percentAccuracy, sweetspotcircle);
+
         ////////////////////////////////////////////////////////////////////
         ////////////// Touch Succesful. Receive Percent ////////////////////
         //////////////////////////////////////////////////////////////////// 
+        let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
+        this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
         this.increaseComboNumer(); 
         this.scoreNumber += ( percentAccuracy + this.comboNumber );
         this.uiManager.scoreNumber = this.scoreNumber;
         this.removeMiss();
-        //console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "score:", this.scoreNumber);
+        console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "score:", this.scoreNumber);
     }
 
     beatMissed()
@@ -210,7 +293,6 @@ export default class Level_BasicTouch
         this.beatsMissed += 1;
         this.uiManager.missesNumber = this.beatsMissed;
         this.resetComboNumber();
-        //console.log(this.beatsMissed + " Beats Missed total");
         if(this.beatsMissed > 20){
             console.log("you lose");
             this.audio.pause();
@@ -230,6 +312,29 @@ export default class Level_BasicTouch
             console.error("Error adding score: ", error);
         });
     }
+
+    cleanup() {
+        // Stop and reset the audio
+        if (this.audio) {
+            this.audio.pause();
+            this.audio.currentTime = 0;
+        }
+    
+        // Reset the state of each SweetSpotCircle
+        this.SweetSpotCircleArray.forEach(sweetSpotCircle => sweetSpotCircle.reset());
+    
+        // Clear game-related arrays
+        this.beatCircles_Array = []; // Assuming this is an array of objects for beat circles
+        this.recordedMoments_Array = []; // Assuming this is for recording moments or beats
+    
+        // Reset game-related counters
+        this.beatsMissed = 0;
+        this.scoreNumber = 0;
+        this.comboNumber = 0;
+    
+        // ... any additional resets for other state variables ...
+    }
+    
     
 
 }

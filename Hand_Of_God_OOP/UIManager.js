@@ -19,6 +19,8 @@ export default class UIManager
         this.mouseCanvasX = 0;
         this.mouseCanvasY = 0;
 
+        
+
          // Bind event listeners for mouse interactions
         this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this), false);
         this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this), false);
@@ -27,7 +29,8 @@ export default class UIManager
 
   
 
-    draw() {
+    draw() 
+    {
 
         //DRAWING THE SCORE
        // Positioning for the score and combo display

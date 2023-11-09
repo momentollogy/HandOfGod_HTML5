@@ -1,8 +1,9 @@
 import BoxUI from './BoxUI.js'; // Assuming BoxUI.js exists and is in the same directory
 
 export default class BlueButton {
-  constructor(ctx, x, y, width, height, radius, color, hoverColor, text, shadowColor,callback) {
+  constructor(ctx, x, y, width, height, radius, color, hoverColor, text, shadowColor,actionData, buttonAction) {
     // Context from the canvas where the button will be drawn
+
     this.ctx = ctx;
 
     // Button properties
@@ -15,7 +16,10 @@ export default class BlueButton {
     this.hoverColor = hoverColor;
     this.text = text;
     this.shadowColor = shadowColor || 'rgba(0, 0, 0, 0.5)';
-    this.callback = callback;
+
+    this.actionData = actionData; // The data needed to perform the action (like level details)
+    this.buttonAction = buttonAction; // The type of action this button represents ("restart", "levelSelect", etc.)
+
 
 
     // State variables for button interaction
@@ -33,10 +37,6 @@ export default class BlueButton {
     this.ctx.canvas.addEventListener('mousedown', this.onMouseDown);
     this.ctx.canvas.addEventListener('mouseup', this.onMouseUp);
     this.ctx.canvas.addEventListener('click', this.onClick);
-
-    // New variable to store the event detail or callback for the click event
-    //this.onClickDetail = onClickDetail;
-    //this.dispatchClickEvent = this.dispatchClickEvent.bind(this);
 
   }
 
@@ -96,23 +96,19 @@ export default class BlueButton {
     }
   }
 
-  // Event handler for click on the button
-  onClick(event) {
-    if (this.isHovered) {
-      // Perform action or dispatch custom event
-      console.log('Button clicked!');
-      this.callback();
-      //this.dispatchClickEvent();
-      // Dispatch custom event or call callback function here
-    }
-  }
+// Event handler for click on the button
+// Inside the BlueButton class
+onClick(event) {
+ if (this.isHovered) {
+   console.log(`${this.text} Button clicked!`);
+   console.log('Dispatching event with details:', this.actionData);
 
-  dispatchClickEvent() {
-   if (this.onClickDetail) {
-     const event = new CustomEvent('levelChange', { detail: this.onClickDetail });
-     document.dispatchEvent(event);
-   }
+   // Dispatch the event with the actionData
+   // Make sure the event name here matches what your GameManager is listening for
+   document.dispatchEvent(new CustomEvent('levelChange', { detail: this.actionData }));
  }
+}
+
 
   dispose() {
     // Remove event listeners when the button is no longer needed

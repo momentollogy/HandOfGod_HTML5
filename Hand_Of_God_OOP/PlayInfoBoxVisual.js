@@ -29,7 +29,7 @@ export default class PlayInfoBoxVisual {
 
     // Header and level info styling variables
     this.HEADER_HEIGHT = 50; // Smaller header for the play info box
-    this.HEADER_FONT_SIZE = 40;
+    this.HEADER_FONT_SIZE = 37;
     this.LEVEL_INFO_FONT_SIZE = 20;
 
     // Create BoxUI instance for the play info box
