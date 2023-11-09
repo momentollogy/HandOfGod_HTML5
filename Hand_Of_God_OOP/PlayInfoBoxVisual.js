@@ -221,6 +221,7 @@ export default class PlayInfoBoxVisual {
        if (this.currentLevelData) {
         const detailData = 
         {
+          
           levelName: this.currentLevelData.fileName,
           levelDisplayName: this.currentLevelData.levelDisplayName,
           fireBaseLevelLeaderBoard: this.currentLevelData.fireBaseLevelLeaderBoard,
@@ -228,7 +229,10 @@ export default class PlayInfoBoxVisual {
           mp3Path: this.currentLevelData.mp3Path,
           jsonPath: this.currentLevelData.jsonPath
           // Add other properties from this.currentLevelData as needed
-        };         document.dispatchEvent(new CustomEvent('levelChange', { detail: detailData }));
+          
+        };        
+        console.log('Dispatching levelChange with details:', detailData);
+        document.dispatchEvent(new CustomEvent('levelChange', { detail: detailData }));
        }
      }
    }

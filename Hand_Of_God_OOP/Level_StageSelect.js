@@ -12,6 +12,22 @@ export default class Level_StageSelect
         this.mediaPipe = MediaPipeTracker.getInstance();
         this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
+
+
+
+
+
+        //BACKGOUND IMAGE
+        this.backgroundImage = new Image();
+        this.backgroundImage.onload = () => 
+         // Draw the image onto the canvas once it's loaded
+        {
+            this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
+        };
+        this.backgroundImage.src = 'images/bg_imageda66opacity.jpeg'; 
+    
+
+
     
         this.playInfoBoxVisual = new PlayInfoBoxVisual();
         this.levelselectvisual = new LevelSelectVisual(this.playInfoBoxVisual);
@@ -47,6 +63,12 @@ export default class Level_StageSelect
 
     level_loop() 
     {
+        //added this for bg image.
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Draw the background image
+        this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
+
         // mediapipe stuff
         let results = this.mediaPipe.results;
         if (results == undefined) { return; }

@@ -2,7 +2,8 @@
 // Assuming the BoxUI class has been imported correctly
 import BoxUI from './BoxUI.js';
 
-export default class LevelSelectVisual {
+export default class LevelSelectVisual 
+{
  
     constructor(playInfoBoxVisual) {
     this.playInfoBoxVisual = playInfoBoxVisual;
@@ -13,6 +14,7 @@ export default class LevelSelectVisual {
     this.canvas = document.getElementById("output_canvas");
     this.ctx = this.canvas.getContext("2d");
 
+    
 
         // Define the box properties, ensuring they can be modified dynamically
         this.RESIZE_FACTOR = 0.8;
@@ -26,11 +28,11 @@ export default class LevelSelectVisual {
 
         // Create an instance of BoxUI for the leaderboard
         this.box = new BoxUI(this.ctx,
-                             this.LEADERBOARD_X,
-                             this.LEADERBOARD_Y,
-                             this.LEADERBOARD_WIDTH,
-                             this.LEADERBOARD_HEIGHT,
-                             this.LEADERBOARD_RADIUS);
+                    this.LEADERBOARD_X,
+                    this.LEADERBOARD_Y,
+                    this.LEADERBOARD_WIDTH,
+                    this.LEADERBOARD_HEIGHT,
+                    this.LEADERBOARD_RADIUS);
 
         // Header and score styling variables
         this.HEADER_HEIGHT = 113;

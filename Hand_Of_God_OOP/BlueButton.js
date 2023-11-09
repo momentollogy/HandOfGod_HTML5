@@ -102,6 +102,7 @@ onClick(event) {
  if (this.isHovered) {
    console.log(`${this.text} Button clicked!`);
    console.log('Dispatching event with details:', this.actionData);
+   
 
    // Dispatch the event with the actionData
    // Make sure the event name here matches what your GameManager is listening for
