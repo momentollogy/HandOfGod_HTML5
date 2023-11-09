@@ -304,14 +304,26 @@ this.restartButton = new BlueButton(
     audioEnded() {
         console.log('Level Complete');
         console.log('Score is:', this.scoreNumber);
-
-        console.log('audioEnded - levelArrayDataObject:', this.levelArrayDataObject);
-        addScore(this.playerName, this.scoreNumber,this.levelArrayDataObject).then(() => {
-            this.leaderBoardVisualInstance.populateAndDraw();
-        }).catch(error => {
-            console.error("Error adding score: ", error);
-        });
+    
+        // Prompt the user for their name
+        const playerName = window.prompt("Enter Player Name:", "");
+        if (playerName) { // If a name was entered
+            this.playerName = playerName; // Store the entered name
+            console.log('audioEnded - levelArrayDataObject:', this.levelArrayDataObject);
+            
+            // Now that we have the playerName, proceed with adding the score
+            addScore(this.playerName, this.scoreNumber, this.levelArrayDataObject).then(() => {
+                this.leaderBoardVisualInstance.populateAndDraw();
+            }).catch(error => {
+                console.error("Error adding score: ", error);
+            });
+        } else {
+            console.log('User did not enter a name.');
+            // Handle the case where the user does not enter a name
+            // You might want to ask them again, or handle it however you prefer
+        }
     }
+    
 
     cleanup() {
         // Stop and reset the audio

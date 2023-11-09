@@ -81,13 +81,13 @@ export default class LevelSelectVisual {
                         },
                         {   
                             fileName: "Level_05_Recorder", 
-                            levelDisplayName: "Custom Level Recorder", 
+                            levelDisplayName: "Custom Level Rec.", 
                             fireBaseLevelLeaderBoard: "TBD", 
                             duration: "",
                             mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
                             jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"
                         },
-                        /*
+                        
                         {   
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "Level_3NoteTest", 
@@ -96,6 +96,7 @@ export default class LevelSelectVisual {
                             mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
                             jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"
                         },
+                        /*
                         {   
                             fileName: "Level_StageSelect", 
                             levelDisplayName: "Test to get pass LevelStage", 
