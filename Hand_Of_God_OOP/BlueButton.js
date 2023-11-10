@@ -110,6 +110,44 @@ onClick(event) {
  }
 }
 
+/*
+/////////////////////////////////
+/////////////////////////////////
+//INCLUDES Prompt for user name.
+/////////////////////////////////
+/////////////////////////////////
+
+onClick(event) {
+  if (this.isHovered) {
+      console.log(`${this.text} Button clicked!`);
+      
+      // Check if the button clicked is the 'Start' button from the title screen
+      if (this.text === "Start" && this.actionData.levelName === "Level_StageSelect") {
+          let playerName = window.prompt("Enter Player Name (max 14 characters):", "");
+          
+          // Keep prompting if the input is too long
+          while (playerName && playerName.length > 14) {
+              playerName = window.prompt("Name too long. Enter Player Name (max 14 characters):", "");
+          }
+
+          // If a playerName is entered and within the character limit, store it and dispatch the event
+          if (playerName) {
+              window.playerName = playerName; // Store the player's name globally
+              
+              // Dispatch the event with the actionData
+              document.dispatchEvent(new CustomEvent('levelChange', { detail: this.actionData }));
+          } else {
+              console.log('User did not enter a name.');
+              // Handle the case where the user does not enter a name
+          }
+      } else {
+          // If it's any other button, just dispatch the event as before
+          document.dispatchEvent(new CustomEvent('levelChange', { detail: this.actionData }));
+      }
+  }
+}
+*/
+
 
   dispose() {
     // Remove event listeners when the button is no longer needed
