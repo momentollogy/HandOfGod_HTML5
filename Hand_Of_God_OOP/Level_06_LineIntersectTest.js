@@ -49,47 +49,93 @@ export default class Level_06_LineIntersectTest
         //this.sweetSpotCircle.puffy=true;
         let itTouches = false;
         if(this.tip_L && this.tip_R){
-            itTouches = this.circleLineToucheyMath(this.sweetSpotCircle.x, this.sweetSpotCircle.y, this.sweetSpotCircle.baseRadius, this.tip_L.x, this.tip_L.y, this.tip_R.x, this.tip_R.y);
+            
+            //console.log(this.sweetSpotCircle);
+
+            //itTouches = this.circleLineToucheyMath({x:this.sweetSpotCircle.x, y:this.sweetSpotCircle.y}, this.sweetSpotCircle.baseRadius, {x:this.tip_L.x, y:this.tip_L.y}, {x:this.tip_R.x, y:this.tip_R.y});
+            itTouches = this.circleLineToucheyMath( {x:this.sweetSpotCircle.position.x, y:this.sweetSpotCircle.position.y},    this.sweetSpotCircle.baseRadius,    [this.tip_L.x, this.tip_L.y],  [this.tip_R.x, this.tip_R.y] );
             console.log(itTouches); // true
         }
         if(itTouches){this.sweetSpotCircle.puffy=true}else{this.sweetSpotCircle.puffy=false}
     }
 
-    circleLineToucheyMath(cx, cy, r, x1, y1, x2, y2) {
-        // Calculate the squared distance from the circle center to the line segment
-        function pointToLineDistance(x, y, x1, y1, x2, y2) {
-            let A = x - x1;
-            let B = y - y1;
-            let C = x2 - x1;
-            let D = y2 - y1;
-            let dot = A * C + B * D;
-            let lenSq = C * C + D * D;
-            let param = -1;
-            if (lenSq !== 0) param = dot / lenSq;
-            let closestX, closestY;
-
-            if (param < 0) {
-            closestX = x1;
-            closestY = y1;
-            } else if (param > 1) {
-            closestX = x2;
-            closestY = y2;
-            } else {
-            closestX = x1 + param * C;
-            closestY = y1 + param * D;
+    //circleLineToucheyMath(cx, cy, r, x1, y1, x2, y2) {
+        circleLineToucheyMath(circleCenter, circleRadius, linePoint1, linePoint2) {
+            // Extracting coordinates
+            const { x: cx, y: cy } = circleCenter;
+            const r = circleRadius;
+            const [x1, y1] = linePoint1;
+            const [x2, y2] = linePoint2;
+        
+            // Function to calculate the distance between two points
+            function distance(x1, y1, x2, y2) {
+                return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
             }
-
-            let dx = x - closestX;
-            let dy = y - closestY;
-            return dx * dx + dy * dy;
+        
+            // Check if both points are inside the circle
+            const distance1 = distance(cx, cy, x1, y1);
+            const distance2 = distance(cx, cy, x2, y2);
+            if (distance1 < r && distance2 < r) {
+                // Both points are within the circle, so the line segment is inside the circle
+                return [linePoint1, linePoint2];
+            }
+        
+            // Continue with the rest of the function to check for intersection points
+            // Check for vertical line to avoid division by zero
+            if (x1 === x2) {
+                // The line is vertical
+                const y_diff_square = r * r - (x1 - cx) * (x1 - cx);
+                if (y_diff_square < 0) {
+                    return null; // The line is outside the circle
+                }
+                const y_diff = Math.sqrt(y_diff_square);
+                const y_int1 = cy + y_diff;
+                const y_int2 = cy - y_diff;
+                // Check if y coordinates are within the segment
+                if (y1 <= y_int1 && y_int1 <= y2 || y1 <= y_int2 && y_int2 <= y2) {
+                    return [[x1, y_int1], [x1, y_int2]].filter(point => distance(cx, cy, point[0], point[1]) <= r);
+                } else {
+                    return null;
+                }
+            }
+        
+            // Calculate slope and intercept of the line
+            const m = (y2 - y1) / (x2 - x1);
+            const b = y1 - m * x1;
+        
+            // Coefficients for the quadratic equation ax^2 + bx + c = 0
+            const a = 1 + m * m;
+            const b_quad = 2 * (m * b - m * cy - cx);
+            const c_quad = cx * cx + cy * cy - r * r + b * b - 2 * b * cy;
+        
+            // Calculate discriminant
+            const discriminant = b_quad * b_quad - 4 * a * c_quad;
+        
+            if (discriminant < 0) {
+                return null; // No intersection
+            }
+        
+            // Calculate x values for the intersection points
+            const x_int1 = (-b_quad + Math.sqrt(discriminant)) / (2 * a);
+            const x_int2 = (-b_quad - Math.sqrt(discriminant)) / (2 * a);
+        
+            // Calculate y values for the intersection points
+            const y_int1 = m * x_int1 + b;
+            const y_int2 = m * x_int2 + b;
+        
+            // Function to check if a point is within the line segment
+            function isBetween(value, start, end) {
+                return Math.min(start, end) <= value && value <= Math.max(start, end);
+            }
+        
+            // Filter points that are not within the line segment
+            const points = [[x_int1, y_int1], [x_int2, y_int2]].filter(point => {
+                return isBetween(point[0], x1, x2) && isBetween(point[1], y1, y2);
+            });
+        
+            return points.length > 0 ? points : null;
         }
-
-        // Calculate the squared distance from the circle center to the line segment
-        let dist = pointToLineDistance(cx, cy, x1, y1, x2, y2);
-
-        // Check if the squared distance is less than or equal to the circle radius squared
-        return dist <= r * r;
-    }
+        
     
 }
     
