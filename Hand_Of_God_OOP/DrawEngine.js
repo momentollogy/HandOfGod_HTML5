@@ -7,6 +7,9 @@ export default class DrawEngine {
         
         this.video = document.getElementById("webcam");
         this.mpCanvasElement = document.getElementById("mediaPipe_canvas");
+
+      //  this.mpCanvasElement.style.zIndex = "10"; // Use a higher value to bring it to the front
+
         this.canvas = document.getElementById("output_canvas");
         this.mpctx = this.mpCanvasElement.getContext("2d");
         this.ctx = this.canvas.getContext("2d");

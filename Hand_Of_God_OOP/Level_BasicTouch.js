@@ -11,7 +11,6 @@ import { OverlayText } from './OverlayText.js';
 
  
 
-
 export default class Level_BasicTouch
 {
     constructor(_levelArrayDataObject)
@@ -38,8 +37,8 @@ export default class Level_BasicTouch
         this.uiManager = new UIManager(this.audio,this.uIButtons)
 
         this.SweetSpotCircleArray=[];
-        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: this.canvas.width /2 -125, y: this.canvas.height/2+200}  );
-        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: this.canvas.width /2 +125, y: this.canvas.height/2+200} );
+        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: this.canvas.width /2 -135, y: this.canvas.height/2+100}  );
+        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: this.canvas.width /2 +135, y: this.canvas.height/2+100} );
         this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -90;
         this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -90;
         this.SweetSpotCircleArray[0].name="LeftSSCir";
@@ -77,11 +76,6 @@ export default class Level_BasicTouch
         const buttonHeight = 50;
         const buttonRadius = 10;
 
-        
-
-
-
-
         // 'LEVEL SELECT' BUTTON
         this.levelSelectButton = new BlueButton(
             this.ctx,
@@ -115,9 +109,6 @@ export default class Level_BasicTouch
             this.levelArrayDataObject        
         );
         
-        
-        
-
 
         this.playerName = 'momentology'; // Add this line with a default test player name
       //  const leaderBoardVisual = new LeaderBoardVisual();
@@ -164,7 +155,8 @@ export default class Level_BasicTouch
         this.uiManager.draw();
         this.restartButton.draw();
         this.levelSelectButton.draw();
-        // Now update and draw the overlay texts
+
+        // Update and draw the overlay texts
         this.overlayText.update(); // This will update positions and fade out texts
         this.overlayText.draw(this.ctx); // This will draw texts to the canvas
 
@@ -204,7 +196,6 @@ export default class Level_BasicTouch
     
     
 
-
     touchSuccesfulWithPercentage(percentAccuracy, sweetspotcircle)
     {
         console.log('touchSuccesfulWithPercentage called with:', percentAccuracy, sweetspotcircle);
@@ -237,6 +228,34 @@ export default class Level_BasicTouch
     }
 
 
+        //WHEN SONG ENDS SEND SCORE AND PLAYER NAME TO FIREBASE. 
+        audioEnded() 
+    {
+        console.log('Level Complete');
+        console.log('Score is:', this.scoreNumber);
+
+        // Retrieve the player's name from the global variable
+        const playerName = window.playerName; // assuming you stored the name here
+
+        // Check if a name was entered
+        if (playerName) {
+            console.log('audioEnded - levelArrayDataObject:', this.levelArrayDataObject);
+            
+            // Now that we have the playerName, proceed with adding the score
+            addScore(playerName, this.scoreNumber, this.levelArrayDataObject).then(() => {
+                this.leaderBoardVisualInstance.populateAndDraw();
+            }).catch(error => {
+                console.error("Error adding score: ", error);
+            });
+        } else {
+            console.log('User did not enter a name.');
+            // Handle the case where the playerName is not available
+        }
+    }
+
+
+    /*
+    //WHEN SONG ENDS SEND SCORE AND PLAYER NAME TO FIREBASE. 
     audioEnded() {
         console.log('Level Complete');
         console.log('Score is:', this.scoreNumber);
@@ -255,10 +274,11 @@ export default class Level_BasicTouch
             });
         } else {
             console.log('User did not enter a name.');
-            // Handle the case where the user does not enter a name
-            // You might want to ask them again, or handle it however you prefer
+            
         }
     }
+
+    */
 
     resetVariables(){
         this.scoreNumber = 0;
@@ -266,9 +286,7 @@ export default class Level_BasicTouch
         this.beatsMissed = 0;
         this.beatsMissedPrevious=0;
         for(let sweetspotcircle of this.SweetSpotCircleArray)
-        {
-            sweetspotcircle.beatsMissed = 0;
-        }
+        {sweetspotcircle.beatsMissed = 0;}
     }
     
 
@@ -279,36 +297,20 @@ export default class Level_BasicTouch
         {
             this.audio.pause();
             this.audio.currentTime = 0;
-           // this.audio = null;
-           this.audio.removeEventListener('ended', this.onAudioEnded);
-           this.audio = new Audio();
+            this.audio.removeEventListener('ended', this.onAudioEnded);
+            this.audio = new Audio();
 
         }
     
         // Clear game-related arrays
-        this.beatCircles_Array = []; // Assuming this is an array of objects for beat circles
-        this.recordedMoments_Array = []; // Assuming this is for recording moments or beats
-    
-        //this.scoreNumber = 0;
-       // this.comboNumber = 0;
-    
-        // ... any additional resets for other state variables ...
-
-       // this.uiManager.scoreNumber = 0;
-      //  this.uiManager.comboNumber = 0;
-      //  this.beatsMissed = 0;
-       // this.beatIndex = 0;
-
+        this.beatCircles_Array = []; 
+        this.recordedMoments_Array = []; 
         this.SweetSpotCircleArray[0].reset();
         this.SweetSpotCircleArray[1].reset();
         this.uiManager.draw();
         this.resetVariables();
 
-        //this.uiManager.reset();
     }
-    
-    
-
 }
 
 

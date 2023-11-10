@@ -27,21 +27,19 @@ export default class Level_TitlePage
          // 'LEVEL SELECT' BUTTON
          this.levelSelectButton = new BlueButton(
              this.ctx,
-            // this.ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
              leftButtonX,
              buttonY,
              buttonWidth,
              buttonHeight,
              buttonRadius,
-             "#003a46",
-             //"#08282e", // Deep blue color
+             "#003a46", //button color - change in photoshop etc to get value.
              "#0000CD", // Lighter blue for hover effect
              "Start",
              "rgba(0, 0, 0, 0.5)",
-             // Here, instead of passing a callback, you pass the actionData directly
              { levelName: "Level_StageSelect" } // This will be used as this.actionData in the BlueButton class
          );
 
+         
          this.backgroundImage = new Image();
          this.backgroundImage.onload = () => 
           // Draw the image onto the canvas once it's loaded
@@ -56,14 +54,9 @@ export default class Level_TitlePage
 
 
     level_loop() 
-    {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // Draw the background image
+    {   
         this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
         this.levelSelectButton.draw();
-
-
 
         // mediapipe stuff
         let results = this.mediaPipe.results;
@@ -71,27 +64,5 @@ export default class Level_TitlePage
         
     }
 }
-    /*
-dispose() 
-    {
-        // Remove event listeners - assuming you have methods to remove event listeners in your BlueButton class
-        this.levelSelectButton.removeEventListeners(); 
 
-        // Clear the canvas
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-            // Dereference the backgroundImage to help with garbage collection
-            this.backgroundImage.onload = null;
-            this.backgroundImage.src = '';
-
-                // Remove references to DOM elements and other resources
-        this.canvas = null;
-        this.ctx = null;
-        this.levelSelectButton = null;
-       // this.mediaPipe = null;
-
-
-
-    }
-*/
 

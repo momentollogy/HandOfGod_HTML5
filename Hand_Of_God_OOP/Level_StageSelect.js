@@ -46,19 +46,10 @@ export default class Level_StageSelect
             } else {
                 console.error('Level array is not initialized.');
             }
-        }, 0); // A timeout of 0 ms means execute as soon as the stack is clear
-
-       
+        }, 0); // A timeout of 0 ms means execute as soon as the stack is clear    
 
     }
 
-
-/*
-    handleCanvasClick() {
-        console.log("mouse clicked");
-        document.dispatchEvent(new CustomEvent('levelChange', { detail: { levelName: 'Level_05' } }));
-      }
-*/
 
 
     level_loop() 

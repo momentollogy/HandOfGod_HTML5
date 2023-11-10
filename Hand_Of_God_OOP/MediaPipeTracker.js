@@ -8,7 +8,7 @@ export default class MediaPipeTracker
         this.handLandmarker;
         this.results;
         this.canvas = document.getElementById("output_canvas");
-        this.diagnostics = false;
+        this.diagnostics = true;
 
         this.LEFT = "Left";
         this.RIGHT= "Right";
