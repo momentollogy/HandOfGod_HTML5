@@ -105,6 +105,14 @@ export default class LevelSelectVisual
                             duration: "0:20",
                             mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
                             jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"
+                        },
+                        {   
+                            fileName: "Level_BasicSwipe", 
+                            levelDisplayName: "Swipe Scene", 
+                            fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard", 
+                            duration: "0:20",
+                            mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
+                            jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"
                         }
                         /*
                         {   
