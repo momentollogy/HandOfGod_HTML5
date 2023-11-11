@@ -76,6 +76,8 @@ export default class Level_BasicTouch
         const buttonHeight = 50;
         const buttonRadius = 10;
 
+
+
         // 'LEVEL SELECT' BUTTON
         this.levelSelectButton = new BlueButton(
             this.ctx,
@@ -89,7 +91,9 @@ export default class Level_BasicTouch
             "Level Select",
             "rgba(0, 0, 0, 0.5)",
             // Here, instead of passing a callback, you pass the actionData directly
-            { levelName: "Level_StageSelect" } // This will be used as this.actionData in the BlueButton class
+            { levelName: "Level_StageSelect", 
+            lastLevelData: this.lastLevelChangeDetails // Pass the entire levelChange object or relevant part
+            } // This will be used as this.actionData in the BlueButton class
         );
 
 
@@ -153,8 +157,10 @@ export default class Level_BasicTouch
         // update display stuff and process classes stuff
         for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
         this.uiManager.draw();
+         this.uiManager.draw();
         this.restartButton.draw();
         this.levelSelectButton.draw();
+
 
         // Update and draw the overlay texts
         this.overlayText.update(); // This will update positions and fade out texts
@@ -196,21 +202,48 @@ export default class Level_BasicTouch
     
     
 
-    touchSuccesfulWithPercentage(percentAccuracy, sweetspotcircle)
+    touchSuccesfulWithPercentage(percentAccuracy, sweetspotcircle) 
     {
         console.log('touchSuccesfulWithPercentage called with:', percentAccuracy, sweetspotcircle);
-
+    
         ////////////////////////////////////////////////////////////////////
         ////////////// Touch Succesful. Receive Percent ////////////////////
         //////////////////////////////////////////////////////////////////// 
         let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
         this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
-        this.increaseComboNumer(); 
-        this.scoreNumber += ( percentAccuracy + this.comboNumber );
+        
+        // Increase the combo number with each successful hit
+        this.increaseComboNumer();
+    
+        // Determine the combo multiplier based on the current combo number
+        this.updateComboMultiplier();
+    
+        // Apply the multiplier to the score
+        this.scoreNumber += (percentAccuracy * this.comboMultiplier);
+    
+        // Update the UI with the new score
         this.uiManager.scoreNumber = this.scoreNumber;
+        
+        // Remove a miss, if applicable
         this.removeMiss();
-        console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "score:", this.scoreNumber);
+    
+        console.log(percentAccuracy + "% accuracy", sweetspotcircle.color, "combo:", this.comboNumber, "multiplier:", this.comboMultiplier, "score:", this.scoreNumber);
     }
+    
+    // Function to update the combo multiplier based on the current combo number
+    updateComboMultiplier() 
+    {
+        if (this.comboNumber >= 14) {
+            this.comboMultiplier = 8;
+        } else if (this.comboNumber >= 6) {
+            this.comboMultiplier = 4;
+        } else if (this.comboNumber >= 2) {
+            this.comboMultiplier = 2;
+        } else {
+            this.comboMultiplier = 1;
+        }
+    }
+    
 
     beatMissed()
     {
@@ -225,6 +258,26 @@ export default class Level_BasicTouch
             this.audio.pause();
             // show something in the UI perhaps?
         }
+    }
+
+
+
+    audioEnded() 
+    {
+        console.log('Level Complete');
+        console.log('Score is:', this.scoreNumber);
+
+        console.log('audioEnded - levelArrayDataObject:', this.levelArrayDataObject);
+        addScore(this.playerName, this.scoreNumber,this.levelArrayDataObject).then(() => {
+            this.leaderBoardVisualInstance.populateAndDraw();
+        }).catch(error => {
+            console.error("Error adding score: ", error);
+        });
+    }
+
+
+
+    /*
     }
 
 
@@ -252,6 +305,7 @@ export default class Level_BasicTouch
             // Handle the case where the playerName is not available
         }
     }
+    */
 
 
     /*

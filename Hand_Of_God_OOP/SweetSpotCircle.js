@@ -32,7 +32,7 @@ export default class SweetSpotCircle {
         this.touched=false;
         this.checkedForMiss = false;
         this.beatPassed = false;
-        this.beatBufferTime = 100; //how many ms before and after to define length of beatrange
+        this.beatBufferTime = 300; //how many ms before and after to define length of beatrange
         this.beatsMissed = 0;
         this.touchable = false;
         //this.loadedCircleData;
@@ -114,7 +114,7 @@ export default class SweetSpotCircle {
 
         if(!this.recordMode && this.beatCircles_Array.length > 0){
             this.updateForPlay();
-            this.drawBeatRanges();
+          //  this.drawBeatRanges();
         }else{
             this.updateForRecording();
         }

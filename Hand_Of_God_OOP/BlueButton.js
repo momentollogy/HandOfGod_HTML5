@@ -100,14 +100,15 @@ export default class BlueButton {
   //disbatches whatever happens when Blue Button Object is clicked.
   onClick(event) 
   {
-    if (this.isHovered) {
+    if (this.isHovered) 
+    {
       console.log(`${this.text} Button clicked!`);
       console.log('Dispatching event with details:', this.actionData);
       
-  
-      // Dispatch the event with the actionData
-      // Make sure the event name here matches what your GameManager is listening for
-      document.dispatchEvent(new CustomEvent('levelChange', { detail: this.actionData }));
+   
+          // Dispatch the event with the actionData
+          // Make sure the event name here matches what your GameManager is listening for
+          document.dispatchEvent(new CustomEvent('levelChange', { detail: this.actionData }));
     }
  }
 

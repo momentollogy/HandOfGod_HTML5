@@ -5,16 +5,17 @@ import BoxUI from './BoxUI.js';
 export default class LevelSelectVisual 
 {
  
-    constructor(playInfoBoxVisual) {
-    this.playInfoBoxVisual = playInfoBoxVisual;
-    //console.log(this.playInfoBoxVisual);
-
-   
-    
-    this.canvas = document.getElementById("output_canvas");
-    this.ctx = this.canvas.getContext("2d");
+    constructor(playInfoBoxVisual) 
+    {
+        this.playInfoBoxVisual = playInfoBoxVisual;
+        //console.log(this.playInfoBoxVisual);
 
     
+        
+        this.canvas = document.getElementById("output_canvas");
+        this.ctx = this.canvas.getContext("2d");
+
+        
 
         // Define the box properties, ensuring they can be modified dynamically
         this.RESIZE_FACTOR = 0.8;
@@ -70,7 +71,7 @@ export default class LevelSelectVisual
                             levelDisplayName: "'Dance The Night'  Dua Lipa", 
                             fireBaseLevelLeaderBoard: "DanceTheNight_LeaderBoard", 
                             duration: "1:05",
-                            mp3Path:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.mp3", 
+                            mp3Path:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.wav", 
                             jsonPath:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.json"
                         },
                         {   
@@ -82,8 +83,32 @@ export default class LevelSelectVisual
                             jsonPath:"Level_Mp3AndJson/WonderBoy/WonderBoy.json"
                         },
                         {   
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "'Chandelier'  Sia", 
+                            fireBaseLevelLeaderBoard: "Chandelier_LB", 
+                            duration: "1:09",
+                            mp3Path:"Level_Mp3AndJson/Chandelier/Chandelier.wav", 
+                            jsonPath:"Level_Mp3AndJson/Chandelier/Chandelier.json"
+                        },
+                        {   
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "'Elastic Heart'  Sia", 
+                            fireBaseLevelLeaderBoard: "ElasticHeart_LB", 
+                            duration: "1:24",
+                            mp3Path:"Level_Mp3AndJson/ElasticHeart/ElasticHeart.wav", 
+                            jsonPath:"Level_Mp3AndJson/ElasticHeart/ElasticHeart.json"
+                        },
+                        {   
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "'Apache'  Sugar Hill Gang", 
+                            fireBaseLevelLeaderBoard: "Apache_LB", 
+                            duration: "1:24",
+                            mp3Path:"Level_Mp3AndJson/Apache/Apache.wav", 
+                            jsonPath:"Level_Mp3AndJson/Apache/Apache.json"
+                        },
+                        {   
                             fileName: "Level_05_Recorder", 
-                            levelDisplayName: "Custom Level Rec.", 
+                            levelDisplayName: "RECORDER", 
                             fireBaseLevelLeaderBoard: "TBD", 
                             duration: "",
                             mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
@@ -113,7 +138,9 @@ export default class LevelSelectVisual
 
 
         ];
-        this.currentSelectedLevelIndex = 0;
+        
+        this.currentSelectedLevelIndex = this.getCurrentLevelIndex();
+        this.getCurrentLevelIndex();
         this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[0]);
 
 
@@ -129,103 +156,126 @@ export default class LevelSelectVisual
     }
 
 
-     // This method is added to your class
-     bindEvents() {
-      window.addEventListener('keydown', this.handleKeyDown);
-      this.canvas.addEventListener('click', this.handleMouseClick);
-  }
+    // This method is added to your class
+    bindEvents() 
+    {
+        window.addEventListener('keydown', this.handleKeyDown);
+        this.canvas.addEventListener('click', this.handleMouseClick);
+    }
 
-  // This method is added to your class
-  handleKeyDown(event) {
-   if (event.key === 'ArrowUp' && this.currentSelectedLevelIndex > 0) {
-       this.currentSelectedLevelIndex -= 1;
-       this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[this.currentSelectedLevelIndex]);
-       this.dispatchLevelSelectedEvent(); // Add this line to dispatch the event
-
-
-   } else if (event.key === 'ArrowDown' && this.currentSelectedLevelIndex < this.levelArray.length - 1) {
-       this.currentSelectedLevelIndex += 1;
-       this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[this.currentSelectedLevelIndex]);
-       this.dispatchLevelSelectedEvent(); // Add this line to dispatch the event
-
-
-   }
-
-   this.draw(); // Re-draw to update the visual selection
-}
-
-handleMouseClick(event) {
-    const rect = this.canvas.getBoundingClientRect();
-    const scaleX = this.canvas.width / rect.width;    // calculate the scale of the canvas
-    const scaleY = this.canvas.height / rect.height;
-    const clickX = (event.clientX - rect.left) * scaleX;  // adjust click position based on canvas scale
-    const clickY = (event.clientY - rect.top) * scaleY;
-   
-    // Define a margin for the clickable area to make it wider than the text itself
-    const clickMargin =120; // This adds 20 pixels on each side of the text
-   
-    // Initial guess for Y_OFFSET
-    const Y_OFFSET = this.SCORE_LINE_HEIGHT / 2;
-   
-    // Now we iterate over the levels and their bounding boxes
-    this.levelArray.forEach((level, index) => {
-      // Adjust topY by subtracting the Y_OFFSET to center vertically
-      let levelTopY = this.LEADERBOARD_Y + this.HEADER_HEIGHT + this.SCORE_MARGIN_TOP + (index * this.SCORE_LINE_HEIGHT) - Y_OFFSET;
-      let levelBottomY = levelTopY + this.SCORE_LINE_HEIGHT;
-   
-      // Center the level display name horizontally and add margin
-      let textWidth = this.ctx.measureText(level.levelDisplayName).width;
-      let levelLeftX = this.TEXT_CENTER_X - (textWidth / 2) - clickMargin;
-      let levelRightX = this.TEXT_CENTER_X + (textWidth / 2) + clickMargin;
-   
-      // Check if the click is within the bounds of the level's bounding box
-      if (
-        clickX >= levelLeftX &&
-        clickX <= levelRightX &&
-        clickY >= levelTopY &&
-        clickY <= levelBottomY
-      ) {
-        this.currentSelectedLevelIndex = index; // Set the current index to the clicked one
+    // This method is added to your class
+    handleKeyDown(event) {
+    if (event.key === 'ArrowUp' && this.currentSelectedLevelIndex > 0) {
+        this.currentSelectedLevelIndex -= 1;
         this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[this.currentSelectedLevelIndex]);
-        this.draw(); // Re-draw to update the visual selection
-        this.dispatchLevelSelectedEvent(); // Notify that a level was selected
-      }
-    });
-   }
-   
-   
+        this.dispatchLevelSelectedEvent(); // Add this line to dispatch the event
 
+
+    } else if (event.key === 'ArrowDown' && this.currentSelectedLevelIndex < this.levelArray.length - 1) {
+        this.currentSelectedLevelIndex += 1;
+        this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[this.currentSelectedLevelIndex]);
+        this.dispatchLevelSelectedEvent(); // Add this line to dispatch the event
+
+
+    }
+
+    this.draw(); // Re-draw to update the visual selection
+    }
+
+    handleMouseClick(event) 
+    {
+        const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width;    // calculate the scale of the canvas
+        const scaleY = this.canvas.height / rect.height;
+        const clickX = (event.clientX - rect.left) * scaleX;  // adjust click position based on canvas scale
+        const clickY = (event.clientY - rect.top) * scaleY;
+    
+        // Define a margin for the clickable area to make it wider than the text itself
+        const clickMargin =120; // This adds 20 pixels on each side of the text
+    
+        // Initial guess for Y_OFFSET
+        const Y_OFFSET = this.SCORE_LINE_HEIGHT / 2;
+    
+        // Now we iterate over the levels and their bounding boxes
+        this.levelArray.forEach((level, index) => {
+        // Adjust topY by subtracting the Y_OFFSET to center vertically
+        let levelTopY = this.LEADERBOARD_Y + this.HEADER_HEIGHT + this.SCORE_MARGIN_TOP + (index * this.SCORE_LINE_HEIGHT) - Y_OFFSET;
+        let levelBottomY = levelTopY + this.SCORE_LINE_HEIGHT;
+    
+        // Center the level display name horizontally and add margin
+        let textWidth = this.ctx.measureText(level.levelDisplayName).width;
+        let levelLeftX = this.TEXT_CENTER_X - (textWidth / 2) - clickMargin;
+        let levelRightX = this.TEXT_CENTER_X + (textWidth / 2) + clickMargin;
+    
+        // Check if the click is within the bounds of the level's bounding box
+        if (
+            clickX >= levelLeftX &&
+            clickX <= levelRightX &&
+            clickY >= levelTopY &&
+            clickY <= levelBottomY
+        ) {
+            this.setCurrentLevelIndex(index);
+           // this.currentSelectedLevelIndex = index; // Set the current index to the clicked one
+            this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[this.currentSelectedLevelIndex]);
+            this.draw(); // Re-draw to update the visual selection
+            this.dispatchLevelSelectedEvent(); // Notify that a level was selected
+          }
+        });
+    }
+   
+   
+    setCurrentLevelIndex(num)
+    {
+        window.myCurrentLevelIndex = num;
+        this.currentSelectedLevelIndex = window.myCurrentLevelIndex
+    }
+
+    getCurrentLevelIndex()
+    {
+        
+        if (!window.myCurrentLevelIndex)
+        {
+            window.myCurrentLevelIndex = 0;
+        }
+      
+        this.currentSelectedLevelIndex = window.myCurrentLevelIndex
+       // console.log("Window Index is:", window.myCurrentLevelIndex)
+        return this.currentSelectedLevelIndex;
+    }
  
 
 
 
-       // This method is added to your class
-       dispatchLevelSelectedEvent() {
-           const selectedLevel = this.levelArray[this.currentSelectedLevelIndex];
-           const event = new CustomEvent('levelSelected', { detail: selectedLevel });
-           window.dispatchEvent(event);
-       }
+    // This method is added to your class
+    dispatchLevelSelectedEvent() 
+    {
+        const selectedLevel = this.levelArray[this.currentSelectedLevelIndex];
+        const event = new CustomEvent('levelSelected', { detail: selectedLevel });
+        window.dispatchEvent(event);
+    }
 
-       // This method is added to your class
-       dispose() {
-           window.removeEventListener('keydown', this.handleKeyDown);
-           this.canvas.removeEventListener('click', this.handleMouseClick);
-       }
+    // This method is added to your class
+    dispose() 
+    {
+        window.removeEventListener('keydown', this.handleKeyDown);
+        this.canvas.removeEventListener('click', this.handleMouseClick);
+    }
 
-       draw() {
+    draw() 
+    {
         this.ctx.save();
-    
+
         // Set the fill style for the box and draw it
         this.ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
         this.box.draw();
-    
+
         // Draw the header for the level selection, centered
         this.ctx.textAlign = "center"; // Center-align text
         this.ctx.fillStyle = '#FFF'; // Text color
         this.ctx.font = `${this.HEADER_FONT_SIZE}px Verdana`;
         // Use the center of the box for X position
         this.ctx.fillText('LEVEL SELECT', this.TEXT_CENTER_X, this.LEADERBOARD_Y + this.HEADER_HEIGHT);
-    
+
         // Draw the level names, centered
         this.ctx.font = `${this.SCORE_FONT_SIZE}px Arial`; // Set the font for the level names
         this.levelArray.forEach((level, index) => {
@@ -235,7 +285,7 @@ handleMouseClick(event) {
             // Draw each level name centered in the box
             this.ctx.fillText(level.levelDisplayName, this.TEXT_CENTER_X, textY);
         });
-    
+
         this.ctx.restore();
     }
     

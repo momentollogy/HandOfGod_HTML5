@@ -77,17 +77,16 @@ export default class PlayInfoBoxVisual {
  
  
 
-  updateCurrentLevel(event) {
-   // Make sure to modify this to handle the event object
-   //this.currentLevelData = event.detail;
-   //this.currentLevelData = this.levelselectvisual.levelArray[this.levelselectvisual.currentSelectedLevelIndex];
+  updateCurrentLevel(event) 
+  {
+
     if (this.levelselectvisual)
      {  
      this.currentLevelData = this.levelselectvisual.levelArray[this.levelselectvisual.currentSelectedLevelIndex];
      }
 
    this.draw();
- }
+  }
 
 
 

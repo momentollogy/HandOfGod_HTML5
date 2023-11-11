@@ -35,6 +35,8 @@ export default class Level_StageSelect
         this.playInfoBoxVisual.currentLevelData=this.levelselectvisual.levelArray;
         this.playInfoBoxVisual.updateCurrentLevel(this.levelselectvisual.levelArray[0]);
         this.leaderboardvisual = new LeaderBoardVisual();
+       // this.LevelSelectVisual.this.currentSelectedLevelIndex
+       console.log(this.levelselectvisual.currentSelectedLevelIndex);
        // this.leaderboardvisual = new LeaderBoardVisual();
 
 
