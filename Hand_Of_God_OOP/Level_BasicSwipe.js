@@ -158,6 +158,7 @@ export default class Level_BasicTouch
             this.checkFingerPositionsAndUpdateFingerArrays();
             this.drawSwipeForEachFingerFromFingerArrayData();
             this.checkLineCircleTouch();
+
             //this.checkCirclesForMissesAndStuff();
         }else{
             this.sendTouchesForRecording();
@@ -222,7 +223,7 @@ export default class Level_BasicTouch
         this.scoreNumber += ( percentAccuracy + this.comboNumber );
         this.uiManager.scoreNumber = this.scoreNumber;
         this.removeMiss();
-        console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "score:", this.scoreNumber);
+        //console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "score:", this.scoreNumber);
     }
 
     beatMissed()
@@ -340,7 +341,7 @@ export default class Level_BasicTouch
             this.ctx.beginPath();
             this.ctx.moveTo(this.leftSwipeArray[0].x , this.leftSwipeArray[0].y);
             this.ctx.lineTo(this.leftSwipeArray[1].x , this.leftSwipeArray[1].y);
-            console.log(this.leftSwipeArray[0])
+            //console.log(this.leftSwipeArray[0])
             this.ctx.stroke();
             this.ctx.restore();
         }
@@ -352,7 +353,7 @@ export default class Level_BasicTouch
             this.ctx.beginPath();
             this.ctx.moveTo(this.rightSwipeArray[0].x , this.rightSwipeArray[0].y);
             this.ctx.lineTo(this.rightSwipeArray[1].x , this.rightSwipeArray[1].y);
-            console.log(this.rightSwipeArray[0])
+            //console.log(this.rightSwipeArray[0])
             this.ctx.stroke();
             this.ctx.restore();
         }
@@ -371,7 +372,8 @@ export default class Level_BasicTouch
                                                             sweetSpotCircle.baseRadius,
                                                             [this.leftSwipeArray[0].x, this.leftSwipeArray[0].y],  
                                                             [this.leftSwipeArray[1].x, this.leftSwipeArray[1].y] 
-                                                        );                
+                                                        );   
+                //console.log(this.calculateAngle(this.leftSwipeArray[0].x, this.leftSwipeArray[0].y, this.leftSwipeArray[1].x, this.leftSwipeArray[1].y))
             }
             if(this.rightSwipeArray[0] && this.rightSwipeArray[1] && this.SweetSpotCircleArray[0])
             {
@@ -379,11 +381,20 @@ export default class Level_BasicTouch
                                                             sweetSpotCircle.baseRadius,
                                                             [this.rightSwipeArray[0].x, this.rightSwipeArray[0].y],  
                                                             [this.rightSwipeArray[1].x, this.rightSwipeArray[1].y] 
-                                                        );                     
+                                                        );     
+                //console.log(this.calculateAngle(this.rightSwipeArray[0].x, this.rightSwipeArray[0].y, this.rightSwipeArray[1].x, this.rightSwipeArray[1].y))
             }
 
-            if(leftTouches){sweetSpotCircle.puffy=true}
-            else if(rightTouches){sweetSpotCircle.puffy=true}
+            if(leftTouches && !sweetSpotCircle.puffy){
+                sweetSpotCircle.puffy=true;
+                //this.touchSuccesfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                console.log(this.calculateAngle(this.leftSwipeArray[0].x, this.leftSwipeArray[0].y, this.leftSwipeArray[1].x, this.leftSwipeArray[1].y))
+            }
+            else if(rightTouches && !sweetSpotCircle.puffy){
+                sweetSpotCircle.puffy=true;
+                //this.touchSuccesfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                console.log(this.calculateAngle(this.rightSwipeArray[0].x, this.rightSwipeArray[0].y, this.rightSwipeArray[1].x, this.rightSwipeArray[1].y))
+            }
             else{sweetSpotCircle.puffy=false}
         }  
 
@@ -464,7 +475,16 @@ export default class Level_BasicTouch
     
         return points.length > 0 ? points : null;
     }
-        
+    
+    calculateAngle(x1, y1, x2, y2) {
+        // Calculate the angle in radians
+        const angleRadians = Math.atan2(y2 - y1, x2 - x1);
+      
+        // Convert the angle to degrees
+        const angleDegrees = (angleRadians * 180) / Math.PI;
+      
+        return angleDegrees;
+      }
 
 }
 
