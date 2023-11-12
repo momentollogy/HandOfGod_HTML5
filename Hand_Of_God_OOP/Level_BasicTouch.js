@@ -1,5 +1,4 @@
 import MediaPipeTracker from './MediaPipeTracker.js';
-//import UIManager from './UIManager.js';
 import SweetSpotCircle from './SweetSpotCircle.js';
 import JsonManager from './JsonManager.js';
 import DrawEngine from './DrawEngine.js';
@@ -9,23 +8,13 @@ import BlueButton from './BlueButton.js';
 import { OverlayText } from './OverlayText.js';
 import { UIUtilities } from './UIUtilities.js';
 import { GameStats } from './GameStats.js'; 
-console.log("GameStats imported successfully:", GameStats);
 
 
-
-
-
-
-
- 
 
 export default class Level_BasicTouch
 {
     constructor(_levelArrayDataObject,audio)
     {
-        console.log("GameLevel constructor started");
-
-        console.log('Level_BasicTouch constructor - levelArrayDataObject:', _levelArrayDataObject);
 
         this.mediaPipe = MediaPipeTracker.getInstance()
         this.canvas = document.getElementById("output_canvas");;
@@ -38,19 +27,16 @@ export default class Level_BasicTouch
         
         this.jsonManager = new JsonManager();
 
-        this.levelArrayDataObject = _levelArrayDataObject; //important
+        this.levelArrayDataObject = _levelArrayDataObject; //important, has all mp3,json etc..
 
         this.mp3Path= this.levelArrayDataObject.mp3Path;
         this.jsonPath=this.levelArrayDataObject.jsonPath;
 
         this.volumeSlider = UIUtilities.createVolumeSlider(this.audio, this.canvas);
-        
+       
+        //ALL SCORES/STATS CAPTURED HERE
         this.stats = new GameStats();
-        console.log("GameStats instance created:", this.stats);
-        console.log("Initial GameStats values:", this.stats.score, this.stats.combo, this.stats.misses);
-
-
-
+       
         this.SweetSpotCircleArray=[];
         this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: this.canvas.width /2 -135, y: this.canvas.height/2+100}  );
         this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: this.canvas.width /2 +135, y: this.canvas.height/2+100} );
@@ -105,10 +91,10 @@ export default class Level_BasicTouch
             "#0000CD", // Lighter blue for hover effect
             "Level Select",
             "rgba(0, 0, 0, 0.5)",
-            // Here, instead of passing a callback, you pass the actionData directly
-            { levelName: "Level_StageSelect", 
-            lastLevelData: this.lastLevelChangeDetails // Pass the entire levelChange object or relevant part
-            } // This will be used as this.actionData in the BlueButton class
+            { 
+                levelName: "Level_StageSelect",  //  pass the actionData directly
+                lastLevelData: this.lastLevelChangeDetails // Pass the entire levelChange object or relevant part
+            } 
         );
 
 
@@ -152,16 +138,11 @@ export default class Level_BasicTouch
         // load mp3, json, and play
         this.audio.src = this.mp3Path;          
         this.jsonManager.loadJsonFileByPath(this.jsonPath);
-        this.audio.play();
-
-
-        console.log("GameLevel constructor finished");
-        
+        this.audio.play();        
 
     }
 
 
-    
     level_loop() 
     {
 
@@ -175,23 +156,23 @@ export default class Level_BasicTouch
         
         this.restartButton.draw();
         this.levelSelectButton.draw();
-        console.log("Score:", this.stats.score, "Combo:", this.stats.combo, "Misses:", this.stats.misses);
+
+        //Draw Score from GameStat.js
         UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.misses);
 
-        
 
+        // Update and draw percentage overlay texts with succesful beat hits
+        this.overlayText.update(); 
+        this.overlayText.draw(this.ctx); 
 
-        // Update and draw percentage overlay texts
-        this.overlayText.update(); // This will update positions and fade out texts
-        this.overlayText.draw(this.ctx); // This will draw texts to the canvas
+        //Draw volume slider
         this.volumeSlider.drawVolumeSlider();
 
 
     }
     
-    checkForFingerTouchCircles(){
-        console.log("checkForFingerTouchCircles this:", this);
-
+    checkForFingerTouchCircles()
+    {
         for(let sweetspotcircle of this.SweetSpotCircleArray){
             if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8).length>0)
             {
@@ -206,7 +187,7 @@ export default class Level_BasicTouch
             }
         }
     }
-        //simplifed gamestats logic
+        //Simplifed gamestats logic
         increaseComboNumber() {this.stats.increaseCombo();}
         resetComboNumber() {this.stats.resetCombo();}
         removeMiss() {this.stats.removeMiss();}
@@ -219,8 +200,6 @@ export default class Level_BasicTouch
         //////////////////////////////////////////////////////////////////// 
         touchSuccessfulWithPercentage(percentAccuracy, sweetspotcircle) 
         {
-            console.log('touchSuccessfulWithPercentage called with:', percentAccuracy, sweetspotcircle);
-        
             let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
             this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
         
@@ -229,9 +208,7 @@ export default class Level_BasicTouch
             this.stats.addScore(percentAccuracy);  // Adjust this if you need to include comboNumber in the calculation
         
             // Assuming you always want to remove a miss after a successful touch
-            this.stats.removeMiss();
-        
-            console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "combo:", this.stats.combo, "score:", this.stats.score);
+            this.stats.removeMiss();     
         }
         
 
@@ -242,89 +219,26 @@ export default class Level_BasicTouch
             this.stats.addMiss();
             this.resetComboNumber();  // Make sure this method updates this.stats.combo
         
-            if (this.stats.misses > 20) {
+            if (this.stats.misses > 20) 
+            {
                 console.log("you lose");
                 this.audio.pause();
-                // Show something in the UI to indicate game over
             }
         }
-
 
 
 
     audioEnded() 
     {
         console.log('Level Complete');
-       // console.log('Score is:', this.scoreNumber);
         console.log('Score is:', this.stats.score);
 
-
-        console.log('audioEnded - levelArrayDataObject:', this.levelArrayDataObject);
         addScore(this.playerName, this.stats.score,this.levelArrayDataObject).then(() => {
             this.leaderBoardVisualInstance.populateAndDraw();
         }).catch(error => {
             console.error("Error adding score: ", error);
         });
     }
-
-
-
-    /*
-    }
-
-
-        //WHEN SONG ENDS SEND SCORE AND PLAYER NAME TO FIREBASE. 
-        audioEnded() 
-    {
-        console.log('Level Complete');
-        console.log('Score is:', this.scoreNumber);
-
-        // Retrieve the player's name from the global variable
-        const playerName = window.playerName; // assuming you stored the name here
-
-        // Check if a name was entered
-        if (playerName) {
-            console.log('audioEnded - levelArrayDataObject:', this.levelArrayDataObject);
-            
-            // Now that we have the playerName, proceed with adding the score
-            addScore(playerName, this.scoreNumber, this.levelArrayDataObject).then(() => {
-                this.leaderBoardVisualInstance.populateAndDraw();
-            }).catch(error => {
-                console.error("Error adding score: ", error);
-            });
-        } else {
-            console.log('User did not enter a name.');
-            // Handle the case where the playerName is not available
-        }
-    }
-    */
-
-
-    /*
-    //WHEN SONG ENDS SEND SCORE AND PLAYER NAME TO FIREBASE. 
-    audioEnded() {
-        console.log('Level Complete');
-        console.log('Score is:', this.scoreNumber);
-    
-        // Prompt the user for their name
-        const playerName = window.prompt("Enter Player Name:", "");
-        if (playerName) { // If a name was entered
-            this.playerName = playerName; // Store the entered name
-            console.log('audioEnded - levelArrayDataObject:', this.levelArrayDataObject);
-            
-            // Now that we have the playerName, proceed with adding the score
-            addScore(this.playerName, this.scoreNumber, this.levelArrayDataObject).then(() => {
-                this.leaderBoardVisualInstance.populateAndDraw();
-            }).catch(error => {
-                console.error("Error adding score: ", error);
-            });
-        } else {
-            console.log('User did not enter a name.');
-            
-        }
-    }
-
-    */
 
     resetVariables(){
         this.scoreNumber = 0;
@@ -353,12 +267,7 @@ export default class Level_BasicTouch
         this.recordedMoments_Array = []; 
         this.SweetSpotCircleArray[0].reset();
         this.SweetSpotCircleArray[1].reset();
-       // this.uiManager.draw();
-      // UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.misses);
-
         this.resetVariables();
 
     }
 }
-
-

@@ -53,8 +53,6 @@ export class Button
 }
 
 
-
-
 // Exported UIManager
 export default class UIManager
 {

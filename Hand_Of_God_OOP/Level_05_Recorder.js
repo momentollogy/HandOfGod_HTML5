@@ -279,27 +279,11 @@ export default class Level_05
         this.uiManager.missesNumber = this.beatsMissed;
     }
 
-    removeMiss(){
+    removeMiss()
+    {
         if(this.beatsMissed>0){this.beatsMissed -= 1;}
         this.uiManager.missesNumber = this.beatsMissed;
-        /*
-        // remove a miss from one circle, if that circle has none remove from the next circle etc..
-        for(let sweetspotcircle of this.SweetSpotCircleArray)
-        {
-            if(sweetspotcircle.beatsMissed > 0){
-                sweetspotcircle.beatsMissed -=1; 
-                break;
-            }
-        }
-        // tally the adjusted misses and set the miss tracking variables in all the appropriate places
-        this.beatsMissed = 0;
-        for(let sweetspotcircle of this.SweetSpotCircleArray)
-        {
-            this.beatsMissed += sweetspotcircle.beatsMissed;
-        }
-        this.beatsMissedPrevious = this.beatsMissed;
-        this.uiManager.missesNumber = this.beatsMissed;
-        */
+      
     }
 
 
@@ -312,9 +296,7 @@ export default class Level_05
         ////////////////////////////////////////////////////////////////////
         ///// Loading a song and beats on startup for testing purposes /////
         ////////////////////////////////////////////////////////////////////
-       // this.audio.src = "sound2/tool_short.mp3";          
-       // this.jsonManager.loadJsonFileByPath('sound2/6beatstest.json');
-
+      
         this.audio.src = "Level_Mp3AndJson/JustDance/JustDance.mp3";          
         this.jsonManager.loadJsonFileByPath('sound2/6beatstest.json');
     }
