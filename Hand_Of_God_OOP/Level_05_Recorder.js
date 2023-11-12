@@ -5,6 +5,8 @@ import JsonManager from './JsonManager.js';
 import DrawEngine from './DrawEngine.js';
 import BackgroundManager from './BackgroundManager.js'
 import BlueButton from './BlueButton.js';
+import { UIUtilities } from './UIUtilities.js';
+
 
 export default class Level_05
 {
@@ -19,6 +21,8 @@ export default class Level_05
         this.audio = new Audio();
         this.audio.volume = 0.5; 
         
+        this.volumeSlider = UIUtilities.createVolumeSlider(this.audio, this.canvas);
+
         this.jsonManager = new JsonManager();
 
         this.uIButtons = ["StartStop","Reset","ExportBeats","LoadBeats","LoadSong","Record"];
@@ -54,6 +58,7 @@ export default class Level_05
         this.hasBeatBeenMissed=false;
         this.scoreNumber = 0;
         this.comboNumber = 0;
+
         
         this.setInitialSongAndJson();
         document.addEventListener("BeatMissed", (data) => {
@@ -219,6 +224,8 @@ export default class Level_05
         for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
         this.levelSelectButton.draw();
         this.uiManager.draw();
+        this.volumeSlider.drawVolumeSlider();
+
     }
     
     checkForFingerTouchCircles(){

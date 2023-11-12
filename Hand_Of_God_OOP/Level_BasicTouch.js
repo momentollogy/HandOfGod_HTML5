@@ -1,5 +1,5 @@
 import MediaPipeTracker from './MediaPipeTracker.js';
-import UIManager from './UIManager.js';
+//import UIManager from './UIManager.js';
 import SweetSpotCircle from './SweetSpotCircle.js';
 import JsonManager from './JsonManager.js';
 import DrawEngine from './DrawEngine.js';
@@ -7,15 +7,25 @@ import LeaderBoardVisual from './LeaderBoardVisual.js';
 import { addScore } from './Leaderboard.js';
 import BlueButton from './BlueButton.js';
 import { OverlayText } from './OverlayText.js';
+import { UIUtilities } from './UIUtilities.js';
+import { GameStats } from './GameStats.js'; 
+console.log("GameStats imported successfully:", GameStats);
+
+
+
+
+
 
 
  
 
 export default class Level_BasicTouch
 {
-    constructor(_levelArrayDataObject)
+    constructor(_levelArrayDataObject,audio)
     {
-       // console.log('Level_BasicTouch constructor - levelArrayDataObject:', _levelArrayDataObject);
+        console.log("GameLevel constructor started");
+
+        console.log('Level_BasicTouch constructor - levelArrayDataObject:', _levelArrayDataObject);
 
         this.mediaPipe = MediaPipeTracker.getInstance()
         this.canvas = document.getElementById("output_canvas");;
@@ -33,8 +43,13 @@ export default class Level_BasicTouch
         this.mp3Path= this.levelArrayDataObject.mp3Path;
         this.jsonPath=this.levelArrayDataObject.jsonPath;
 
-        this.uIButtons = []
-        this.uiManager = new UIManager(this.audio,this.uIButtons)
+        this.volumeSlider = UIUtilities.createVolumeSlider(this.audio, this.canvas);
+        
+        this.stats = new GameStats();
+        console.log("GameStats instance created:", this.stats);
+        console.log("Initial GameStats values:", this.stats.score, this.stats.combo, this.stats.misses);
+
+
 
         this.SweetSpotCircleArray=[];
         this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: this.canvas.width /2 -135, y: this.canvas.height/2+100}  );
@@ -138,38 +153,45 @@ export default class Level_BasicTouch
         this.audio.src = this.mp3Path;          
         this.jsonManager.loadJsonFileByPath(this.jsonPath);
         this.audio.play();
+
+
+        console.log("GameLevel constructor finished");
+        
+
     }
 
+
     
-    level_loop() {
+    level_loop() 
+    {
+
         // mediapipe stuff
         let results = this.mediaPipe.results;
         if (results == undefined) { return; }
         
-        if(!this.recordMode){
-            // game interaction and score stuff
-            this.checkForFingerTouchCircles();
-            //this.checkCirclesForMissesAndStuff();
-        }else{
-            this.sendTouchesForRecording();
-        }
-
+        this.checkForFingerTouchCircles(); 
         // update display stuff and process classes stuff
         for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
-        this.uiManager.draw();
-         this.uiManager.draw();
+        
         this.restartButton.draw();
         this.levelSelectButton.draw();
+        console.log("Score:", this.stats.score, "Combo:", this.stats.combo, "Misses:", this.stats.misses);
+        UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.misses);
+
+        
 
 
-        // Update and draw the overlay texts
+        // Update and draw percentage overlay texts
         this.overlayText.update(); // This will update positions and fade out texts
         this.overlayText.draw(this.ctx); // This will draw texts to the canvas
+        this.volumeSlider.drawVolumeSlider();
 
 
     }
     
     checkForFingerTouchCircles(){
+        console.log("checkForFingerTouchCircles this:", this);
+
         for(let sweetspotcircle of this.SweetSpotCircleArray){
             if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8).length>0)
             {
@@ -177,98 +199,68 @@ export default class Level_BasicTouch
                 let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
                 if(percentAccuracyIfTouched){
 
-                    this.touchSuccesfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                    this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
                 }
             }else{
                 sweetspotcircle.puffy = false;
             }
         }
     }
-
-    increaseComboNumer(){
-        this.comboNumber += 1;
-        this.uiManager.comboNumber = this.comboNumber;
-    }
-
-    resetComboNumber(){
-        this.comboNumber = 0;
-        this.uiManager.comboNumber = this.comboNumber;
-    }
-
-    removeMiss(){
-        if(this.beatsMissed>0){this.beatsMissed -= 1;}
-        this.uiManager.missesNumber = this.beatsMissed;
-    }
+        //simplifed gamestats logic
+        increaseComboNumber() {this.stats.increaseCombo();}
+        resetComboNumber() {this.stats.resetCombo();}
+        removeMiss() {this.stats.removeMiss();}
     
     
 
-    touchSuccesfulWithPercentage(percentAccuracy, sweetspotcircle) 
-    {
-        console.log('touchSuccesfulWithPercentage called with:', percentAccuracy, sweetspotcircle);
-    
+
         ////////////////////////////////////////////////////////////////////
-        ////////////// Touch Succesful. Receive Percent ////////////////////
+        ////////////// NEWTouch Successful. Receive Percent /////////////////
         //////////////////////////////////////////////////////////////////// 
-        let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
-        this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
+        touchSuccessfulWithPercentage(percentAccuracy, sweetspotcircle) 
+        {
+            console.log('touchSuccessfulWithPercentage called with:', percentAccuracy, sweetspotcircle);
         
-        // Increase the combo number with each successful hit
-        this.increaseComboNumer();
-    
-        // Determine the combo multiplier based on the current combo number
-        this.updateComboMultiplier();
-    
-        // Apply the multiplier to the score
-        this.scoreNumber += (percentAccuracy * this.comboMultiplier);
-    
-        // Update the UI with the new score
-        this.uiManager.scoreNumber = this.scoreNumber;
+            let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
+            this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
         
-        // Remove a miss, if applicable
-        this.removeMiss();
-    
-        console.log(percentAccuracy + "% accuracy", sweetspotcircle.color, "combo:", this.comboNumber, "multiplier:", this.comboMultiplier, "score:", this.scoreNumber);
-    }
-    
-    // Function to update the combo multiplier based on the current combo number
-    updateComboMultiplier() 
-    {
-        if (this.comboNumber >= 14) {
-            this.comboMultiplier = 8;
-        } else if (this.comboNumber >= 6) {
-            this.comboMultiplier = 4;
-        } else if (this.comboNumber >= 2) {
-            this.comboMultiplier = 2;
-        } else {
-            this.comboMultiplier = 1;
+            // Increase the combo number and update the score
+            this.stats.increaseCombo(); 
+            this.stats.addScore(percentAccuracy);  // Adjust this if you need to include comboNumber in the calculation
+        
+            // Assuming you always want to remove a miss after a successful touch
+            this.stats.removeMiss();
+        
+            console.log(percentAccuracy + "%  accuracy", sweetspotcircle.color, "combo:", this.stats.combo, "score:", this.stats.score);
         }
-    }
-    
+        
 
-    beatMissed()
-    {
         ////////////////////////////////////////////////////////////////////
-        ////////////// Beat Missed. Total Beats Tallied ////////////////////
+        ////////////// NEW Beat Missed. Total Beats Tallied ////////////////////
         ////////////////////////////////////////////////////////////////////
-        this.beatsMissed += 1;
-        this.uiManager.missesNumber = this.beatsMissed;
-        this.resetComboNumber();
-        if(this.beatsMissed > 20){
-            console.log("you lose");
-            this.audio.pause();
-            // show something in the UI perhaps?
+        beatMissed() {
+            this.stats.addMiss();
+            this.resetComboNumber();  // Make sure this method updates this.stats.combo
+        
+            if (this.stats.misses > 20) {
+                console.log("you lose");
+                this.audio.pause();
+                // Show something in the UI to indicate game over
+            }
         }
-    }
+
 
 
 
     audioEnded() 
     {
         console.log('Level Complete');
-        console.log('Score is:', this.scoreNumber);
+       // console.log('Score is:', this.scoreNumber);
+        console.log('Score is:', this.stats.score);
+
 
         console.log('audioEnded - levelArrayDataObject:', this.levelArrayDataObject);
-        addScore(this.playerName, this.scoreNumber,this.levelArrayDataObject).then(() => {
+        addScore(this.playerName, this.stats.score,this.levelArrayDataObject).then(() => {
             this.leaderBoardVisualInstance.populateAndDraw();
         }).catch(error => {
             console.error("Error adding score: ", error);

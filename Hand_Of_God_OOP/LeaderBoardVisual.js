@@ -102,9 +102,9 @@ export default class LeaderBoardVisual {
     }
   
 
-    async populateAndDraw(leaderboardId) {
+    async populateAndDraw(fireBaseLevelLeaderBoard) {
         // Fetch the top scores
-        let topScores = await getTopScores(leaderboardId); // Adjust getTopScores to accept an id
+        let topScores = await getTopScores(fireBaseLevelLeaderBoard); // Adjust getTopScores to accept an id
         
         // Transform the scores to match what the draw function expects
        let transformedScores = topScores.map(score => ({

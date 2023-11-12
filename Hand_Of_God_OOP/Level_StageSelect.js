@@ -43,8 +43,8 @@ export default class Level_StageSelect
         setTimeout(() => 
         {
             if (this.levelselectvisual.levelArray && this.levelselectvisual.levelArray.length > 0) {
-                const initialLeaderboardId = this.levelselectvisual.levelArray[0].fireBaseLevelLeaderBoard;
-                this.leaderboardvisual.populateAndDraw(initialLeaderboardId);
+                const fireBaseLevelLeaderBoard = this.levelselectvisual.levelArray[0].fireBaseLevelLeaderBoard;
+                this.leaderboardvisual.populateAndDraw(fireBaseLevelLeaderBoard);
             } else {
                 console.error('Level array is not initialized.');
             }
