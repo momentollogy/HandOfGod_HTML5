@@ -1,3 +1,4 @@
+
 // LeaderBoardVisual.js
 // Class for visualizing the leaderboard, including text and interactions with Firebase.
 

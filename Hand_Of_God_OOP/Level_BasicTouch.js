@@ -353,7 +353,9 @@ export default class Level_BasicTouch
         this.recordedMoments_Array = []; 
         this.SweetSpotCircleArray[0].reset();
         this.SweetSpotCircleArray[1].reset();
-        this.uiManager.draw();
+       // this.uiManager.draw();
+      // UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.misses);
+
         this.resetVariables();
 
     }
