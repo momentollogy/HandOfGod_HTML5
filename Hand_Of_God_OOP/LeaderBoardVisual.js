@@ -3,7 +3,9 @@
 // Class for visualizing the leaderboard, including text and interactions with Firebase.
 
 import BoxUI from './BoxUI.js';
-import { getTopScores } from './Leaderboard.js'; // Update the path if necessary
+//import { getTopScores } from './Leaderboard.js'; // Update the path if necessary
+import { getTopScores, getLatestScore, getPlayerTopScores } from './Leaderboard.js';
+
 
 export default class LeaderBoardVisual {
     constructor() {
@@ -103,19 +105,54 @@ export default class LeaderBoardVisual {
     }
   
 
-    async populateAndDraw(fireBaseLevelLeaderBoard) {
-        // Fetch the top scores
-        let topScores = await getTopScores(fireBaseLevelLeaderBoard); // Adjust getTopScores to accept an id
-        
-        // Transform the scores to match what the draw function expects
-       let transformedScores = topScores.map(score => ({
+    // LeaderBoardVisual.js
+
+async populateAndDraw(fireBaseLevelLeaderBoard) 
+{
+
+        // Existing logic to fetch the top 10 scores
+        let topScores = await getTopScores(fireBaseLevelLeaderBoard);
+        let transformedTopScores = topScores.map(score => ({
             playerName: score.name,
             score: score.score
         }));
 
-        this.update(transformedScores); // Update the leaderboard scores
-      //  this.draw(); // Display the updated leaderboard scores
-    }
+
+
+     // Fetch the most recent score and surrounding scores
+        let latestScoreData = await getLatestScore(fireBaseLevelLeaderBoard);
+        let recentRank = latestScoreData.rank;
+
+        let transformedLatestScores = latestScoreData.surroundingScores.map((score, index) => {
+            let rank = recentRank - latestScoreData.surroundingScores.length + index + 1;
+            return {
+                rank: rank,
+                playerName: score.name,
+                score: score.score
+            };
+        });
+
+   
+
+
+
+        // Fetch the top 10 scores of the current player
+        let playerTopScores = await getPlayerTopScores(fireBaseLevelLeaderBoard);
+        let transformedPlayerTopScores = playerTopScores.map(score => ({
+            playerName: score.name,
+            score: score.score
+        }));
+
+    // Log the 10 scores for the three different states
+    console.log("Top 10 Scores:", transformedTopScores);
+    console.log("Most Recent Score and Surrounding Scores:", transformedLatestScores);
+    console.log("Top 10 Scores of the Current Player:", transformedPlayerTopScores);
+
+    // Update the leaderboard scores based on the currently selected state
+    // this.update(transformedScores); // Uncomment and modify this line as per the current state
+    // this.draw(); // Display the updated leaderboard scores
+}
+
 
     update(newScores) {
         this.scores = newScores;

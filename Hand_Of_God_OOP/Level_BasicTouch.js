@@ -227,6 +227,8 @@ export default class Level_BasicTouch
         }
 
 
+      
+
 
     audioEnded() 
     {
@@ -239,6 +241,13 @@ export default class Level_BasicTouch
             console.error("Error adding score: ", error);
         });
     }
+
+ 
+
+
+
+
+
 
     resetVariables(){
         this.scoreNumber = 0;
