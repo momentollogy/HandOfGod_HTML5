@@ -2,7 +2,7 @@
 
 // Import db from firebase initialization module
 import { db } from './firebase.js';
-import { collection, query, orderBy, limit, getDocs, where, startAt, endBefore, startAfter } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+import { collection, query, orderBy, limit, getDocs, where, addDoc,startAt, endBefore, startAfter } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 
 
 // Function to add a score
