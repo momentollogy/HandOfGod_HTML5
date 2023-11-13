@@ -4,7 +4,11 @@
 
 import BoxUI from './BoxUI.js';
 //import { getTopScores } from './Leaderboard.js'; // Update the path if necessary
+<<<<<<< HEAD
 import { getTopScores, getLatestScore, getPlayerTopScores } from './Leaderboard.js';
+=======
+import { getTopScores, getLatestScore, getPlayerTopScores } from './Leaderboard.js'; // Adjust the path if necessary
+>>>>>>> HeadDeleteSoon
 
 
 export default class LeaderBoardVisual {
@@ -105,6 +109,7 @@ export default class LeaderBoardVisual {
     }
   
 
+<<<<<<< HEAD
     // LeaderBoardVisual.js
 
 async populateAndDraw(fireBaseLevelLeaderBoard) 
@@ -113,6 +118,123 @@ async populateAndDraw(fireBaseLevelLeaderBoard)
         // Existing logic to fetch the top 10 scores
         let topScores = await getTopScores(fireBaseLevelLeaderBoard);
         let transformedTopScores = topScores.map(score => ({
+=======
+    
+    async populateAndDraw(fireBaseLevelLeaderBoard) {
+        // Fetch the top scores
+        let topScores = await getTopScores(fireBaseLevelLeaderBoard); 
+        let transformedTopScores = topScores.map(score => ({
+            playerName: score.name,
+            score: score.score
+        }));
+    
+        // Fetch the most recent score and surrounding scores
+        let latestScoreData = await getLatestScore(fireBaseLevelLeaderBoard);
+        let recentRank = latestScoreData.rank;
+    
+        // Calculate the rank for each surrounding score
+        let transformedLatestScores = latestScoreData.surroundingScores.map((score, index) => {
+            let rankAdjustment = index - latestScoreData.surroundingScores.indexOf(latestScoreData.recentScoreData);
+            let rank = recentRank + rankAdjustment;
+            return {
+                rank: rank,
+                playerName: score.name,
+                score: score.score
+            };
+        });
+
+
+          // Fetch the top 10 scores of the current player
+          let playerTopScores = await getPlayerTopScores(fireBaseLevelLeaderBoard);
+          let transformedPlayerTopScores = playerTopScores.map(score => ({
+              playerName: score.name,
+              score: score.score
+          }));
+  
+    
+        // Log the scores for debugging
+        console.log("Top 10 Scores:", transformedTopScores);
+        console.log("Most Recent Score and Surrounding Scores:", transformedLatestScores);
+        console.log("Top 10 Scores of the Current Player:", transformedPlayerTopScores);
+
+    
+        // Additional code for handling player's top scores
+        // ...
+    }
+    
+
+
+
+/* Might pull playname if needed
+
+    async populateAndDraw(fireBaseLevelLeaderBoard) 
+    {
+    
+            // Existing logic to fetch the top 10 scores
+            let topScores = await getTopScores(fireBaseLevelLeaderBoard);
+            let transformedTopScores = topScores.map(score => ({
+                playerName: score.name,
+                score: score.score
+            }));
+    
+    
+    
+         // Fetch the most recent score and surrounding scores
+            let latestScoreData = await getLatestScore(fireBaseLevelLeaderBoard);
+            let recentRank = latestScoreData.rank;
+    
+            let transformedLatestScores = latestScoreData.surroundingScores.map((score, index) => {
+                let rank = recentRank - latestScoreData.surroundingScores.length + index + 1;
+                return {
+                    rank: rank,
+                    playerName: score.name,
+                    score: score.score
+                };
+            });
+    
+    
+            // Fetch the top 10 scores of the current player
+            let playerTopScores = await getPlayerTopScores(fireBaseLevelLeaderBoard);
+            let transformedPlayerTopScores = playerTopScores.map(score => ({
+                playerName: score.name,
+                score: score.score
+            }));
+    
+        // Log the 10 scores for the three different states
+        console.log("Top 10 Scores:", transformedTopScores);
+        console.log("Most Recent Score and Surrounding Scores:", transformedLatestScores);
+        console.log("Top 10 Scores of the Current Player:", transformedPlayerTopScores);
+    }
+    
+
+*/
+
+
+
+
+
+    update(newScores) {
+        this.scores = newScores;
+    }
+
+    dispose() {
+        window.removeEventListener('levelSelected', this.boundLevelSelected);
+        // ... other cleanup code ...
+      }
+}
+
+
+
+
+/* old working function for recieve and populate only top 10
+
+async populateAndDraw(fireBaseLevelLeaderBoard) {
+        // Fetch the top scores
+        let topScores = await getTopScores(fireBaseLevelLeaderBoard); // Adjust getTopScores to accept an id
+        
+        // Transform the scores to match what the draw function expects
+       let transformedScores = topScores.map(score => ({
+>>>>>>> HeadDeleteSoon
             playerName: score.name,
             score: score.score
         }));
@@ -154,12 +276,4 @@ async populateAndDraw(fireBaseLevelLeaderBoard)
 }
 
 
-    update(newScores) {
-        this.scores = newScores;
-    }
-
-    dispose() {
-        window.removeEventListener('levelSelected', this.boundLevelSelected);
-        // ... other cleanup code ...
-      }
-}
+    */
