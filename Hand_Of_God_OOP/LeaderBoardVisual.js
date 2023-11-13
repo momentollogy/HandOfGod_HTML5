@@ -3,7 +3,6 @@
 // Class for visualizing the leaderboard, including text and interactions with Firebase.
 
 import BoxUI from './BoxUI.js';
-//import { getTopScores } from './Leaderboard.js'; // Update the path if necessary
 import { getTopScores, getLatestScore, getPlayerTopScores } from './Leaderboard.js'; // Adjust the path if necessary
 
 
@@ -46,8 +45,12 @@ export default class LeaderBoardVisual {
             // No resize factor or offsets here, as they are already calculated in width and X, Y positions.
         );
 
+                const defaultLeaderboardId = "JustDance_easy_LeaderBoard";
+
+
         // Immediately attempt to populate and draw the leaderboard
-        this.populateAndDraw();
+         this.populateAndDraw(defaultLeaderboardId, 'topScores');
+
         
     }
 
@@ -55,11 +58,9 @@ export default class LeaderBoardVisual {
         this.ctx.save();
         // Set the style for the box
         this.ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-        
-        // Draw the box with rounded edges
         this.leaderboardBox.draw();
-
-        // Draw the HIGHSCORES header, centered within the leaderboard
+    
+        // Draw the HIGHSCORES header
         this.ctx.font = `${this.HEADER_FONT_SIZE}px Verdana`;
         this.ctx.fillStyle = "white";
         this.ctx.textAlign = "center";
@@ -68,136 +69,173 @@ export default class LeaderBoardVisual {
             this.LEADERBOARD_X + (this.LEADERBOARD_WIDTH / 2), 
             this.LEADERBOARD_Y + this.HEADER_HEIGHT / 2 + 37
         );
-
-        // Draw the scores
-        this.ctx.font = `${this.SCORE_FONT_SIZE}px Verdana`;
+    
+        // Start of new code for drawing the scores
         let startY = this.LEADERBOARD_Y + this.HEADER_HEIGHT + this.SCORE_LINE_HEIGHT;
-        for (let i = 0; i < this.scores.length && i < 10; i++) {
-            this.ctx.textAlign = "left";
-            this.ctx.fillText(
-                (i + 1).toString(), 
-                this.LEADERBOARD_X + this.SCORE_MARGIN_LEFT, 
-                startY + (i * this.SCORE_LINE_HEIGHT)
-            );
-
-            this.ctx.textAlign = "center";
-            this.ctx.fillText(
-                this.scores[i].playerName, 
-                this.LEADERBOARD_X + (this.LEADERBOARD_WIDTH / 2), 
-                startY + (i * this.SCORE_LINE_HEIGHT)
-            );
-
-            this.ctx.textAlign = "right";
-            this.ctx.fillText(
-                this.scores[i].score.toString(), 
-                this.LEADERBOARD_X + this.LEADERBOARD_WIDTH - this.SCORE_MARGIN_RIGHT, 
-                startY + (i * this.SCORE_LINE_HEIGHT)
-            );
+    
+        if (this.scores && this.scores.length > 0) {
+            // Check if the scores include a 'rank' property
+            let includesRank = 'rank' in this.scores[0];
+    
+            for (let i = 0; i < this.scores.length && i < 10; i++) {
+                let scoreItem = this.scores[i];
+    
+                // Draw the rank or index
+                this.ctx.font = `${this.SCORE_FONT_SIZE}px Verdana`;
+                this.ctx.fillStyle = "white";
+    
+                if (includesRank) {
+                    this.ctx.textAlign = "left";
+                    this.ctx.fillText(
+                        scoreItem.rank.toString(), 
+                        this.LEADERBOARD_X + this.SCORE_MARGIN_LEFT, 
+                        startY + (i * this.SCORE_LINE_HEIGHT)
+                    );
+                } else {
+                    this.ctx.textAlign = "left";
+                    this.ctx.fillText(
+                        (i + 1).toString(), 
+                        this.LEADERBOARD_X + this.SCORE_MARGIN_LEFT, 
+                        startY + (i * this.SCORE_LINE_HEIGHT)
+                    );
+                }
+    
+                // Draw player name
+                this.ctx.textAlign = "center";
+                this.ctx.fillText(
+                    scoreItem.playerName, 
+                    this.LEADERBOARD_X + (this.LEADERBOARD_WIDTH / 2), 
+                    startY + (i * this.SCORE_LINE_HEIGHT)
+                );
+    
+                // Draw score
+                this.ctx.textAlign = "right";
+                this.ctx.fillText(
+                    scoreItem.score.toString(), 
+                    this.LEADERBOARD_X + this.LEADERBOARD_WIDTH - this.SCORE_MARGIN_RIGHT, 
+                    startY + (i * this.SCORE_LINE_HEIGHT)
+                );
+            }
         }
+    
         this.ctx.restore();
     }
+
+
+
+    
 
     // Handle the levelSelected event
     levelSelected(event) 
     {
         const selectedLevelLeaderboard = event.detail.fireBaseLevelLeaderBoard;
-        this.populateAndDraw(selectedLevelLeaderboard);
+        this.populateAndDraw(selectedLevelLeaderboard, 'topScores');
     }
-  
-
-    
-    async populateAndDraw(fireBaseLevelLeaderBoard) {
-        // Fetch the top scores
-        let topScores = await getTopScores(fireBaseLevelLeaderBoard); 
-        let transformedTopScores = topScores.map(score => ({
-            playerName: score.name,
-            score: score.score
-        }));
-    
-        // Fetch the most recent score and surrounding scores
-        let latestScoreData = await getLatestScore(fireBaseLevelLeaderBoard);
-        let recentRank = latestScoreData.rank;
-    
-        // Calculate the rank for each surrounding score
-        let transformedLatestScores = latestScoreData.surroundingScores.map((score, index) => {
-            let rankAdjustment = index - latestScoreData.surroundingScores.indexOf(latestScoreData.recentScoreData);
-            let rank = recentRank + rankAdjustment;
-            return {
-                rank: rank,
-                playerName: score.name,
-                score: score.score
-            };
-        });
-
-
-          // Fetch the top 10 scores of the current player
-          let playerTopScores = await getPlayerTopScores(fireBaseLevelLeaderBoard);
-          let transformedPlayerTopScores = playerTopScores.map(score => ({
-              playerName: score.name,
-              score: score.score
-          }));
-  
-    
-        // Log the scores for debugging
-        console.log("Top 10 Scores:", transformedTopScores);
-        console.log("Most Recent Score and Surrounding Scores:", transformedLatestScores);
-        console.log("Top 10 Scores of the Current Player:", transformedPlayerTopScores);
-
-    
-        // Additional code for handling player's top scores
-        // ...
-    }
-    
+    //topScores   latestScores
 
 
 
-/* Might pull playname if needed
-
-    async populateAndDraw(fireBaseLevelLeaderBoard) 
-    {
+    async populateAndDraw(fireBaseLevelLeaderBoard, dataType) {
+        let transformedScores;
     
-            // Existing logic to fetch the top 10 scores
-            let topScores = await getTopScores(fireBaseLevelLeaderBoard);
-            let transformedTopScores = topScores.map(score => ({
-                playerName: score.name,
-                score: score.score
-            }));
-    
-    
-    
-         // Fetch the most recent score and surrounding scores
-            let latestScoreData = await getLatestScore(fireBaseLevelLeaderBoard);
-            let recentRank = latestScoreData.rank;
-    
-            let transformedLatestScores = latestScoreData.surroundingScores.map((score, index) => {
-                let rank = recentRank - latestScoreData.surroundingScores.length + index + 1;
-                return {
-                    rank: rank,
+        switch (dataType) {
+            case 'topScores': {
+                let topScores = await getTopScores(fireBaseLevelLeaderBoard); 
+                transformedScores = topScores.map(score => ({
                     playerName: score.name,
                     score: score.score
-                };
-            });
+                }));
+                break;
+            }
     
+            case 'latestScores': {
+                let latestScoreData = await getLatestScore(fireBaseLevelLeaderBoard);
+                transformedScores = latestScoreData.surroundingScores.map((score, index) => {
+                    let rankAdjustment = index - latestScoreData.surroundingScores.indexOf(latestScoreData.recentScoreData);
+                    let rank = latestScoreData.rank + rankAdjustment;
+                    return {
+                        rank: rank,
+                        playerName: score.name,
+                        score: score.score
+                    };
+                });
+                break;
+            }
     
-            // Fetch the top 10 scores of the current player
-            let playerTopScores = await getPlayerTopScores(fireBaseLevelLeaderBoard);
-            let transformedPlayerTopScores = playerTopScores.map(score => ({
-                playerName: score.name,
-                score: score.score
-            }));
+            case 'PlayerTopScores': {
+                let playerTopScores = await getPlayerTopScores(fireBaseLevelLeaderBoard);
+                transformedScores = playerTopScores.map(score => ({
+                    playerName: score.name,
+                    score: score.score
+                }));
+                break;
+            }
+        }
     
-        // Log the 10 scores for the three different states
-        console.log("Top 10 Scores:", transformedTopScores);
-        console.log("Most Recent Score and Surrounding Scores:", transformedLatestScores);
-        console.log("Top 10 Scores of the Current Player:", transformedPlayerTopScores);
+        this.update(transformedScores);
+        this.draw();
     }
     
 
-*/
+/*
+    async populateAndDraw(fireBaseLevelLeaderBoard, dataType) 
+    {
+        switch (dataType) 
+        {
+    
+            case 'topScores': 
+            {
+                let topScores = await getTopScores(fireBaseLevelLeaderBoard); 
+                let transformedTopScores = topScores.map(score => ({
+                    playerName: score.name,
+                    score: score.score
+                }));
+                console.log("Top 10 Scores:", transformedTopScores);
+                this.update(transformedTopScores); // Update the leaderboard with top scores
+                this.draw(); // Draw the updated leaderboard
+                break;
+            }
+    
 
 
+            case 'latestScores': 
+            {
+                let latestScoreData = await getLatestScore(fireBaseLevelLeaderBoard);
+                let recentRank = latestScoreData.rank;
+    
+                let transformedLatestScores = latestScoreData.surroundingScores.map((score, index) => {
+                    let rankAdjustment = index - latestScoreData.surroundingScores.indexOf(latestScoreData.recentScoreData);
+                    let rank = recentRank + rankAdjustment;
+                    return {
+                        rank: rank,
+                        playerName: score.name,
+                        score: score.score
+                    };
+                });
+                console.log("Latest Scores:", transformedLatestScores);
+                this.update(transformedTopScores); // Update the leaderboard with top scores
+                this.draw(); // Draw the updated leaderboard
+                break;
+            }
 
 
+            case 'PlayerTopScores':
+            {
+                let playerTopScores = await getPlayerTopScores(fireBaseLevelLeaderBoard);
+                let transformedPlayerTopScores = playerTopScores.map(score => ({
+                    playerName: score.name,
+                    score: score.score
+                }));
+                console.log("Player Top Scores:", transformedPlayerTopScores);
+                this.update(transformedTopScores); // Update the leaderboard with top scores
+                this.draw(); // Draw the updated leaderboard
+                break;
+            }
+        }
+    }
+
+
+   */
 
     update(newScores) {
         this.scores = newScores;
@@ -210,55 +248,3 @@ export default class LeaderBoardVisual {
 }
 
 
-
-
-/* old working function for recieve and populate only top 10
-
-async populateAndDraw(fireBaseLevelLeaderBoard) {
-        // Fetch the top scores
-        let topScores = await getTopScores(fireBaseLevelLeaderBoard); // Adjust getTopScores to accept an id
-        
-        // Transform the scores to match what the draw function expects
-       let transformedScores = topScores.map(score => ({
-            playerName: score.name,
-            score: score.score
-        }));
-
-
-
-     // Fetch the most recent score and surrounding scores
-        let latestScoreData = await getLatestScore(fireBaseLevelLeaderBoard);
-        let recentRank = latestScoreData.rank;
-
-        let transformedLatestScores = latestScoreData.surroundingScores.map((score, index) => {
-            let rank = recentRank - latestScoreData.surroundingScores.length + index + 1;
-            return {
-                rank: rank,
-                playerName: score.name,
-                score: score.score
-            };
-        });
-
-   
-
-
-
-        // Fetch the top 10 scores of the current player
-        let playerTopScores = await getPlayerTopScores(fireBaseLevelLeaderBoard);
-        let transformedPlayerTopScores = playerTopScores.map(score => ({
-            playerName: score.name,
-            score: score.score
-        }));
-
-    // Log the 10 scores for the three different states
-    console.log("Top 10 Scores:", transformedTopScores);
-    console.log("Most Recent Score and Surrounding Scores:", transformedLatestScores);
-    console.log("Top 10 Scores of the Current Player:", transformedPlayerTopScores);
-
-    // Update the leaderboard scores based on the currently selected state
-    // this.update(transformedScores); // Uncomment and modify this line as per the current state
-    // this.draw(); // Display the updated leaderboard scores
-}
-
-
-    */
