@@ -119,11 +119,7 @@ export default class LevelSelectVisual
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "Level_3NoteTest", 
                             fireBaseLevelLeaderBoard: "Level_3NoteTest_LB", 
-<<<<<<< HEAD
                             duration: ":07",
-=======
-                            duration: "1:23",
->>>>>>> HeadDeleteSoon
                             mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
                             jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"
                         },

@@ -4,11 +4,7 @@
 
 import BoxUI from './BoxUI.js';
 //import { getTopScores } from './Leaderboard.js'; // Update the path if necessary
-<<<<<<< HEAD
-import { getTopScores, getLatestScore, getPlayerTopScores } from './Leaderboard.js';
-=======
 import { getTopScores, getLatestScore, getPlayerTopScores } from './Leaderboard.js'; // Adjust the path if necessary
->>>>>>> HeadDeleteSoon
 
 
 export default class LeaderBoardVisual {
@@ -109,16 +105,6 @@ export default class LeaderBoardVisual {
     }
   
 
-<<<<<<< HEAD
-    // LeaderBoardVisual.js
-
-async populateAndDraw(fireBaseLevelLeaderBoard) 
-{
-
-        // Existing logic to fetch the top 10 scores
-        let topScores = await getTopScores(fireBaseLevelLeaderBoard);
-        let transformedTopScores = topScores.map(score => ({
-=======
     
     async populateAndDraw(fireBaseLevelLeaderBoard) {
         // Fetch the top scores
@@ -234,7 +220,6 @@ async populateAndDraw(fireBaseLevelLeaderBoard) {
         
         // Transform the scores to match what the draw function expects
        let transformedScores = topScores.map(score => ({
->>>>>>> HeadDeleteSoon
             playerName: score.name,
             score: score.score
         }));

@@ -2,12 +2,7 @@
 
 // Import db from firebase initialization module
 import { db } from './firebase.js';
-<<<<<<< HEAD
 import { collection, query, orderBy, limit, getDocs, where, startAt, endBefore, startAfter } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
-=======
-import { collection, query, orderBy, limit, getDocs, where, addDoc, startAt, endBefore, startAfter } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
-
->>>>>>> HeadDeleteSoon
 
 
 // Function to add a score
@@ -30,8 +25,6 @@ export async function addScore(name, score,levelArrayDataObject) {
 
 
 
-<<<<<<< HEAD
-=======
 
 
 
@@ -126,7 +119,6 @@ export async function getPlayerTopScores(leaderboardId) {
 
 /* OLD WOKING CODE which just retives top 10
 
->>>>>>> HeadDeleteSoon
 // Function to retrieve top scores
 export async function getTopScores(leaderboardId,limitCount = 10) {
   const scoresCollectionRef = collection(db, leaderboardId);
