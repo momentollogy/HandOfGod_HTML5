@@ -118,7 +118,7 @@ export default class LevelSelectVisual
                         {   
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "Level_3NoteTest", 
-                            fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard", 
+                            fireBaseLevelLeaderBoard: "Level_3NoteTest_LB", 
                             duration: "1:23",
                             mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
                             jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"

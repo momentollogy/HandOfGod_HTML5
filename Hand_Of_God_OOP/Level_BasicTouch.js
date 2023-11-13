@@ -232,6 +232,9 @@ export default class Level_BasicTouch
     {
         console.log('Level Complete');
         console.log('Score is:', this.stats.score);
+        console.log('Player Name:', this.playerName);
+        console.log('Level Array Data Object:', this.levelArrayDataObject);
+        
 
         addScore(this.playerName, this.stats.score,this.levelArrayDataObject).then(() => {
             this.leaderBoardVisualInstance.populateAndDraw();
