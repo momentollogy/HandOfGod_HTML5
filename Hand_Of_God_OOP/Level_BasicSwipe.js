@@ -12,7 +12,7 @@ import { OverlayText } from './OverlayText.js';
  
 
 
-export default class Level_BasicTouch
+export default class Level_BasicSwipe
 {
     constructor(_levelArrayDataObject)
     {
@@ -82,39 +82,49 @@ export default class Level_BasicTouch
         this.rightSwipeArray = [];
         
 
-        // 'LEVEL SELECT' BUTTON
-        this.levelSelectButton = new BlueButton(
-            this.ctx,
-            leftButtonX,
-            buttonY,
-            buttonWidth,
-            buttonHeight,
-            buttonRadius,
-            "#00008B", // Deep blue color
-            "#0000CD", // Lighter blue for hover effect
-            "Level Select",
-            "rgba(0, 0, 0, 0.5)",
-            // Here, instead of passing a callback, you pass the actionData directly
-            { levelName: "Level_StageSelect" } // This will be used as this.actionData in the BlueButton class
-        );
+       // 'Level Select' button specific code
+       this.levelSelectButton = new BlueButton
+       (
+           this.ctx,
+           leftButtonX,
+           buttonY,
+           buttonWidth,
+           buttonHeight,
+           buttonRadius,
+           "#00008B",
+           "#0000CD",
+           "Level Select",
+           "rgba(0, 0, 0, 0.5)",
+           { levelName: "Level_StageSelect", lastLevelData: this.lastLevelChangeDetails },
+           (actionData) => {
+               // Dispatching event for a different level selection
+               document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
+               console.log("Level Select Button clicked, dispatching levelChange event with details:", actionData);
+           }
+       );
 
 
-         // 'RESTART' BUTTON
-        this.restartButton = new BlueButton
-        (
-            this.ctx,
-            rightButtonX,
-            buttonY,
-            buttonWidth,
-            buttonHeight,
-            buttonRadius,
-            "#8B0000", // Dark red color
-            "#CD5C5C", // Lighter red for hover effect
-            "Restart",
-            "rgba(0, 0, 0, 0.5)",
-            this.levelArrayDataObject        
-        );
-        
+
+       // 'Restart' button specific code
+       this.restartButton = new BlueButton
+       (
+           this.ctx,
+           rightButtonX,
+           buttonY,
+           buttonWidth,
+           buttonHeight,
+           buttonRadius,
+           "#8B0000",
+           "#CD5C5C",
+           "Restart",
+           "rgba(0, 0, 0, 0.5)",
+           this.levelArrayDataObject,
+           (actionData) => {
+               // Dispatching event to restart the game or level
+               document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
+               console.log("Restart Button clicked, dispatching levelChange event with details:", actionData);
+           }
+       );
         
         
 

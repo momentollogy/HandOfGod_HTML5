@@ -1,5 +1,4 @@
 import MediaPipeTracker from './MediaPipeTracker.js';
-import UIManager, { Button } from './UIManager.js';
 
 
 export default class Level_StageSelect

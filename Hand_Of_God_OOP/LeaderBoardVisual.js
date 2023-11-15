@@ -45,16 +45,23 @@ export default class LeaderBoardVisual {
             // No resize factor or offsets here, as they are already calculated in width and X, Y positions.
         );
 
-                const defaultLeaderboardId = "JustDance_easy_LeaderBoard";
+             //   const defaultLeaderboardId = "JustDance_easy_LeaderBoard";
 
 
         // Immediately attempt to populate and draw the leaderboard
-         this.populateAndDraw(defaultLeaderboardId, 'topScores');
+   // this.populateAndDraw(defaultLeaderboardId, detail.leaderBoardState); //or latestScores or playerTopscores   
+      // this.setState(detail.leaderBoardState);
+    }
 
-        
+    setState(LB_state)
+    {
+        this.populateAndDraw("JustDance_easy_LeaderBoard",LB_state);
     }
 
     draw() {
+
+      //  console.log("Drawing leaderboard with scores: ", this.scores);
+
         this.ctx.save();
         // Set the style for the box
         this.ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
@@ -79,10 +86,15 @@ export default class LeaderBoardVisual {
     
             for (let i = 0; i < this.scores.length && i < 10; i++) {
                 let scoreItem = this.scores[i];
+
+               // console.log(`Setting fillStyle for ${scoreItem.playerName}: `, scoreItem.isLatest ? "red" : "white");
+
     
-                // Draw the rank or index
+                // ß the rank or index
                 this.ctx.font = `${this.SCORE_FONT_SIZE}px Verdana`;
-                this.ctx.fillStyle = "white";
+               // this.ctx.fillStyle = "white";
+               this.ctx.fillStyle = scoreItem.isLatest ? "red" : "white";
+
     
                 if (includesRank) {
                     this.ctx.textAlign = "left";
@@ -129,13 +141,17 @@ export default class LeaderBoardVisual {
     levelSelected(event) 
     {
         const selectedLevelLeaderboard = event.detail.fireBaseLevelLeaderBoard;
-        this.populateAndDraw(selectedLevelLeaderboard, 'topScores');
+        this.populateAndDraw(selectedLevelLeaderboard, 'latestScores');
+       // console.log(`Drawing score for ${scoreItem.playerName}, isLatest in levelSelected loop: `, scoreItem.isLatest);
+
     }
-    //topScores   latestScores
+    //topScores   latestScores //topPlayerscores
 
 
 
     async populateAndDraw(fireBaseLevelLeaderBoard, dataType) {
+     // console.log("right after pop and draw",dataType)
+
         let transformedScores;
     
         switch (dataType) {
@@ -147,7 +163,8 @@ export default class LeaderBoardVisual {
                 }));
                 break;
             }
-    
+
+
             case 'latestScores': {
                 let latestScoreData = await getLatestScore(fireBaseLevelLeaderBoard);
                 transformedScores = latestScoreData.surroundingScores.map((score, index) => {
@@ -156,12 +173,14 @@ export default class LeaderBoardVisual {
                     return {
                         rank: rank,
                         playerName: score.name,
-                        score: score.score
+                        score: score.score,
+                        isLatest: index === latestScoreData.surroundingScores.indexOf(latestScoreData.recentScoreData)
                     };
                 });
                 break;
             }
-    
+
+
             case 'PlayerTopScores': {
                 let playerTopScores = await getPlayerTopScores(fireBaseLevelLeaderBoard);
                 transformedScores = playerTopScores.map(score => ({
@@ -175,67 +194,6 @@ export default class LeaderBoardVisual {
         this.update(transformedScores);
         this.draw();
     }
-    
-
-/*
-    async populateAndDraw(fireBaseLevelLeaderBoard, dataType) 
-    {
-        switch (dataType) 
-        {
-    
-            case 'topScores': 
-            {
-                let topScores = await getTopScores(fireBaseLevelLeaderBoard); 
-                let transformedTopScores = topScores.map(score => ({
-                    playerName: score.name,
-                    score: score.score
-                }));
-                console.log("Top 10 Scores:", transformedTopScores);
-                this.update(transformedTopScores); // Update the leaderboard with top scores
-                this.draw(); // Draw the updated leaderboard
-                break;
-            }
-    
-
-
-            case 'latestScores': 
-            {
-                let latestScoreData = await getLatestScore(fireBaseLevelLeaderBoard);
-                let recentRank = latestScoreData.rank;
-    
-                let transformedLatestScores = latestScoreData.surroundingScores.map((score, index) => {
-                    let rankAdjustment = index - latestScoreData.surroundingScores.indexOf(latestScoreData.recentScoreData);
-                    let rank = recentRank + rankAdjustment;
-                    return {
-                        rank: rank,
-                        playerName: score.name,
-                        score: score.score
-                    };
-                });
-                console.log("Latest Scores:", transformedLatestScores);
-                this.update(transformedTopScores); // Update the leaderboard with top scores
-                this.draw(); // Draw the updated leaderboard
-                break;
-            }
-
-
-            case 'PlayerTopScores':
-            {
-                let playerTopScores = await getPlayerTopScores(fireBaseLevelLeaderBoard);
-                let transformedPlayerTopScores = playerTopScores.map(score => ({
-                    playerName: score.name,
-                    score: score.score
-                }));
-                console.log("Player Top Scores:", transformedPlayerTopScores);
-                this.update(transformedTopScores); // Update the leaderboard with top scores
-                this.draw(); // Draw the updated leaderboard
-                break;
-            }
-        }
-    }
-
-
-   */
 
     update(newScores) {
         this.scores = newScores;
@@ -243,7 +201,6 @@ export default class LeaderBoardVisual {
 
     dispose() {
         window.removeEventListener('levelSelected', this.boundLevelSelected);
-        // ... other cleanup code ...
       }
 }
 

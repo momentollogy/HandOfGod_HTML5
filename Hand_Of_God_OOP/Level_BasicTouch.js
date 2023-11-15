@@ -8,6 +8,9 @@ import BlueButton from './BlueButton.js';
 import { OverlayText } from './OverlayText.js';
 import { UIUtilities } from './UIUtilities.js';
 import { GameStats } from './GameStats.js'; 
+import SplashScreens from './SplashScreens.js';
+
+
 
 
 
@@ -23,7 +26,7 @@ export default class Level_BasicTouch
         this.fileInput = document.getElementById('fileInput');
         
         this.audio = new Audio();
-        this.audio.volume = 0.5; 
+        this.audio.volume = 0.04; 
         
         this.jsonManager = new JsonManager();
 
@@ -37,6 +40,7 @@ export default class Level_BasicTouch
         //ALL SCORES/STATS CAPTURED HERE
         this.stats = new GameStats();
        
+
         this.SweetSpotCircleArray=[];
         this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: this.canvas.width /2 -135, y: this.canvas.height/2+100}  );
         this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: this.canvas.width /2 +135, y: this.canvas.height/2+100} );
@@ -44,6 +48,7 @@ export default class Level_BasicTouch
         this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -90;
         this.SweetSpotCircleArray[0].name="LeftSSCir";
         this.SweetSpotCircleArray[1].name="RightSSCir";
+
 
         this.recordedMoments_Array=[];
         this.recordMode = false;
@@ -66,7 +71,23 @@ export default class Level_BasicTouch
         this.displayBkg = false;
         this.hasBeatBeenMissed=false;
 
+        //showing Percentage accuacies when touch beats.
         this.overlayText = new OverlayText();
+
+        //showing splash screens level compelete, level failed.
+       // this.splashScreens = new SplashScreens(this.ctx); // pass in the canvas context
+
+
+        this.calculateRank = (score) => {
+            // Logic to determine rank based on the score argument
+            if (score > 200) return 'A';
+            if (score > 100) return 'B';
+            return 'C';
+        };
+        this.checkNewHighScore = (score) => {
+            // For now, any score greater than 50 is considered a high score
+            return score > 50;
+        };
 
 
         // Button positions (You may need to adjust these positions to fit your layout)
@@ -78,44 +99,56 @@ export default class Level_BasicTouch
         const buttonRadius = 10;
 
 
-
-        // 'LEVEL SELECT' BUTTON
-        this.levelSelectButton = new BlueButton(
-            this.ctx,
+        // 'Level Select' button specific code
+        this.levelSelectButton = new BlueButton
+        (
             leftButtonX,
             buttonY,
             buttonWidth,
             buttonHeight,
             buttonRadius,
-            "#00008B", // Deep blue color
-            "#0000CD", // Lighter blue for hover effect
+            "#00008B",
+            "#0000CD",
             "Level Select",
             "rgba(0, 0, 0, 0.5)",
-            { 
-                levelName: "Level_StageSelect",  //  pass the actionData directly
-                lastLevelData: this.lastLevelChangeDetails // Pass the entire levelChange object or relevant part
-            } 
+            { levelName: "Level_StageSelect",leaderBoardState: "latestScores"},
+            (actionData) => {
+                // Dispatching event for a different level selection
+               // actionData.leaderBoardState = "latestScores";
+                document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
+                console.log("Level Select Button clicked, dispatching levelChange event with details:", actionData);
+            }
         );
 
 
-         // 'RESTART' BUTTON
+        
+
+
+        // 'Restart' button specific code
         this.restartButton = new BlueButton
         (
-            this.ctx,
             rightButtonX,
             buttonY,
             buttonWidth,
             buttonHeight,
             buttonRadius,
-            "#8B0000", // Dark red color
-            "#CD5C5C", // Lighter red for hover effect
+            "#8B0000",
+            "#CD5C5C",
             "Restart",
             "rgba(0, 0, 0, 0.5)",
-            this.levelArrayDataObject        
+            this.levelArrayDataObject,
+            (actionData) => 
+            {
+                // Dispatching event to restart the game or level
+                document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
+                console.log("Restart Button clicked, dispatching levelChange event with details:", actionData);
+            }
         );
-        
 
-        this.playerName = 'momentology'; // Add this line with a default test player name
+
+
+
+       // this.playerName = 'momentology'; // Add this line with a default test player name
       //  const leaderBoardVisual = new LeaderBoardVisual();
         this.leaderBoardVisualInstance = new LeaderBoardVisual();
 
@@ -226,29 +259,39 @@ export default class Level_BasicTouch
             }
         }
 
+       
 
-      
 
 
     audioEnded() 
     {
         console.log('Level Complete');
         console.log('Score is:', this.stats.score);
-        console.log('Player Name:', this.playerName);
+        console.log('Player Name:', window.playerName);
         console.log('Level Array Data Object:', this.levelArrayDataObject);
         
+        
 
-        addScore(this.playerName, this.stats.score,this.levelArrayDataObject).then(() => {
+        // Dispatch a levelChange event with the required data for the Level Results Stage
+        const levelResultsData = 
+        {
+            levelName: 'Level_ResultsStage', // The name of the results level/stage
+            score: this.stats.score,
+            playerName: window.playerName,
+            // Include any other data you want to pass to the level results stage
+        };
+
+        document.dispatchEvent(new CustomEvent('levelChange', { detail: levelResultsData }));
+
+
+
+        addScore(window.playerName, this.stats.score,this.levelArrayDataObject).then(() => {
             this.leaderBoardVisualInstance.populateAndDraw();
         }).catch(error => {
             console.error("Error adding score: ", error);
         });
     }
-
- 
-
-
-
+      
 
 
 
@@ -280,6 +323,12 @@ export default class Level_BasicTouch
         this.SweetSpotCircleArray[0].reset();
         this.SweetSpotCircleArray[1].reset();
         this.resetVariables();
+
+
+        this.levelSelectButton.dispose();
+        this.restartButton.dispose();
+
+        
 
     }
 }
