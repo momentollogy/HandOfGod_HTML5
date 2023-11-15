@@ -1,5 +1,5 @@
 import MediaPipeTracker from './MediaPipeTracker.js';
-import ResultsDisplayBox from './ResultsDisplayBox.js'; // Make sure the path is correct
+import Results_Box from './Results_Box.js'; // Make sure the path is correct
 
 export default class LevelResultsStage {
     constructor(_data) {
@@ -8,12 +8,12 @@ export default class LevelResultsStage {
         this.ctx = this.canvas.getContext("2d");
         this.resultsData = _data;
         
-        // Instantiate the ResultsDisplayBox with the canvas context
-        this.resultsDisplayBox = new ResultsDisplayBox(this.resultsData);
+        // Instantiate the ResultsBox with the canvas context
+        this.results_Box = new Results_Box(this.resultsData);
 
-        // Set initial state for ResultsDisplayBox
+        // Set initial state for ResultsBox
         // You can modify these values as needed when the level ends
-        this.resultsDisplayBox.setState('levelComplete', 100, 'A', true);
+        this.results_Box.setState('levelComplete', 100, 'A', true);
     }
 
     level_loop() {
@@ -25,7 +25,7 @@ export default class LevelResultsStage {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         // Draw the results display box
-        this.resultsDisplayBox.draw();
+        this.results_Box.draw();
 
         // Additional game loop logic...
     }
@@ -33,35 +33,41 @@ export default class LevelResultsStage {
     // You can add a method to update the state of the results display box
     // based on game events such as level completion or failure
     updateResults(newState, score, rank, isNewHighScore) {
-        this.resultsDisplayBox.setState(newState, score, rank, isNewHighScore);
+        this.results_Box.setState(newState, score, rank, isNewHighScore);
     }
 
 
-
-    dispose() 
-    {
-        // Stop and reset the audio
-        if (this.audio) 
-        {
+    dispose() {
+        console.log("Disposing LevelResultsStage...");
+    
+        if (this.audio) {
             this.audio.pause();
             this.audio.currentTime = 0;
             this.audio.removeEventListener('ended', this.onAudioEnded);
             this.audio = new Audio();
-
         }
     
-        // Clear game-related arrays
-        this.beatCircles_Array = []; 
-        this.recordedMoments_Array = []; 
-        this.SweetSpotCircleArray[0].reset();
-        this.SweetSpotCircleArray[1].reset();
-        this.resetVariables();
-
-
-        this.levelSelectButton.dispose();
-        this.restartButton.dispose();
-        this.resultsDisplayBox.dispose();
-        
-
+        // Safely reset elements of SweetSpotCircleArray
+        if (this.SweetSpotCircleArray && this.SweetSpotCircleArray.length > 0) {
+            this.SweetSpotCircleArray.forEach(circle => {
+                if (circle && typeof circle.reset === 'function') {
+                    circle.reset();
+                }
+            });
+        }
+    
+        // Dispose other components...
+        if (this.levelSelectButton) {
+            this.levelSelectButton.dispose();
+        }
+        if (this.restartButton) {
+            this.restartButton.dispose();
+        }
+        if (this.results_Box) {
+            this.results_Box.dispose();
+        }
+    
+        // Clear any other states or arrays...
     }
+
 }

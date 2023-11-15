@@ -20,8 +20,14 @@ export default class GameManager
 
     // Method to handle level changes
     async handleLevelChange(event) {
+      console.log("Handling level change. Event received:", event);
+
       const levelName = event.detail.levelName;
+      console.log("Requested level:", levelName);
+
       try {
+        console.log("Loading new level:", levelName);
+
         const module = await import(`./${levelName}.js`);
         const LevelClass = module.default;
     
@@ -35,7 +41,8 @@ export default class GameManager
     
         // Assign the new level instance to this.currentLevel
         this.currentLevel = levelInstance;
-    
+        console.log("New level loaded:", this.currentLevel);
+
       } catch (error) {
         console.error('Failed to load level module:', error);
       }
@@ -44,12 +51,15 @@ export default class GameManager
     
 
     // Method to go to the title page
-    goToTitlePage() {
+    goToTitlePage() 
+    {
         this.handleLevelChange({ detail: { levelName: 'Level_TitlePage' } });
     }
 
-      // Method to go to the level select screenß
-    goToLevelSelect() {
+
+      // Method to go to the level select screen
+    goToLevelSelect() 
+    {
       // Check if the current level is TitlePage and if it has a dispose method
       if (this.currentLevel instanceof TitlePage && typeof this.currentLevel.dispose === 'function') {
           // Call the dispose method of TitlePage
@@ -58,10 +68,5 @@ export default class GameManager
 
       // After disposing of TitlePage, handle changing to the new level
       this.handleLevelChange({ detail: { levelName: this.levelSelectPath } });
-}ß
+    }
 }
-
-
-
-
-

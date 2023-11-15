@@ -22,4 +22,11 @@ export default class BoxUI {
         this.ctx.closePath();
         this.ctx.fill();
     }
+
+    dispose() 
+    {
+        console.log("Disposing BoxUI...");
+        // No further action needed if BoxUI doesn't manage complex resources
+    }
+    
 }

@@ -1,8 +1,9 @@
 import MediaPipeTracker from './MediaPipeTracker.js';
 import UIManager from './UIManager_Recorder.js';
-import LeaderBoardVisual from './LeaderBoardVisual.js';
+import LeaderBoard_Box from './LeaderBoard_Box.js';
 import PlayInfoBoxVisual from './PlayInfoBoxVisual.js';
-import LevelSelectVisual from './LevelSelectVisual.js';
+import SongSelect_BoxSelectVisual from './SongSelect_Box.js';
+import SongSelect_Box from './SongSelect_Box.js';
 
 
 export default class Level_StageSelect
@@ -31,25 +32,25 @@ export default class Level_StageSelect
 
     
         this.playInfoBoxVisual = new PlayInfoBoxVisual();
-        this.levelselectvisual = new LevelSelectVisual(this.playInfoBoxVisual);
-        this.leaderboardvisual = new LeaderBoardVisual(detail.leaderBoardState);
+        this.songselect_box = new SongSelect_Box(this.playInfoBoxVisual);
+        this.leaderboardbox = new LeaderBoard_Box(detail.leaderBoardState);
 
-        this.leaderboardvisual.setState(detail.leaderBoardState)
+        this.leaderboardbox.setState(detail.leaderBoardState)
        
 
 
 
-        this.playInfoBoxVisual.levelselectvisual=this.levelselectvisual;
-        this.playInfoBoxVisual.currentLevelData=this.levelselectvisual.levelArray;
-        this.playInfoBoxVisual.updateCurrentLevel(this.levelselectvisual.levelArray[0]);
+        this.playInfoBoxVisual.songselect_box=this.songselect_box;
+        this.playInfoBoxVisual.currentLevelData=this.songselect_box.levelArray;
+        this.playInfoBoxVisual.updateCurrentLevel(this.songselect_box.levelArray[0]);
         
 
 
         setTimeout(() => 
         {
-            if (this.levelselectvisual.levelArray && this.levelselectvisual.levelArray.length > 0) {
-                const initialLeaderboardId = this.levelselectvisual.levelArray[0].fireBaseLevelLeaderBoard;
-                this.leaderboardvisual.populateAndDraw(initialLeaderboardId);
+            if (this.songselect_box.levelArray && this.songselect_box.levelArray.length > 0) {
+                const initialLeaderboardId = this.songselect_box.levelArray[0].fireBaseLevelLeaderBoard;
+                this.leaderboardbox.populateAndDraw(initialLeaderboardId);
             } else {
                 console.error('Level array is not initialized.');
             }
@@ -70,8 +71,8 @@ export default class Level_StageSelect
         // mediapipe stuff
         let results = this.mediaPipe.results;
         if (results == undefined) { return; }
-       this.leaderboardvisual.draw(); 
-       this.levelselectvisual.draw();  
+       this.leaderboardbox.draw(); 
+       this.songselect_box.draw();  
       this.playInfoBoxVisual.draw(); 
 
     }
@@ -80,12 +81,12 @@ export default class Level_StageSelect
     dispose()
     {
         this.canvas.removeEventListener('click', () => this.handleCanvasClick());
-        this.leaderboardvisual = null;
+        this.leaderboardbox = null;
         this.mediaPipe = null;
         this.canvas =  null;
         this.ctx = null;
         this.playInfoBoxVisual.dispose();
-        this.levelselectvisual.dispose();
+        this.songselect_box.dispose();
     }
 }
 

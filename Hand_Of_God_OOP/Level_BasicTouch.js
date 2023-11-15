@@ -2,13 +2,12 @@ import MediaPipeTracker from './MediaPipeTracker.js';
 import SweetSpotCircle from './SweetSpotCircle.js';
 import JsonManager from './JsonManager.js';
 import DrawEngine from './DrawEngine.js';
-import LeaderBoardVisual from './LeaderBoardVisual.js';
+import LeaderBoard_Box from './LeaderBoard_Box.js';
 import { addScore } from './Leaderboard.js';
 import BlueButton from './BlueButton.js';
 import { OverlayText } from './OverlayText.js';
 import { UIUtilities } from './UIUtilities.js';
 import { GameStats } from './GameStats.js'; 
-import SplashScreens from './SplashScreens.js';
 
 
 
@@ -115,8 +114,9 @@ export default class Level_BasicTouch
             (actionData) => {
                 // Dispatching event for a different level selection
                // actionData.leaderBoardState = "latestScores";
+               console.log("Level_BasicTouch Select Button clicked, dispatching levelChange event with details:", actionData);
                 document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
-                console.log("Level Select Button clicked, dispatching levelChange event with details:", actionData);
+
             }
         );
 
@@ -140,8 +140,10 @@ export default class Level_BasicTouch
             (actionData) => 
             {
                 // Dispatching event to restart the game or level
+                console.log("Level Basic Touch Restart Button clicked, dispatching levelChange event with details:", actionData);
                 document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
-                console.log("Restart Button clicked, dispatching levelChange event with details:", actionData);
+            
+                
             }
         );
 
@@ -150,7 +152,7 @@ export default class Level_BasicTouch
 
        // this.playerName = 'momentology'; // Add this line with a default test player name
       //  const leaderBoardVisual = new LeaderBoardVisual();
-        this.leaderBoardVisualInstance = new LeaderBoardVisual();
+        this.leaderBoardBoxInstance = new LeaderBoard_Box();
 
 
         // event handler for when json is fully loaded
@@ -259,8 +261,41 @@ export default class Level_BasicTouch
             }
         }
 
-       
-
+       /*
+        audioEnded() {
+            console.log('Level Complete');
+            console.log('Score is:', this.stats.score);
+            console.log('Player Name:', window.playerName);
+            console.log('Level Array Data Object:', this.levelArrayDataObject);
+            
+            // Dispatch a levelChange event with the required data for the Level Results Stage
+            const levelResultsData = {
+                levelName: 'Level_ResultsStage',
+                score: this.stats.score,
+                playerName: window.playerName,
+                levelData: {
+                    // Original level data needed to restart the level
+                    levelName: this.levelArrayDataObject.fileName,
+                    levelDisplayName: this.levelArrayDataObject.levelDisplayName,
+                    fireBaseLevelLeaderBoard: this.levelArrayDataObject.fireBaseLevelLeaderBoard,
+                    duration: this.levelArrayDataObject.duration,
+                    mp3Path: this.levelArrayDataObject.mp3Path,
+                    jsonPath: this.levelArrayDataObject.jsonPath
+                    // Add other properties from this.levelArrayDataObject as needed
+                }
+                // Include any other data you want to pass to the level results stage
+            };
+        
+            document.dispatchEvent(new CustomEvent('levelChange', { detail: levelResultsData }));
+        
+            // Update leader board if applicable
+            addScore(window.playerName, this.stats.score, this.levelArrayDataObject).then(() => {
+                this.leaderBoardBoxInstance.populateAndDraw();
+            }).catch(error => {
+                console.error("Error adding score: ", error);
+            });
+        }
+        */
 
 
     audioEnded() 
@@ -287,7 +322,7 @@ export default class Level_BasicTouch
 
 
         addScore(window.playerName, this.stats.score,this.levelArrayDataObject).then(() => {
-            this.leaderBoardVisualInstance.populateAndDraw();
+            this.leaderBoardBoxInstance.populateAndDraw();
         }).catch(error => {
             console.error("Error adding score: ", error);
         });

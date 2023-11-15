@@ -96,23 +96,10 @@ export default class BlueButton {
         }
     }
 
-    dispose() {
+    dispose() 
+    {
 
-        /*this.canvas = undefined;
-        this.ctx =  undefined;
-        this.x =  undefined;
-        this.y =  undefined;
-        this.width =  undefined;
-        this.height = undefined;
-        this.radius = undefined;
-        this.color = undefined;
-        this.hoverColor = undefined;
-        this.text = undefined;
-        this.shadowColor =  undefined;
-        this.actionData =  undefined;
-        this.onClickCallback = undefined;
-        this.isHovered = undefined;
-        this.isPressed = undefined;*/
+       
         this.ctx.canvas.removeEventListener('mousemove', this.onMouseMove);
         this.ctx.canvas.removeEventListener('mousedown', this.onMouseDown);
         this.ctx.canvas.removeEventListener('mouseup', this.onMouseUp);
