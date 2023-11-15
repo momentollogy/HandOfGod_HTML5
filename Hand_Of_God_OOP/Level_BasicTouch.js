@@ -278,6 +278,7 @@ export default class Level_BasicTouch
             levelName: 'Level_ResultsStage', // The name of the results level/stage
             score: this.stats.score,
             playerName: window.playerName,
+            levelData: this.levelArrayDataObject
             // Include any other data you want to pass to the level results stage
         };
 

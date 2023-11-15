@@ -81,13 +81,11 @@ export default class PlayInfoBoxVisual {
 
   updateCurrentLevel(event) 
   {
-
     if (this.levelselectvisual)
-     {  
-     this.currentLevelData = this.levelselectvisual.levelArray[this.levelselectvisual.currentSelectedLevelIndex];
-     }
-
-   this.draw();
+    {  
+      this.currentLevelData = this.levelselectvisual.levelArray[this.levelselectvisual.currentSelectedLevelIndex];
+    }
+      this.draw();
   }
 
 

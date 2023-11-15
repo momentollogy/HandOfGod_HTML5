@@ -2,13 +2,14 @@ import MediaPipeTracker from './MediaPipeTracker.js';
 import ResultsDisplayBox from './ResultsDisplayBox.js'; // Make sure the path is correct
 
 export default class LevelResultsStage {
-    constructor() {
+    constructor(_data) {
         this.mediaPipe = MediaPipeTracker.getInstance();
         this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
-
+        this.resultsData = _data;
+        
         // Instantiate the ResultsDisplayBox with the canvas context
-        this.resultsDisplayBox = new ResultsDisplayBox();
+        this.resultsDisplayBox = new ResultsDisplayBox(this.resultsData);
 
         // Set initial state for ResultsDisplayBox
         // You can modify these values as needed when the level ends
@@ -59,7 +60,7 @@ export default class LevelResultsStage {
 
         this.levelSelectButton.dispose();
         this.restartButton.dispose();
-
+        this.resultsDisplayBox.dispose();
         
 
     }

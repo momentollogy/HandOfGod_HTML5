@@ -4,7 +4,7 @@ import BlueButton from './BlueButton.js'; // Import the BlueButton class
 
 export default class ResultsDisplayBox 
 {
-  constructor(_levelArrayDataObject,audio) 
+  constructor(_resultsData)
   {
     //this.ctx = ctx;
     this.canvas = document.getElementById("output_canvas");;
@@ -17,7 +17,8 @@ export default class ResultsDisplayBox
     this.radius = 50;
     this.boxColor = 'rgba(0, 0, 0, 0.7)';
     this.textColor = 'white';
-    
+    this.levelArrayDataObject = _resultsData.levelData;
+    console.log(this.levelArrayDataObject);
 
     // Define properties for the text for different states
     this.fontSize = 48; // Base font size, can be scaled for different texts
@@ -37,12 +38,12 @@ export default class ResultsDisplayBox
     this.rank = 'C';
     this.isNewHighScore = false;
 
-    this.levelArrayDataObject = _levelArrayDataObject; //important, has all mp3,json etc..
+    //this.levelArrayDataObject = _levelArrayDataObject; //important, has all mp3,json etc..
 
 
   // Button positions (You may need to adjust these positions to fit your layout)
-    const leftButtonX = 100; // for example, 100 pixels from the left
-    const rightButtonX = this.canvas.width - 300; // for example, 300 pixels from the right edge
+    const leftButtonX = 200; // for example, 100 pixels from the left
+    const rightButtonX = this.canvas.width - 500; // for example, 300 pixels from the right edge
     const buttonY = this.canvas.height / 2 + 400; // vertical center for demonstration
     const buttonWidth = 150;
     const buttonHeight = 50;
@@ -90,6 +91,7 @@ export default class ResultsDisplayBox
             this.levelArrayDataObject,
             (actionData) => 
             {
+                this.levelArrayDataObject.levelName = "Level_BasicTouch";
                 // Dispatching event to restart the game or level
                 document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
                 console.log("Restart Button clicked, dispatching levelChange event with details:", actionData);
@@ -179,8 +181,42 @@ export default class ResultsDisplayBox
 
   dispose() 
   {
-       
 
+    this.box.dispose();
+    this.box = null;
+
+    /*this.canvas = null;
+    this.ctx = null;
+    this.resizeFactor = null;
+    this.offsetX =null;
+    this.offsetY = null;
+    this.width = null;
+    this.height = null;
+    this.radius = null;
+    this.boxColor = null;
+    this.textColor = null;
+    this.levelArrayDataObject = null;
+    this.fontSize = null;
+
+    this.state = null;
+    this.score = null;
+    this.rank = null;
+    this.isNewHighScore = null;
+
+    const leftButtonX = null;
+    const rightButtonX = null;
+    const buttonY =null;
+    const buttonWidth =null;
+    const buttonHeight =null;
+    const buttonRadius =null;
+
+    this.levelSelectButton.dispose();
+    this.levelSelectButton = null;
+
+    // null varialbes  ( maybe better to set to undefined )
+    // dispose objects ( aka classs )
+    // null objects ( after disposal )
+    // removeEvnetListeners*/
   }
 
   

@@ -79,13 +79,13 @@ export default class Level_StageSelect
 
     dispose()
     {
-    this.canvas.removeEventListener('click', () => this.handleCanvasClick());
-    this.leaderboardvisual = null;
-    this.mediaPipe = null;
-    this.canvas =  null;
-    this.ctx = null;
-    this.playInfoBoxVisual.dispose();
-    this.levelselectvisual.dispose();
+        this.canvas.removeEventListener('click', () => this.handleCanvasClick());
+        this.leaderboardvisual = null;
+        this.mediaPipe = null;
+        this.canvas =  null;
+        this.ctx = null;
+        this.playInfoBoxVisual.dispose();
+        this.levelselectvisual.dispose();
     }
 }
 
