@@ -111,7 +111,8 @@ export default class Level_BasicTouch
             "Level Select",
             "rgba(0, 0, 0, 0.5)",
             { levelName: "Level_StageSelect",leaderBoardState: "latestScores"},
-            (actionData) => {
+            (actionData) => 
+            {
                 // Dispatching event for a different level selection
                // actionData.leaderBoardState = "latestScores";
                console.log("Level_BasicTouch Select Button clicked, dispatching levelChange event with details:", actionData);
@@ -250,53 +251,26 @@ export default class Level_BasicTouch
         ////////////////////////////////////////////////////////////////////
         ////////////// NEW Beat Missed. Total Beats Tallied ////////////////////
         ////////////////////////////////////////////////////////////////////
-        beatMissed() {
+
+        beatMissed() 
+        {
             this.stats.addMiss();
             this.resetComboNumber();  // Make sure this method updates this.stats.combo
         
-            if (this.stats.misses > 20) 
-            {
+            if (this.stats.misses > 0) {
                 console.log("you lose");
                 this.audio.pause();
+        
+                // Dispatch a levelChange event for level failure
+                const levelFailureData = {
+                    levelName: 'Level_ResultsStage', 
+                    state: 'levelFailed', // Indicate the level failed
+                };
+        
+                document.dispatchEvent(new CustomEvent('levelChange', { detail: levelFailureData }));
             }
         }
-
-       /*
-        audioEnded() {
-            console.log('Level Complete');
-            console.log('Score is:', this.stats.score);
-            console.log('Player Name:', window.playerName);
-            console.log('Level Array Data Object:', this.levelArrayDataObject);
-            
-            // Dispatch a levelChange event with the required data for the Level Results Stage
-            const levelResultsData = {
-                levelName: 'Level_ResultsStage',
-                score: this.stats.score,
-                playerName: window.playerName,
-                levelData: {
-                    // Original level data needed to restart the level
-                    levelName: this.levelArrayDataObject.fileName,
-                    levelDisplayName: this.levelArrayDataObject.levelDisplayName,
-                    fireBaseLevelLeaderBoard: this.levelArrayDataObject.fireBaseLevelLeaderBoard,
-                    duration: this.levelArrayDataObject.duration,
-                    mp3Path: this.levelArrayDataObject.mp3Path,
-                    jsonPath: this.levelArrayDataObject.jsonPath
-                    // Add other properties from this.levelArrayDataObject as needed
-                }
-                // Include any other data you want to pass to the level results stage
-            };
         
-            document.dispatchEvent(new CustomEvent('levelChange', { detail: levelResultsData }));
-        
-            // Update leader board if applicable
-            addScore(window.playerName, this.stats.score, this.levelArrayDataObject).then(() => {
-                this.leaderBoardBoxInstance.populateAndDraw();
-            }).catch(error => {
-                console.error("Error adding score: ", error);
-            });
-        }
-        */
-
 
     audioEnded() 
     {
@@ -311,6 +285,7 @@ export default class Level_BasicTouch
         const levelResultsData = 
         {
             levelName: 'Level_ResultsStage', // The name of the results level/stage
+            state: 'levelComplete',
             score: this.stats.score,
             playerName: window.playerName,
             levelData: this.levelArrayDataObject

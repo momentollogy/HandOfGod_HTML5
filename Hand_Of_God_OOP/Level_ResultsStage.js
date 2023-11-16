@@ -9,11 +9,12 @@ export default class LevelResultsStage {
         this.resultsData = _data;
         
         // Instantiate the ResultsBox with the canvas context
-        this.results_Box = new Results_Box(this.resultsData);
+    
+        this.results_Box = new Results_Box(_data);
 
-        // Set initial state for ResultsBox
-        // You can modify these values as needed when the level ends
-        this.results_Box.setState('levelComplete', 100, 'A', true);
+
+       // this.results_Box.setState('levelComplete', _data.score, _data.grade, _data.isNewHighScore);
+
     }
 
     level_loop() {

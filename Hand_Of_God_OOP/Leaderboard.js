@@ -70,12 +70,12 @@ export async function getLatestScore(leaderboardId) {
 
   // Fetch scores above the recent score
   const scoresAboveQuery = query(collection(db, leaderboardId), orderBy("score", "desc"), 
-      where("score", ">", recentScoreData.score), limit(5));
+      where("score", ">", recentScoreData.score), limit(4));
   const scoresAboveSnapshot = await getDocs(scoresAboveQuery);
 
   // Fetch scores below the recent score
   const scoresBelowQuery = query(collection(db, leaderboardId), orderBy("score"), 
-      where("score", "<", recentScoreData.score), limit(4));
+      where("score", "<", recentScoreData.score), limit(5));
   const scoresBelowSnapshot = await getDocs(scoresBelowQuery);
 
   // Combine the scores with the recent score in the middle

@@ -145,6 +145,8 @@ export default class SongSelect_Box
  
          // Call the function to set up event listeners
          this.bindEvents();
+
+         this.dispatchLevelSelectedEvent()
     }
 
 
@@ -233,6 +235,11 @@ export default class SongSelect_Box
         this.currentSelectedLevelIndex = window.myCurrentLevelIndex
        // console.log("Window Index is:", window.myCurrentLevelIndex)
         return this.currentSelectedLevelIndex;
+    }
+    
+    getCurrentSongData()
+    {
+        return this.levelArray[currentSelectedLevelIndex];
     }
  
 

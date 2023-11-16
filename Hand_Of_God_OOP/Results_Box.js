@@ -6,7 +6,7 @@ export default class Results_Box
 {
   constructor(_resultsData)
   {
-    //this.ctx = ctx;
+
     this.canvas = document.getElementById("output_canvas");;
     this.ctx = this.canvas.getContext("2d");
     this.resizeFactor = 1;
@@ -33,12 +33,12 @@ export default class Results_Box
     );
 
     // Variables to hold the state and data
-    this.state = 'levelComplete'; // Default state
-    this.score = 0;
-    this.rank = 'C';
+    //this.state = 'levelComplete'; // Default state
+    this.state = _resultsData.state;
+    this.score = _resultsData.score;
+    this.rank = this.calculateGrade(this.score); 
     this.isNewHighScore = false;
 
-    //this.levelArrayDataObject = _levelArrayDataObject; //important, has all mp3,json etc..
 
 
   // Button positions (You may need to adjust these positions to fit your layout)
@@ -68,9 +68,9 @@ export default class Results_Box
         (actionData) => {
             // Dispatching event for a different level selection
            // actionData.leaderBoardState = "latestScores";
-           console.log("resultsbox Level Select Button clicked, dispatching levelChange event with details:", actionData);
+          console.log("resultsbox Level Select Button clicked, dispatching levelChange event with details:", actionData);
 
-            document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
+          document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
         }
     );
 
@@ -103,6 +103,16 @@ export default class Results_Box
   }
 
   
+        calculateGrade(score) 
+        {
+          if (score > 200) {
+              return 'A';
+          } else if (score >= 100) { // Include 100 in the B grade range
+              return 'B';
+          } else {
+              return 'C';
+          }
+        }
 
 
   draw() 
@@ -135,25 +145,24 @@ export default class Results_Box
         this.restartButton.draw();
         break;
 
-
-
-
       case 'levelFailed':
         // Draw 'Level Failed' text
         this.ctx.font = `${this.fontSize}px Arial`;
         this.ctx.fillText('Level Failed', this.offsetX + this.width / 2, this.offsetY + this.height / 2);
+        this.levelSelectButton.draw();
+        this.restartButton.draw();
         break;
 
 
 
-
-        
       case 'levelCompleteCampaign':
         // For now, this will be the same as 'levelComplete'
         // Future code for buttons and additional information will go here
         break;
     }
   }
+
+
 
   setState(newState, score, rank, isNewHighScore) 
   {
@@ -174,18 +183,6 @@ export default class Results_Box
     this.box.y = offsetY;
   }
 
-
-/*
-  dispose() 
-  {
-    console.log("Disposing Results_Box...");
-    this.box.dispose();
-    this.box = null;
-    this.levelSelectButton.dispose();
-    this.restartButton.dispose();
-
-  }
-*/
 
 dispose() {
   console.log("Disposing Results_Box...");

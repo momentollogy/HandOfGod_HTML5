@@ -32,10 +32,17 @@ export default class Level_StageSelect
 
     
         this.playInfoBoxVisual = new PlayInfoBoxVisual();
-        this.songselect_box = new SongSelect_Box(this.playInfoBoxVisual);
         this.leaderboardbox = new LeaderBoard_Box(detail.leaderBoardState);
-
-        this.leaderboardbox.setState(detail.leaderBoardState)
+        this.songselect_box = new SongSelect_Box(this.playInfoBoxVisual);
+        
+        if(this.detail){
+            var fbName = "" //this.currentLevelData.fireBaseLevelLeaderBoard;
+            var LB_state = detail.leaderBoardState;
+            console.log(fbName, LB_state);
+            //this.leaderboardbox.setState(this.currentLevelData.fireBaseLevelLeaderBoard,detail.leaderBoardState);
+        }
+        
+        
        
 
 

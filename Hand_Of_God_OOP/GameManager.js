@@ -8,15 +8,33 @@ import Level_ResultsStage from './Level_ResultsStage.js'; // Make sure the path 
 
 export default class GameManager 
 {
-    constructor() {
-        this.currentLevel = new TitlePage(); // Start the game with the title page
-       // this.currentLevel = new Level_ResultsStage();
+    constructor() 
+    {
+            this.currentLevel = new TitlePage(); // Start the game with the title page
+            // this.currentLevel = new Level_ResultsStage();
 
-        this.currentLevelData = null; // To keep track of level-specific data
-        this.levelSelectPath = 'Level_StageSelect'; // The path to the level select screen
+            this.currentLevelData = null; // To keep track of level-specific data
+            this.levelSelectPath = 'Level_StageSelect'; // The path to the level select screen
+            document.addEventListener('levelChange', this.handleLevelChange.bind(this));
 
-        document.addEventListener('levelChange', this.handleLevelChange.bind(this));
+
+        /*
+          //storeing curent level - good idea.
+          setCurrentLevelData(levelData) 
+          {
+              this.currentLevelData = levelData;
+          }
+        
+          getCurrentLevelData() 
+          {
+            return this.currentLevelData;
+          }
+          */
     }
+
+
+
+
 
     // Method to handle level changes
     async handleLevelChange(event) {

@@ -218,6 +218,8 @@ export default class PlayInfoBoxVisual {
 
        // Ensure that the currentLevelData is available
        if (this.currentLevelData) {
+        //GameManagerInstance.setCurrentLevelData(this.currentLevelData); //add to send to GM
+
         const detailData = 
         {
           
@@ -232,6 +234,7 @@ export default class PlayInfoBoxVisual {
         };        
         console.log('Dispatching levelChange with details:', detailData);
         document.dispatchEvent(new CustomEvent('levelChange', { detail: detailData }));
+        
        }
      }
    }
