@@ -1,8 +1,8 @@
 // firebase.js
 
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+//import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
+//import { getFirestore } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -16,7 +16,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase only if there isn't an existing app instance
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
-const db = getFirestore(app);
+//const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+//const db = getFirestore(app);
 
-export { db };
+//export { db };

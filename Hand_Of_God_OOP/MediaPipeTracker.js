@@ -1,4 +1,4 @@
-import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.6";
+//import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.6";
 
 export default class MediaPipeTracker 
 {
@@ -15,7 +15,7 @@ export default class MediaPipeTracker
         this.BOTH = "Both";
     }
 
-    async createHandLandmarker(){
+   /* async createHandLandmarker(){
         const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.6/wasm");
         this.handLandmarker = await HandLandmarker.createFromOptions(vision, {
             baseOptions: {
@@ -26,7 +26,7 @@ export default class MediaPipeTracker
             numHands: 2
         });
     }
-
+*/
     setVid(_vid){
         this.video = _vid;
     }

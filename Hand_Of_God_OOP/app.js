@@ -1,4 +1,4 @@
-import MediaPipeTracker from './MediaPipeTracker.js';
+///import MediaPipeTracker from './MediaPipeTracker.js';
 import DrawEngine from './DrawEngine.js';
 import GameManager from './GameManager.js';
 
@@ -25,9 +25,9 @@ canvas.height=1080;
 
 let gm = new GameManager()
 
-let mp = MediaPipeTracker.getInstance();
-mp.setVid(video);
-mp.createLandmarks();
+//let mp = MediaPipeTracker.getInstance();
+//mp.setVid(video);
+//mp.createLandmarks();
 
 let de = DrawEngine.getInstance();
 de.setGameManager(gm);

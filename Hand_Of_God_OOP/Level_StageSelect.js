@@ -1,4 +1,4 @@
-import MediaPipeTracker from './MediaPipeTracker.js';
+//import MediaPipeTracker from './MediaPipeTracker.js';
 import UIManager from './UIManager_Recorder.js';
 import LeaderBoard_Box from './LeaderBoard_Box.js';
 import PlayInfoBoxVisual from './PlayInfoBoxVisual.js';
@@ -10,7 +10,7 @@ export default class Level_StageSelect
 {
     constructor(detail)
     {
-        this.mediaPipe = MediaPipeTracker.getInstance();
+       // this.mediaPipe = MediaPipeTracker.getInstance();
         this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
 
@@ -76,8 +76,8 @@ export default class Level_StageSelect
         this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
 
         // mediapipe stuff
-        let results = this.mediaPipe.results;
-        if (results == undefined) { return; }
+       // let results = this.mediaPipe.results;
+       // if (results == undefined) { return; }
        this.leaderboardbox.draw(); 
        this.songselect_box.draw();  
       this.playInfoBoxVisual.draw(); 
@@ -89,7 +89,7 @@ export default class Level_StageSelect
     {
         this.canvas.removeEventListener('click', () => this.handleCanvasClick());
         this.leaderboardbox = null;
-        this.mediaPipe = null;
+      //  this.mediaPipe = null;
         this.canvas =  null;
         this.ctx = null;
         this.playInfoBoxVisual.dispose();
