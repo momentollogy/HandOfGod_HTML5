@@ -1,4 +1,4 @@
-import MediaPipeTracker from './MediaPipeTracker.js';
+//import MediaPipeTracker from './MediaPipeTracker.js';
 //import UIManager, { Button } from './UIManager.js';
 import BlueButton from './BlueButton.js';
 
@@ -7,7 +7,7 @@ export default class Level_TitlePage
 {
     constructor()
     {
-        this.mediaPipe = MediaPipeTracker.getInstance()
+      //  this.mediaPipe = MediaPipeTracker.getInstance()
         this.canvas = document.getElementById("output_canvas");;
         this.ctx = this.canvas.getContext("2d");
         
@@ -108,8 +108,8 @@ export default class Level_TitlePage
 
 
         // mediapipe stuff
-        let results = this.mediaPipe.results;
-        if (results == undefined) { return; }
+       // let results = this.mediaPipe.results;
+       // if (results == undefined) { return; }
         
     }
 }

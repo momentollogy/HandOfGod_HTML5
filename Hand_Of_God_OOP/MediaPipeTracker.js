@@ -5,8 +5,8 @@ export default class MediaPipeTracker
     constructor() 
     {
         this.video;
-        this.handLandmarker;
-        this.results;
+       // this.handLandmarker;
+       // this.results;
         this.canvas = document.getElementById("output_canvas");
         this.diagnostics = true;
 
@@ -15,7 +15,8 @@ export default class MediaPipeTracker
         this.BOTH = "Both";
     }
 
-   /* async createHandLandmarker(){
+   /* 
+   async createHandLandmarker(){
         const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.6/wasm");
         this.handLandmarker = await HandLandmarker.createFromOptions(vision, {
             baseOptions: {
@@ -30,7 +31,7 @@ export default class MediaPipeTracker
     setVid(_vid){
         this.video = _vid;
     }
-
+/*
     createLandmarks(){
         this.createHandLandmarker().then(() => {
             //console.log("Hand Landmark model loaded!");
@@ -51,7 +52,7 @@ export default class MediaPipeTracker
             return this.results;
         }
     }
-
+*/
     getResults() {
         return this.results;
     }

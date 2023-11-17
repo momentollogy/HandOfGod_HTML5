@@ -182,8 +182,8 @@ export default class Level_BasicTouch
 
 
         this.spacePressed = false;
-        this.Z_pressed = false;
-        this.X_pressed = false;
+        this.A_pressed = false;
+        this.S_pressed = false;
     }
     
     onKeyDown(event) {
@@ -192,8 +192,8 @@ export default class Level_BasicTouch
             console.log("Spacebar Down");
             // Perform actions for spacebar down
         }
-        if (event.code === 'KeyZ' && !this.Z_pressed) {  this.Z_pressed = true; }
-        if (event.code === 'KeyX' && !this.X_pressed) {  this.X_pressed = true; }
+        if (event.code === 'KeyA' && !this.A_pressed) {  this.A_pressed = true; }
+        if (event.code === 'KeyS' && !this.S_pressed) {  this.S_pressed = true; }
     }
     
     onKeyUp(event) {
@@ -202,8 +202,8 @@ export default class Level_BasicTouch
             console.log("Spacebar Up");
             // Perform actions for spacebar up
         }
-        if (event.code === 'KeyZ') {  this.Z_pressed = false; }
-        if (event.code === 'KeyX') {  this.X_pressed = false; }
+        if (event.code === 'KeyA') {  this.A_pressed = false; }
+        if (event.code === 'KeyS') {  this.S_pressed = false; }
     }
 
 
@@ -275,9 +275,9 @@ export default class Level_BasicTouch
 
         checkIndividualClicks(){
             let sweetspotcircle = this.SweetSpotCircleArray[0];
-            if (this.Z_pressed)
+            if (this.A_pressed)
             {
-                console.log("Z pressed in Check method");
+                console.log("A pressed in Check method");
                 sweetspotcircle.puffy = true;  
                 let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
                 if(percentAccuracyIfTouched){
@@ -290,9 +290,9 @@ export default class Level_BasicTouch
                 sweetspotcircle.puffy = false;
             }
             sweetspotcircle = this.SweetSpotCircleArray[1];
-            if (this.X_pressed)
+            if (this.S_pressed)
             {
-                console.log("Z pressed in Check method");
+                console.log("S pressed in Check method");
                 sweetspotcircle.puffy = true;  
                 let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
                 if(percentAccuracyIfTouched){
