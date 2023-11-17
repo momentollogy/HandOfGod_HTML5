@@ -1,4 +1,4 @@
-import MediaPipeTracker from './MediaPipeTracker.js';
+//import MediaPipeTracker from './MediaPipeTracker.js';
 import SweetSpotCircle from './SweetSpotCircle.js';
 import JsonManager from './JsonManager.js';
 import DrawEngine from './DrawEngine.js';
@@ -18,7 +18,7 @@ export default class Level_BasicTouch
     constructor(_levelArrayDataObject,audio)
     {
 
-        this.mediaPipe = MediaPipeTracker.getInstance()
+      //  this.mediaPipe = MediaPipeTracker.getInstance()
         this.canvas = document.getElementById("output_canvas");;
         this.ctx = this.canvas.getContext("2d");
         this.drawEngine = DrawEngine.getInstance();
@@ -73,8 +73,6 @@ export default class Level_BasicTouch
         //showing Percentage accuacies when touch beats.
         this.overlayText = new OverlayText();
 
-        //showing splash screens level compelete, level failed.
-       // this.splashScreens = new SplashScreens(this.ctx); // pass in the canvas context
 
 
         this.calculateRank = (score) => {
@@ -119,6 +117,8 @@ export default class Level_BasicTouch
                 document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
 
             }
+
+            
         );
 
 
@@ -176,6 +176,34 @@ export default class Level_BasicTouch
         this.jsonManager.loadJsonFileByPath(this.jsonPath);
         this.audio.play();        
 
+        document.addEventListener('keydown', this.onKeyDown.bind(this));
+        document.addEventListener('keyup', this.onKeyUp.bind(this));
+    
+
+
+        this.spacePressed = false;
+        this.A_pressed = false;
+        this.S_pressed = false;
+    }
+    
+    onKeyDown(event) {
+        if (event.code === 'Space' && !this.spacePressed) {
+            this.spacePressed = true;
+            console.log("Spacebar Down");
+            // Perform actions for spacebar down
+        }
+        if (event.code === 'KeyA' && !this.A_pressed) {  this.A_pressed = true; }
+        if (event.code === 'KeyS' && !this.S_pressed) {  this.S_pressed = true; }
+    }
+    
+    onKeyUp(event) {
+        if (event.code === 'Space') {
+            this.spacePressed = false;
+            console.log("Spacebar Up");
+            // Perform actions for spacebar up
+        }
+        if (event.code === 'KeyA') {  this.A_pressed = false; }
+        if (event.code === 'KeyS') {  this.S_pressed = false; }
     }
 
 
@@ -183,15 +211,17 @@ export default class Level_BasicTouch
     {
 
         // mediapipe stuff
-        let results = this.mediaPipe.results;
-        if (results == undefined) { return; }
+       // let results = this.mediaPipe.results;
+      //  if (results == undefined) { return; }
         
-        this.checkForFingerTouchCircles(); 
-        // update display stuff and process classes stuff
+      //  this.checkForFingerTouchCircles(); 
+                    // update display stuff and process classes stuff
         for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
         
         this.restartButton.draw();
         this.levelSelectButton.draw();
+        this.checkForClick();
+        this. checkIndividualClicks();
 
         //Draw Score from GameStat.js
         UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.misses);
@@ -207,6 +237,7 @@ export default class Level_BasicTouch
 
     }
     
+    /*
     checkForFingerTouchCircles()
     {
         for(let sweetspotcircle of this.SweetSpotCircleArray){
@@ -223,6 +254,76 @@ export default class Level_BasicTouch
             }
         }
     }
+*/
+        checkForClick()
+        {
+            for(let sweetspotcircle of this.SweetSpotCircleArray){
+                if (this.spacePressed)
+                {
+                    console.log("mousePessed in Check method");
+                    sweetspotcircle.puffy = true;  
+                    let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
+                    if(percentAccuracyIfTouched){
+
+                        this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                    }
+                }else{
+                    sweetspotcircle.puffy = false;
+                }
+            }
+        }
+
+        checkIndividualClicks(){
+            let sweetspotcircle = this.SweetSpotCircleArray[0];
+            if (this.A_pressed)
+            {
+                console.log("A pressed in Check method");
+                sweetspotcircle.puffy = true;  
+                let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
+                if(percentAccuracyIfTouched){
+
+                    this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                }
+            }
+            else
+            {
+                sweetspotcircle.puffy = false;
+            }
+            sweetspotcircle = this.SweetSpotCircleArray[1];
+            if (this.S_pressed)
+            {
+                console.log("S pressed in Check method");
+                sweetspotcircle.puffy = true;  
+                let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
+                if(percentAccuracyIfTouched){
+
+                    this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                }
+            }else{
+                sweetspotcircle.puffy = false;
+            }
+
+
+        }
+
+        checkForFingerTouchCircles()
+        {
+            for(let sweetspotcircle of this.SweetSpotCircleArray){
+                if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8).length>0)
+                {
+                    sweetspotcircle.puffy = true;  
+                    let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
+                    if(percentAccuracyIfTouched){
+
+                        this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                    }
+                }else{
+                    sweetspotcircle.puffy = false;
+                }
+            }
+        }
+
+
         //Simplifed gamestats logic
         increaseComboNumber() {this.stats.increaseCombo();}
         resetComboNumber() {this.stats.resetCombo();}
@@ -257,7 +358,11 @@ export default class Level_BasicTouch
             this.stats.addMiss();
             this.resetComboNumber();  // Make sure this method updates this.stats.combo
         
+<<<<<<< HEAD
             if (this.stats.misses > 14) {
+=======
+            if (this.stats.misses > 5) {
+>>>>>>> main
                 console.log("you lose");
                 this.audio.pause();
         

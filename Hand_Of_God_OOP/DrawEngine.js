@@ -1,9 +1,9 @@
-import MediaPipeTracker from './MediaPipeTracker.js';
+//import MediaPipeTracker from './MediaPipeTracker.js';
 
 export default class DrawEngine {
     constructor() {        
         this.gm;
-        this.mediaPipe = MediaPipeTracker.getInstance();
+        //this.mediaPipe = MediaPipeTracker.getInstance();
         
         this.video = document.getElementById("webcam");
         this.mpCanvasElement = document.getElementById("mediaPipe_canvas");
@@ -44,20 +44,23 @@ export default class DrawEngine {
 
     calculateHands()
     {
-        // get the results and store them as a class member even though results is only used in this method
+        /*
+         //get the results and store them as a class member even though results is only used in this method
         
         if(this.mediaPipe.results == undefined){this.mediaPipe.detectVideoResults();}
         if(this.mediaPipe.results == undefined){return;}
         // check if the video frame has updated, and if so: generate a new set of landmark results
-        //let framesSinceStart = performance.now(); // Get the current Broswer frame number since the app started
+        let framesSinceStart = performance.now(); // Get the current Broswer frame number since the app started
         if (this.lastVideoTime !== this.video.currentTime) { //If brower refresh rate is faster than video rate dont draw past past that rate ie 30fps
             this.lastVideoTime = this.video.currentTime;
             this.mediaPipe.detectVideoResults();
         }
+        */
     }
 
     drawHands()
-    {
+    { 
+        /*
         if (this.mediaPipe.results.landmarks) {
             for (const landmarks of this.mediaPipe.results.landmarks) {
                 drawConnectors(this.mpctx, landmarks, HAND_CONNECTIONS, {
@@ -67,6 +70,7 @@ export default class DrawEngine {
                 drawLandmarks(this.mpctx, landmarks, { color: "#FF0000", lineWidth: .1 });   
             }
         }
+        */
     }
 
     toggleLoop()
@@ -108,7 +112,7 @@ export default class DrawEngine {
         this.calculateHands();
     
         this.gm.currentLevel.level_loop(); // draw game level stuff
-        if(this.displayTracking){this.drawHands()}  // draw hands
+       // if(this.displayTracking){this.drawHands()}  // draw hands
         
         this.lastTimestamp = timestamp
         if (this.looping) { requestAnimationFrame(this.loop.bind(this)); }

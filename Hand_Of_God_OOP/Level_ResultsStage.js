@@ -1,9 +1,9 @@
-import MediaPipeTracker from './MediaPipeTracker.js';
+//import MediaPipeTracker from './MediaPipeTracker.js';
 import Results_Box from './Results_Box.js'; // Make sure the path is correct
 
 export default class LevelResultsStage {
     constructor(_data) {
-        this.mediaPipe = MediaPipeTracker.getInstance();
+       // this.mediaPipe = MediaPipeTracker.getInstance();
         this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
         this.resultsData = _data;
@@ -17,10 +17,15 @@ export default class LevelResultsStage {
             this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
         };
         this.backgroundImage.src = 'images/bg_imageda66opacity.jpeg'; 
+<<<<<<< HEAD
 
 
         // Instantiate the ResultsBox with the canvas context
+=======
+>>>>>>> main
     
+
+        // Instantiate the ResultsBox with the canvas context
         this.results_Box = new Results_Box(_data);
 
 
@@ -30,13 +35,16 @@ export default class LevelResultsStage {
 
     level_loop() {
         // mediapipe stuff
-        let results = this.mediaPipe.results;
-        if (results == undefined) { return; }
+       // let results = this.mediaPipe.results;
+       // if (results == undefined) { return; }
         
         // Clear the canvas or draw your game's background here
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
 
         // Draw the results display box
         this.results_Box.draw();

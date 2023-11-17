@@ -1,5 +1,5 @@
 // Import necessary modules
-import MediaPipeTracker from './MediaPipeTracker.js';
+//import MediaPipeTracker from './MediaPipeTracker.js';
 import DrawEngine from './DrawEngine.js';
 import GameManager from './GameManager.js';
 
@@ -25,9 +25,9 @@ canvas.height = 1080;
 let gm = new GameManager();
 
 // Create a MediaPipeTracker instance and configure it
-let mp = MediaPipeTracker.getInstance();
-mp.setVid(video);
-mp.createLandmarks();
+//let mp = MediaPipeTracker.getInstance();
+//mp.setVid(video);
+//mp.createLandmarks();
 
 // Create a DrawEngine instance and set the GameManager
 let de = DrawEngine.getInstance();
