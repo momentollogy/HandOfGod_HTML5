@@ -8,6 +8,17 @@ export default class LevelResultsStage {
         this.ctx = this.canvas.getContext("2d");
         this.resultsData = _data;
         
+
+        //BACKGOUND IMAGE
+        this.backgroundImage = new Image();
+        this.backgroundImage.onload = () => 
+         // Draw the image onto the canvas once it's loaded
+        {
+            this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
+        };
+        this.backgroundImage.src = 'images/bg_imageda66opacity.jpeg'; 
+
+
         // Instantiate the ResultsBox with the canvas context
     
         this.results_Box = new Results_Box(_data);
@@ -24,6 +35,8 @@ export default class LevelResultsStage {
         
         // Clear the canvas or draw your game's background here
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
+
 
         // Draw the results display box
         this.results_Box.draw();

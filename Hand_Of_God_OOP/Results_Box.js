@@ -10,12 +10,12 @@ export default class Results_Box
     this.canvas = document.getElementById("output_canvas");;
     this.ctx = this.canvas.getContext("2d");
     this.resizeFactor = 1;
-    this.offsetX = 0;
-    this.offsetY = 0;
+    this.offsetX =  540
+    this.offsetY = 300;
     this.width = 800;
     this.height = 400;
     this.radius = 50;
-    this.boxColor = 'rgba(0, 0, 0, 0.7)';
+    this.boxColor = 'rgba(0, 0, 0, 0.4)';
     this.textColor = 'white';
     this.levelArrayDataObject = _resultsData.levelData;
     console.log(this.levelArrayDataObject);
@@ -37,14 +37,15 @@ export default class Results_Box
     this.state = _resultsData.state;
     this.score = _resultsData.score;
     this.rank = this.calculateGrade(this.score); 
-    this.isNewHighScore = false;
+    this.misses = "5";
+    this.isNewHighScore = true;
 
 
 
   // Button positions (You may need to adjust these positions to fit your layout)
-    const leftButtonX = 200; // for example, 100 pixels from the left
-    const rightButtonX = this.canvas.width - 500; // for example, 300 pixels from the right edge
-    const buttonY = this.canvas.height / 2 + 400; // vertical center for demonstration
+    const leftButtonX = 580; // LEVEL SELZ for example, 100 pixels from the left
+    const rightButtonX = this.canvas.width - 770; // RESTART BUTTON, EX 500 pixels from the right edge
+    const buttonY = this.canvas.height / 2 + 75; // vertical center for demonstration
     const buttonWidth = 150;
     const buttonHeight = 50;
     const buttonRadius = 10;
@@ -87,7 +88,7 @@ export default class Results_Box
             buttonRadius,
             "#8B0000",
             "#CD5C5C",
-            "Restart",
+            "Try Again",
             "rgba(0, 0, 0, 0.5)",
             this.levelArrayDataObject,
             (actionData) => 
@@ -129,25 +130,64 @@ export default class Results_Box
     {
 
       case 'levelComplete':
-        // Draw 'Level Complete' text and other details
-        this.ctx.font = `${this.fontSize}px Arial`;
-        this.ctx.fillText('Level Complete', this.offsetX + this.width / 2, this.offsetY + 100);
-        this.ctx.font = `${this.fontSize * 1.5}px Arial`; // Larger font for score
-        this.ctx.fillText(this.score, this.offsetX + this.width / 2, this.offsetY + 200);
-        if (this.isNewHighScore) {
-          this.ctx.font = `${this.fontSize}px Arial`;
-          this.ctx.fillText('New High Score!', this.offsetX + this.width / 2, this.offsetY + 300);
+        // Draw text 'Level Complete' 
+        this.ctx.font = `${this.fontSize * 1.25}px Helvetica`;
+        this.ctx.fillText('Level Complete', this.offsetX + this.width / 2, this.offsetY + 75);
+
+
+        //Draw "Score" text
+        this.ctx.font = `${this.fontSize / 2.5}px Arial`;
+        this.ctx.fillText('SCORE', this.offsetX + this.width / 2, this.offsetY +140);
+
+         //Draw "RAnk" text
+         this.ctx.font = `${this.fontSize / 2.5}px Arial`;
+         this.ctx.fillText('RANK', this.offsetX + this.width / 2 +300, this.offsetY +140);
+
+
+        //Draw "Misses" text
+        this.ctx.font = `${this.fontSize / 2.5}px Arial`;
+        this.ctx.fillText('MISSES', this.offsetX + this.width / 2 -300, this.offsetY +140);
+    
+ 
+         
+        // Draw the "high score" if high score true.
+        if (this.isNewHighScore) 
+        {
+          this.ctx.font = `${this.fontSize / 2.5}px Arial`;
+          this.ctx.fillText('NEW HIGH SCORE!', this.offsetX + this.width / 2, this.offsetY + 275);
         }
-        this.ctx.font = `${this.fontSize * 3}px Arial`; // Even larger font for rank
-        this.ctx.fillText(this.rank, this.offsetX + this.width / 2, this.offsetY + this.height - 100);
+
+        //----Calculated below ALL data in YELLOW-----//
+        this.ctx.fillStyle = 'yellow'; // Text color for everyhing below
+
+        // Draw the calulated SCORE
+        this.ctx.font = `${this.fontSize * 1.25}px Arial`; // Larger font for score
+        this.ctx.fillText(this.score, this.offsetX + this.width / 2, this.offsetY + 200);
+
+        // Draw Calulated RANK
+        this.ctx.font = `${this.fontSize * 1.25}px Arial`; // Even larger font for rank
+        this.ctx.fillText(this.rank, this.offsetX + this.width / 2 +300, this.offsetY +200);
+
+
+        // Draw Calulated MISSES
+        this.ctx.font = `${this.fontSize * 1.25}px Arial`; // Even larger font for rank
+        this.ctx.fillText(this.misses, this.offsetX + this.width / 2 -300, this.offsetY +200);
+
+   
+
+
+
+       
 
         this.levelSelectButton.draw();
         this.restartButton.draw();
         break;
 
       case 'levelFailed':
-        // Draw 'Level Failed' text
-        this.ctx.font = `${this.fontSize}px Arial`;
+        // Draw 'LEVEL FAILED' text
+        this.ctx.fillStyle = 'RED'; // Text color for everyhing below
+
+        this.ctx.font = `${this.fontSize * 1.5}px Arial`;
         this.ctx.fillText('Level Failed', this.offsetX + this.width / 2, this.offsetY + this.height / 2);
         this.levelSelectButton.draw();
         this.restartButton.draw();

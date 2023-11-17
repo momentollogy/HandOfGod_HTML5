@@ -70,6 +70,8 @@ export default class Level_TitlePage
             }
             if (playerName) {
                 window.playerName = playerName;
+                document.dispatchEvent(new CustomEvent('levelChange', { detail: { levelName: "Level_StageSelect", leaderBoardState: "topScores" } }));
+
             } else {
                 console.log('User did not enter a name, using default.');
                 window.playerName = "Guest" + Math.floor(Math.random() * 10000);

@@ -257,7 +257,7 @@ export default class Level_BasicTouch
             this.stats.addMiss();
             this.resetComboNumber();  // Make sure this method updates this.stats.combo
         
-            if (this.stats.misses > 0) {
+            if (this.stats.misses > 14) {
                 console.log("you lose");
                 this.audio.pause();
         
@@ -265,6 +265,8 @@ export default class Level_BasicTouch
                 const levelFailureData = {
                     levelName: 'Level_ResultsStage', 
                     state: 'levelFailed', // Indicate the level failed
+                    playerName: window.playerName,
+                    levelData: this.levelArrayDataObject
                 };
         
                 document.dispatchEvent(new CustomEvent('levelChange', { detail: levelFailureData }));
@@ -310,6 +312,7 @@ export default class Level_BasicTouch
         this.scoreNumber = 0;
         this.comboNumber = 0;
         this.beatsMissed = 0;
+        this.stats.misses=0
         this.beatsMissedPrevious=0;
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {sweetspotcircle.beatsMissed = 0;}
@@ -334,6 +337,7 @@ export default class Level_BasicTouch
         this.SweetSpotCircleArray[0].reset();
         this.SweetSpotCircleArray[1].reset();
         this.resetVariables();
+        
 
 
         this.levelSelectButton.dispose();
