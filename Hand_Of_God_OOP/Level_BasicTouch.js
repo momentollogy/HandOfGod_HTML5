@@ -113,7 +113,7 @@ export default class Level_BasicTouch
             { levelName: "Level_StageSelect",leaderBoardState: "latestScores"},
             (actionData) => 
             {
-                // Dispatching event for a different level selection
+                // Dispatching event for a different level selections
                // actionData.leaderBoardState = "latestScores";
                console.log("Level_BasicTouch Select Button clicked, dispatching levelChange event with details:", actionData);
                 document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
