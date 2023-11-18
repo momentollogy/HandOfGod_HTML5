@@ -67,30 +67,38 @@ export default class Level_05
         });
 
 
-
-
-        // Select Button position:
+        // Button positions (You may need to adjust these positions to fit your layout)
         const leftButtonX = 100; // for example, 100 pixels from the left
-        const buttonY = this.canvas.height / 2 +50; // vertical center for demonstration
+        const rightButtonX = this.canvas.width - 300; // for example, 300 pixels from the right edge
+        const buttonY = this.canvas.height / 2 + 200; // vertical center for demonstration
         const buttonWidth = 150;
         const buttonHeight = 50;
         const buttonRadius = 10;
 
-        // 'LEVEL SELECT' BUTTON
-        this.levelSelectButton = new BlueButton(
-            this.ctx,
+
+        // 'Level Select' button specific code
+        this.levelSelectButton = new BlueButton
+        (
             leftButtonX,
             buttonY,
             buttonWidth,
             buttonHeight,
             buttonRadius,
-            "#00008B", // Deep blue color
-            "#0000CD", // Lighter blue for hover effect
+            "#00008B",
+            "#0000CD",
             "Level Select",
             "rgba(0, 0, 0, 0.5)",
-            // Here, instead of passing a callback, you pass the actionData directly
-            { levelName: "Level_StageSelect" } // This will be used as this.actionData in the BlueButton class
-        );
+            { levelName: "Level_StageSelect"},//,leaderBoardState: "latestScores"},
+            (actionData) => 
+            {
+                // Dispatching event for a different level selections
+                // actionData.leaderBoardState = "latestScores";
+                console.log("Level_BasicTouch Select Button clicked, dispatching levelChange event with details:", actionData);
+                document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
+
+            }
+ );
+
 
     }
 
@@ -225,6 +233,8 @@ export default class Level_05
         this.levelSelectButton.draw();
         this.uiManager.draw();
         this.volumeSlider.drawVolumeSlider();
+        this.levelSelectButton.draw();
+
 
     }
     
@@ -329,6 +339,63 @@ export default class Level_05
         }
     }
 
+
+    dispose() {
+        // Stop and reset the audio
+        if (this.audio) {
+            this.audio.pause();
+            this.audio.currentTime = 0;
+            if (this.audio.src) {
+                URL.revokeObjectURL(this.audio.src); // Release any object URL
+            }
+            this.audio.src = '';
+            // Remove specific audio event listeners if any were added
+            // Example: this.audio.removeEventListener('someEvent', this.someEventHandler);
+        }
+    
+        // Clear game-related arrays
+        this.beatCircles_Array.length = 0;
+        this.recordedMoments_Array.length = 0;
+    
+        // Reset SweetSpotCircleArray items
+        this.SweetSpotCircleArray.forEach(circle => {
+            if (circle && typeof circle.reset === 'function') {
+                circle.reset();
+            }
+        });
+    
+        // Cleanup UI manager events
+        if (this.uiManager) {
+            this.canvas.removeEventListener('click', this.uiManager.handleClick.bind(this.uiManager));
+            this.canvas.removeEventListener('mousemove', this.uiManager.handleMouseMove.bind(this.uiManager));
+            this.canvas.removeEventListener('mousedown', this.uiManager.handleMouseDown.bind(this.uiManager));
+            this.canvas.removeEventListener('mouseup', this.uiManager.handleMouseUp.bind(this.uiManager));
+        }
+    
+        // Remove document event listeners
+        // Replace 'this.someHandler' with actual method names if they are defined in your class
+        document.removeEventListener('BeatMissed', this.someBeatMissedHandler);
+        document.removeEventListener('beatTimeDataReady', this.someBeatTimeDataReadyHandler);
+        document.removeEventListener('StartStop', this.someStartStopHandler);
+        document.removeEventListener('Reset', this.someResetHandler);
+        document.removeEventListener('ExportBeats', this.someExportBeatsHandler);
+        document.removeEventListener('LoadBeats', this.someLoadBeatsHandler);
+        document.removeEventListener('LoadSong', this.someLoadSongHandler);
+        document.removeEventListener('Record', this.someRecordHandler);
+    
+        // Nullify references to DOM elements and external objects
+        this.canvas = null;
+        this.ctx = null;
+        this.fileInput = null;
+        this.volumeSlider = null;
+        this.songInput = null;
+    
+        // Additional clean-up specific to Level_05
+        // Add any other clean-up code specific to the Level_05 class here
+    }
+    
+    
+/*
     dispose() 
     {
         // Stop and reset the audio
@@ -369,7 +436,7 @@ export default class Level_05
     
 
     }
-
+*/
 
 }
 

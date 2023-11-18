@@ -26,13 +26,27 @@ export default class Level_BasicTouch
         
         this.audio = new Audio();
         this.audio.volume = 0.04; 
+
+        this.jsonManager = new JsonManager(); // Ensure this is initialized
+
+
+        // Assign mp3Path and jsonPath from the level data object first
+        this.mp3Path = _levelArrayDataObject.mp3Path;
+        this.jsonPath = _levelArrayDataObject.jsonPath;
+    
+        // Then use them to set the audio source and load JSON
+        this.audio.src = this.mp3Path;
+        this.jsonManager.loadJsonFileByPath(this.jsonPath);
+
+
+        this.startAudio(); // Instead of this.audio.play();
+
         
         this.jsonManager = new JsonManager();
 
         this.levelArrayDataObject = _levelArrayDataObject; //important, has all mp3,json etc..
 
-        this.mp3Path= this.levelArrayDataObject.mp3Path;
-        this.jsonPath=this.levelArrayDataObject.jsonPath;
+       
 
         this.volumeSlider = UIUtilities.createVolumeSlider(this.audio, this.canvas);
        
@@ -54,6 +68,7 @@ export default class Level_BasicTouch
         this.beatsMissed=0;
         this.scoreNumber = 0;
         this.comboNumber = 0;
+        
 
         this.beatsMissedPrevious=0;
         this.beatArray=[];
@@ -172,10 +187,25 @@ export default class Level_BasicTouch
 
         
         // load mp3, json, and play
-        this.audio.src = this.mp3Path;          
+        this.audio.src = this.mp3Path; 
+         
+        this.audio.src = _levelArrayDataObject.mp3Path;
+        this.audio.addEventListener('loadeddata', () => {
+            this.startAudio();
+        });        
         this.jsonManager.loadJsonFileByPath(this.jsonPath);
         this.audio.play();        
 
+    }
+
+
+    async startAudio() 
+    {
+        try {
+            await this.audio.play();
+        } catch (err) {
+            console.error("Error starting audio playback:", err);
+        }
     }
 
 
@@ -259,7 +289,12 @@ export default class Level_BasicTouch
         
             if (this.stats.misses > 14) {
                 console.log("you lose");
-                this.audio.pause();
+                if (!this.audio.paused) {
+                    this.audio.pause();
+                }
+
+                this.resetVariables();
+
         
                 // Dispatch a levelChange event for level failure
                 const levelFailureData = {
@@ -312,13 +347,14 @@ export default class Level_BasicTouch
         this.scoreNumber = 0;
         this.comboNumber = 0;
         this.beatsMissed = 0;
+        
         this.stats.misses=0
         this.beatsMissedPrevious=0;
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {sweetspotcircle.beatsMissed = 0;}
     }
     
-
+/*
     dispose() 
     {
         // Stop and reset the audio
@@ -346,4 +382,53 @@ export default class Level_BasicTouch
         
 
     }
+    */
+
+    dispose() {
+        // Stop and reset the audio
+        if (this.audio) {
+            this.audio.pause();
+            this.audio.currentTime = 0;
+            if (this.audio.src) {
+                URL.revokeObjectURL(this.audio.src); // Release any object URL
+            }
+            this.audio.src = '';
+            this.audio.removeEventListener('ended', this.audioEnded.bind(this)); // Corrected the event listener removal
+        }
+    
+        // Clear game-related arrays
+        this.beatCircles_Array.length = 0;
+        this.recordedMoments_Array.length = 0;
+        
+        // Reset SweetSpotCircleArray items
+        if (this.SweetSpotCircleArray && this.SweetSpotCircleArray.length) {
+            this.SweetSpotCircleArray.forEach(circle => {
+                if (circle && typeof circle.reset === 'function') {
+                    circle.reset();
+                }
+            });
+        }
+    
+        // Dispose of buttons if they have a dispose method
+        if (this.levelSelectButton && typeof this.levelSelectButton.dispose === 'function') {
+            this.levelSelectButton.dispose();
+        }
+    
+        if (this.restartButton && typeof this.restartButton.dispose === 'function') {
+            this.restartButton.dispose();
+        }
+    
+        // Resetting variables to their initial state
+        this.resetVariables();
+    
+        // Remove references to DOM elements and external objects
+        this.canvas = null;
+        this.ctx = null;
+        this.fileInput = null;
+        this.volumeSlider = null;
+    
+        // Additional clean-up specific to Level_BasicTouch
+        // Add any other clean-up code specific to the Level_BasicTouch class here
+    }
+    
 }
