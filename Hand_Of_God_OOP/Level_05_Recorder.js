@@ -68,7 +68,7 @@ export default class Level_05
 
 
 
-
+/*
         // Select Button position:
         const leftButtonX = 100; // for example, 100 pixels from the left
         const buttonY = this.canvas.height / 2 +50; // vertical center for demonstration
@@ -91,6 +91,41 @@ export default class Level_05
             // Here, instead of passing a callback, you pass the actionData directly
             { levelName: "Level_StageSelect" } // This will be used as this.actionData in the BlueButton class
         );
+        */
+
+          // Button positions (You may need to adjust these positions to fit your layout)
+          const leftButtonX = 100; // for example, 100 pixels from the left
+          const rightButtonX = this.canvas.width - 300; // for example, 300 pixels from the right edge
+          const buttonY = this.canvas.height / 2 + 200; // vertical center for demonstration
+          const buttonWidth = 150;
+          const buttonHeight = 50;
+          const buttonRadius = 10;
+  
+  
+          // 'Level Select' button specific code
+          this.levelSelectButton = new BlueButton
+          (
+              leftButtonX,
+              buttonY,
+              buttonWidth,
+              buttonHeight,
+              buttonRadius,
+              "#00008B",
+              "#0000CD",
+              "Level Select",
+              "rgba(0, 0, 0, 0.5)",
+              { levelName: "Level_StageSelect",leaderBoardState: "latestScores"},
+              (actionData) => 
+              {
+                  // Dispatching event for a different level selections
+                 // actionData.leaderBoardState = "latestScores";
+                 console.log("Level_BasicTouch Select Button clicked, dispatching levelChange event with details:", actionData);
+                  document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
+  
+              }
+          );
+  
+
 
     }
 
@@ -225,6 +260,8 @@ export default class Level_05
         this.levelSelectButton.draw();
         this.uiManager.draw();
         this.volumeSlider.drawVolumeSlider();
+        this.levelSelectButton.draw();
+
 
     }
     
