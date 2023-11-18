@@ -224,21 +224,52 @@ export default class Results_Box
   }
 
 
-dispose() {
-  console.log("Disposing Results_Box...");
+  dispose() {
+    console.log("Disposing Results_Box...");
 
-  if (this.box) {
-      this.box.dispose();
-  }
+    // Dispose of the box object, if it has a dispose method
+    if (this.box && this.box.dispose) {
+        this.box.dispose();
+        this.box = null;
+    }
 
-  if (this.levelSelectButton) {
-      this.levelSelectButton.dispose();
-  }
+    // Dispose of the level select button
+    if (this.levelSelectButton) {
+        this.levelSelectButton.dispose();
+        this.levelSelectButton = null;
+    }
 
-  if (this.restartButton) {
-      this.restartButton.dispose();
-  }
+    // Dispose of the restart button
+    if (this.restartButton) {
+        this.restartButton.dispose();
+        this.restartButton = null;
+    }
+
+    // Clear the canvas context
+    if (this.ctx) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx = null;
+    }
+
+    // Nullify the canvas reference
+    this.canvas = null;
+
+    // Nullify any other references to internal objects or data
+    this.levelArrayDataObject = null;
+    this.state = null;
+    this.score = null;
+    this.rank = null;
+    this.misses = null;
+    this.isNewHighScore = null;
+
+    // Clear any intervals or timeouts if set within this class
+    // clearInterval(this.someIntervalId);
+    // clearTimeout(this.someTimeoutId);
+
+    // Additional cleanup as required
+    // ...
 }
+
 
   
 }

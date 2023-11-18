@@ -32,7 +32,7 @@ export default class SweetSpotCircle {
         this.touched=false;
         this.checkedForMiss = false;
         this.beatPassed = false;
-        this.beatBufferTime = 100; //how many ms before and after to define length of beatrange
+        this.beatBufferTime = 500; //how many ms before and after to define length of beatrange
         this.beatsMissed = 0;
         this.touchable = false;
         //this.loadedCircleData;
@@ -108,26 +108,40 @@ export default class SweetSpotCircle {
         }
     }
     
-    updateAndDraw(){
+    ///////////////////////////////////////////////////
+    //////TURN ON AND OFF DRAWING ELEMENTS HERE////////
+    ///////////////////////////////////////////////////
+    updateAndDraw()
+    {
         // return radius to it's base size if it's larger ( this is basically restoring a pulse to it's normal size )
         if(this.radius > this.baseRadius){this.radius-=3}
 
         if(!this.recordMode && this.beatCircles_Array.length > 0){
             this.updateForPlay();
-            this.drawBeatRanges();
+           // this.drawBeatRanges();
+          
         }else{
             this.updateForRecording();
         }
 
-      //  this.drawMotionIndicatorLine();        
         this.draw();
-        this.updateAndDrawBeatCircles()
+       // this.drawBeatCirleLine();
+        this.updateAndDrawBeatCircles();
+        this.drawHorizontalLine();
+
+       
+        //  this.drawMotionIndicatorLine();        
+
     }
 
     updateForRecording(){
         
     }
 
+   
+    
+
+    
     updateForPlay(){        
         // pulse on the beats
         if(this.isCurrentTimeOnBeat() && !this.beatPassed){
@@ -159,18 +173,24 @@ export default class SweetSpotCircle {
         }
     }
 
+       
+
     // this is where touches from the level are received during play mode
-    touch(){
+    touch()
+    {
         let percentAccuracy = null;
         if(this.touchable){
             if(!this.touched){
                 let touchTimeDiff = Math.abs(this.beatCircles_Array[this.beatIndex].beatTime - this.audio.currentTime*1000 )
-                percentAccuracy = (100 - Math.round(touchTimeDiff/this.beatBufferTime*100));
+              //  percentAccuracy = (100 - Math.round(touchTimeDiff/this.beatBufferTime*100));
+                percentAccuracy = Math.max(0, 100 - Math.round(touchTimeDiff/this.beatBufferTime*100));
+
             }
             this.touched=true;
         }
         return percentAccuracy;
     }
+    
 
     pulse() {
         this.radius = this.baseRadius + 30;
@@ -198,8 +218,77 @@ export default class SweetSpotCircle {
         this.ctx.closePath();
         this.ctx.globalAlpha = 1.0;
         this.ctx.restore();
+
+
+/*
+         //**drawing line in middle of circle. Comment out to end of funciton of dont like
+        let lineLength = this.radius * 2.25; // The line should span the diameter of the circle
+        let angle = 0; // Change this angle if you want the line to be rotated
+
+        let startX = this.position.x - lineLength / 2 * Math.cos(angle);
+        let startY = this.position.y - lineLength / 2 * Math.sin(angle);
+        let endX = this.position.x + lineLength / 2 * Math.cos(angle);
+        let endY = this.position.y + lineLength / 2 * Math.sin(angle);
+
+        // Draw the line
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.moveTo(startX, startY);
+        this.ctx.lineTo(endX, endY);
+        this.ctx.strokeStyle = 'white'; // Set the line color to white
+        this.ctx.lineWidth = 2; // Set the line width
+        this.ctx.stroke();
+        this.ctx.restore();
+        */
     }
 
+
+
+    drawHorizontalLine() 
+    {
+        let lineLength = this.radius * 2.25; // Adjust the line length as needed
+        let angle = 0; // This is for a horizontal line
+
+        let startX = this.position.x - lineLength / 2 * Math.cos(angle);
+        let startY = this.position.y - lineLength / 2 * Math.sin(angle);
+        let endX = this.position.x + lineLength / 2 * Math.cos(angle);
+        let endY = this.position.y + lineLength / 2 * Math.sin(angle);
+
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.moveTo(startX, startY);
+        this.ctx.lineTo(endX, endY);
+        this.ctx.strokeStyle = 'white'; // Set the line color to white
+        this.ctx.lineWidth = 2; // Set the line width
+        this.ctx.stroke();
+        this.ctx.restore();
+    }
+
+
+/*
+    drawBeatCirleLine()
+    {
+    //**drawing line in middle of circle. Comment out to end of funciton of dont like
+    let lineLength = this.radius * 2.25; // The line should span the diameter of the circle
+    let angle = 0; // Change this angle if you want the line to be rotated
+
+    let startX = this.position.x - lineLength / 2 * Math.cos(angle);
+    let startY = this.position.y - lineLength / 2 * Math.sin(angle);
+    let endX = this.position.x + lineLength / 2 * Math.cos(angle);
+    let endY = this.position.y + lineLength / 2 * Math.sin(angle);
+
+    // Draw the line
+    this.ctx.save();
+    this.ctx.beginPath();
+    this.ctx.moveTo(startX, startY);
+    this.ctx.lineTo(endX, endY);
+    this.ctx.strokeStyle = 'white'; // Set the line color to white
+    this.ctx.lineWidth = 2; // Set the line width
+    this.ctx.stroke();
+    this.ctx.restore();
+    }
+
+*/
     isCurrentTimeOnBeat(){
         return (this.audio.currentTime * 1000) >= this.beatCircles_Array[this.beatIndex].beatTime;
     }
@@ -239,7 +328,8 @@ export default class SweetSpotCircle {
         return beatRangeStart
     }
 
-    drawBeatRanges(){
+    drawBeatRanges()
+    {
         let radians = (this.beatCirclePathDirectionAngle * Math.PI) / 180;
         let lineStart = (this.velocity/1000) * (this.findBeatRangeStartForCurrentBeatRange() - this.audio.currentTime * 1000);
         let lineEnd   = (this.velocity/1000) * (this.findBeatRangeEndForCurrentBeatRange()   - this.audio.currentTime * 1000);
@@ -248,6 +338,7 @@ export default class SweetSpotCircle {
         const lineStartpointY = this.position.y + lineStart * Math.sin(radians);
         const lineEndpointX = this.position.x + lineEnd * Math.cos(radians);
         const lineEndpointY = this.position.y + lineEnd * Math.sin(radians);
+    
 
         this.ctx.save();
         this.ctx.beginPath();
@@ -257,6 +348,25 @@ export default class SweetSpotCircle {
         this.ctx.lineWidth = 70; // Set the line width
         this.ctx.stroke();
         this.ctx.restore();
+
+
+        /////DRAWING LINE IN CENTER OF BEAT CIRCLES///////
+
+        // Calculate the position of the exact beat
+        let beatPosition = (this.velocity/1000) * (this.beatCircles_Array[this.beatIndex].beatTime - this.audio.currentTime * 1000);
+        const beatPointX = this.position.x + beatPosition * Math.cos(radians);
+        const beatPointY = this.position.y + beatPosition * Math.sin(radians);
+
+        // Draw a short white line at the beat position
+        this.ctx.save();
+        this.ctx.beginPath();
+        this.ctx.moveTo(beatPointX - 60, beatPointY); // Adjust the length of the line as needed
+        this.ctx.lineTo(beatPointX + 60, beatPointY);
+        this.ctx.strokeStyle = 'white';
+        this.ctx.lineWidth = 2; // Adjust the line width as needed
+        this.ctx.stroke();
+        this.ctx.restore();
+        
     }
 
     drawMotionIndicatorLine(){

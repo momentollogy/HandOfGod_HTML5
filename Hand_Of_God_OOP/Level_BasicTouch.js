@@ -51,6 +51,7 @@ export default class Level_BasicTouch
 
         this.recordedMoments_Array=[];
         this.recordMode = false;
+        
         this.beatsMissed=0;
         this.scoreNumber = 0;
         this.comboNumber = 0;
@@ -174,55 +175,89 @@ export default class Level_BasicTouch
         // load mp3, json, and play
         this.audio.src = this.mp3Path;          
         this.jsonManager.loadJsonFileByPath(this.jsonPath);
-        this.audio.play();        
+        this.audio.play();    
+        
+        
+
+        document.addEventListener("BeatMissed", this.beatMissed.bind(this));
+
 
     }
 
-
-    level_loop() 
-    {
-
-        // mediapipe stuff
-        let results = this.mediaPipe.results;
-        if (results == undefined) { return; }
-        
-        this.checkForFingerTouchCircles(); 
-        // update display stuff and process classes stuff
-        for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
-        
-        this.restartButton.draw();
-        this.levelSelectButton.draw();
-
-        //Draw Score from GameStat.js
-        UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.misses);
-
-
-        // Update and draw percentage overlay texts with succesful beat hits
-        this.overlayText.update(); 
-        this.overlayText.draw(this.ctx); 
-
-        //Draw volume slider
-        this.volumeSlider.drawVolumeSlider();
-
-
-    }
     
-    checkForFingerTouchCircles()
-    {
-        for(let sweetspotcircle of this.SweetSpotCircleArray){
-            if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8).length>0)
-            {
-                sweetspotcircle.puffy = true;  
-                let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
-                if(percentAccuracyIfTouched){
 
-                    this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+
+        level_loop() 
+        {
+
+            // mediapipe stuff
+            let results = this.mediaPipe.results;
+            if (results == undefined) { return; }
+            
+            this.checkForFingerTouchCircles(); 
+            // update display stuff and process classes stuff
+            for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
+            
+            this.restartButton.draw();
+            this.levelSelectButton.draw();
+
+            //Draw Score from GameStat.js
+            UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.misses);
+
+
+            // Update and draw percentage overlay texts with succesful beat hits
+            this.overlayText.update(); 
+            this.overlayText.draw(this.ctx); 
+
+            //Draw volume slider
+            this.volumeSlider.drawVolumeSlider();
+
+
+        }
+
+        checkForFingerTouchCircles() {
+            for(let sweetspotcircle of this.SweetSpotCircleArray){
+                const isTouchingNow = this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH, 8).length > 0;
+                
+                if (isTouchingNow) {
+                    sweetspotcircle.puffy = true;
+                    // Only call touch() if the finger was not touching in the previous frame
+                    if (!sweetspotcircle.wasTouching) {
+                        let percentAccuracyIfTouched = sweetspotcircle.touch();
+                        if (percentAccuracyIfTouched) {
+                            this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                        }
+                    }
+                } else {
+                    sweetspotcircle.puffy = false;
                 }
-            }else{
-                sweetspotcircle.puffy = false;
+        
+                // Update the wasTouching state for the next frame
+                sweetspotcircle.wasTouching = isTouchingNow;
             }
         }
-    }
+        
+    
+/*
+        checkForFingerTouchCircles()
+        {
+            for(let sweetspotcircle of this.SweetSpotCircleArray){
+                if (this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH,  8).length>0)
+                {
+                    sweetspotcircle.puffy = true;  
+                    let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
+                    if(percentAccuracyIfTouched){
+
+                        this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                    }
+                }else{
+                    sweetspotcircle.puffy = false;
+                }
+            }
+        }
+*/
+
+
         //Simplifed gamestats logic
         increaseComboNumber() {this.stats.increaseCombo();}
         resetComboNumber() {this.stats.resetCombo();}
@@ -318,7 +353,7 @@ export default class Level_BasicTouch
         {sweetspotcircle.beatsMissed = 0;}
     }
     
-
+/*
     dispose() 
     {
         // Stop and reset the audio
@@ -346,4 +381,74 @@ export default class Level_BasicTouch
         
 
     }
+    */
+
+    dispose() {
+        // Stop and reset the audio
+        if (this.audio) {
+            this.audio.pause();
+            this.audio.currentTime = 0;
+            this.audio.removeEventListener('ended', this.onAudioEnded);
+            this.audio = null;
+        }
+    
+        // Clear game-related arrays and their contents
+        this.beatCircles_Array.forEach(circle => circle.dispose ? circle.dispose() : null);
+        this.beatCircles_Array = [];
+    
+        this.recordedMoments_Array.forEach(moment => moment.dispose ? moment.dispose() : null);
+        this.recordedMoments_Array = [];
+    
+        // Dispose SweetSpotCircleArray elements
+        this.SweetSpotCircleArray.forEach(circle => circle.reset ? circle.reset() : null);
+        this.SweetSpotCircleArray = [];
+    
+        // Reset game variables
+        this.resetVariables();
+    
+        // Dispose buttons and other UI elements
+        if (this.levelSelectButton && this.levelSelectButton.dispose) {
+            this.levelSelectButton.dispose();
+            this.levelSelectButton = null;
+        }
+    
+        if (this.restartButton && this.restartButton.dispose) {
+            this.restartButton.dispose();
+            this.restartButton = null;
+
+
+            if (this.leaderBoardBoxInstance && this.leaderBoardBoxInstance.dispose) {
+                this.leaderBoardBoxInstance.dispose();
+                this.leaderBoardBoxInstance = null;
+            }
+        
+            // Remove global event listeners
+            document.removeEventListener('beatTimeDataReady', this.handleBeatTimeDataReady);
+            document.removeEventListener('BeatMissed', this.handleBeatMissed);
+        
+            // Nullify any complex objects and arrays
+            this.stats = null;
+            this.levelArrayDataObject = null;
+            document.removeEventListener("BeatMissed", this.beatMissed.bind(this));
+
+        }
+    
+        // Remove custom event listeners if any
+        // Example: document.removeEventListener('customEvent', this.customEventHandler);
+    
+        // Additional cleanup for any third-party libraries or shared resources
+        // ...
+    
+        // Nullify any other references to DOM elements or objects
+        // this.someOtherObject = null;
+        // document.getElementById('someElementId').innerHTML = '';
+    
+        // Clear intervals and timeouts if any
+        // clearInterval(this.someInterval);
+        // clearTimeout(this.someTimeout);
+    
+        // Additional cleanup logic as needed
+        // ...
+    }
+    
 }
