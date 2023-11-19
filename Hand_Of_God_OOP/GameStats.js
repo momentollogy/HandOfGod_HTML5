@@ -32,10 +32,9 @@ export class GameStats
 
     removeMiss() {
 
-        if (this.buffer < 14) { // Ensure the buffer does not exceed the initial limit
+        if (this.buffer < 14) 
+        { // Ensure the buffer does not exceed the initial limit
             this.buffer++;
-            console.log("removeMiss called. Current buffer:", this.buffer);
-
         }
     }
 
@@ -61,8 +60,6 @@ export class GameStats
         this.score = 0;
         this.combo = 0;
         this.buffer = this.bufferLimit; // Reset buffer to the initial limit
-        console.log("Gamestats reset called. Current buffer:", this.buffer);
-
         this.comboMultiplier = 1;
     }
 
