@@ -100,5 +100,29 @@ export default class BeatCircle
             this.alpha = 1;this.color = this.preBeatColor;
         }
     }
+
+
+    dispose() 
+    {
+        console.log("Disposing BeatCircle...")
+        // Clear any ongoing animations or timeouts if present
+        // ...
+
+        // Nullify the canvas and context references
+        this.canvas = null;
+        this.ctx = null;
+
+        // Reset or nullify other properties if necessary
+        this.beatTime = null;
+        this.direction = null;
+        this.x = null;
+        this.y = null;
+        this.sweetSpotPos = null;
+        this.color = null;
+        // ... any other properties that need to be reset ...
+
+        // If there are other resources such as Web Workers, Web Sockets, etc., close or dispose them here
+        // ...
+    }
 }
 

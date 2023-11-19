@@ -98,6 +98,7 @@ export default class BlueButton {
 
     dispose() 
     {
+        console.log("Disposing BlueButton...");
 
        
         this.ctx.canvas.removeEventListener('mousemove', this.onMouseMove);

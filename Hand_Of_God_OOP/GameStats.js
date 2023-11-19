@@ -44,4 +44,15 @@ export class GameStats
        }
    }
 
+   dispose() 
+   {
+    // Reset all properties to their initial values
+    this.score = 0;
+    this.combo = 0;
+    this.misses = 0;
+    this.comboMultiplier = 1;
+
+    // If there are additional resources or references, clean them up here
+    }
+
 }

@@ -85,15 +85,35 @@ export default class Level_StageSelect
     }
 
 
-    dispose()
+    dispose() 
     {
-        this.canvas.removeEventListener('click', () => this.handleCanvasClick());
+        console.log("Disposing LevelSelect_Stage...")
+        // Remove any global event listeners related to this level
+        window.removeEventListener('levelSelected', this.boundUpdateCurrentLevel);
+
+        // Dispose of components that have their own dispose methods
+        if (this.playInfoBoxVisual && typeof this.playInfoBoxVisual.dispose === 'function') {
+            this.playInfoBoxVisual.dispose();
+        }
+        if (this.songselect_box && typeof this.songselect_box.dispose === 'function') {
+            this.songselect_box.dispose();
+        }
+        if (this.leaderboardbox && typeof this.leaderboardbox.dispose === 'function') {
+            this.leaderboardbox.dispose();
+        }
+
+        // Nullify references to DOM elements and external objects
+        this.canvas = null;
+        this.ctx = null;
+        this.backgroundImage = null; // Ensure backgroundImage is also nullified
+
+        // Nullify references to internal objects and components
+        this.playInfoBoxVisual = null;
+        this.songselect_box = null;
         this.leaderboardbox = null;
         this.mediaPipe = null;
-        this.canvas =  null;
-        this.ctx = null;
-        this.playInfoBoxVisual.dispose();
-        this.songselect_box.dispose();
+
+        // ... any other cleanup needed for this level ...
     }
 }
 

@@ -6,6 +6,7 @@ import Level_ResultsStage from './Level_ResultsStage.js'; // Make sure the path 
 
 
 
+
 export default class GameManager 
 {
     constructor() 
@@ -18,18 +19,7 @@ export default class GameManager
             document.addEventListener('levelChange', this.handleLevelChange.bind(this));
 
 
-        /*
-          //storeing curent level - good idea.
-          setCurrentLevelData(levelData) 
-          {
-              this.currentLevelData = levelData;
-          }
         
-          getCurrentLevelData() 
-          {
-            return this.currentLevelData;
-          }
-          */
     }
 
 

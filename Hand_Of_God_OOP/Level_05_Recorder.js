@@ -67,6 +67,7 @@ export default class Level_05
         });
 
 
+       
         // Button positions (You may need to adjust these positions to fit your layout)
         const leftButtonX = 100; // for example, 100 pixels from the left
         const rightButtonX = this.canvas.width - 300; // for example, 300 pixels from the right edge
@@ -88,16 +89,16 @@ export default class Level_05
             "#0000CD",
             "Level Select",
             "rgba(0, 0, 0, 0.5)",
-            { levelName: "Level_StageSelect"},//,leaderBoardState: "latestScores"},
+            { levelName: "Level_StageSelect"},
             (actionData) => 
             {
                 // Dispatching event for a different level selections
-                // actionData.leaderBoardState = "latestScores";
-                console.log("Level_BasicTouch Select Button clicked, dispatching levelChange event with details:", actionData);
+               // actionData.leaderBoardState = "latestScores";
+               console.log("Level_BasicTouch Select Button clicked, dispatching levelChange event with details:", actionData);
                 document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
 
             }
- );
+        );
 
 
     }
@@ -341,6 +342,7 @@ export default class Level_05
 
 
     dispose() {
+        console.log("Disposing Level_05recorder...");
         // Stop and reset the audio
         if (this.audio) {
             this.audio.pause();
@@ -349,14 +351,16 @@ export default class Level_05
                 URL.revokeObjectURL(this.audio.src); // Release any object URL
             }
             this.audio.src = '';
-            // Remove specific audio event listeners if any were added
-            // Example: this.audio.removeEventListener('someEvent', this.someEventHandler);
+            this.audio.removeEventListener('ended', this.audioEnded); // Assuming you have an audioEnded method
         }
+    
+        // Reset gameplay variables
+        this.resetVariables();
     
         // Clear game-related arrays
         this.beatCircles_Array.length = 0;
         this.recordedMoments_Array.length = 0;
-    
+        
         // Reset SweetSpotCircleArray items
         this.SweetSpotCircleArray.forEach(circle => {
             if (circle && typeof circle.reset === 'function') {
@@ -373,15 +377,14 @@ export default class Level_05
         }
     
         // Remove document event listeners
-        // Replace 'this.someHandler' with actual method names if they are defined in your class
-        document.removeEventListener('BeatMissed', this.someBeatMissedHandler);
-        document.removeEventListener('beatTimeDataReady', this.someBeatTimeDataReadyHandler);
-        document.removeEventListener('StartStop', this.someStartStopHandler);
-        document.removeEventListener('Reset', this.someResetHandler);
-        document.removeEventListener('ExportBeats', this.someExportBeatsHandler);
-        document.removeEventListener('LoadBeats', this.someLoadBeatsHandler);
-        document.removeEventListener('LoadSong', this.someLoadSongHandler);
-        document.removeEventListener('Record', this.someRecordHandler);
+        document.removeEventListener('BeatMissed', this.beatMissed);
+        document.removeEventListener('beatTimeDataReady', this.receiveAndProcessCircleData);
+        document.removeEventListener('StartStop', this.startStop);
+        document.removeEventListener('Reset', this.reset);
+        document.removeEventListener('ExportBeats', this.exportRecordedMoments_Array);
+        document.removeEventListener('LoadBeats', this.loadBeats);
+        document.removeEventListener('LoadSong', this.loadSong);
+        document.removeEventListener('Record', this.setRecordMode);
     
         // Nullify references to DOM elements and external objects
         this.canvas = null;
@@ -395,48 +398,7 @@ export default class Level_05
     }
     
     
-/*
-    dispose() 
-    {
-        // Stop and reset the audio
-        if (this.audio) 
-        {
-            this.audio.pause();
-            this.audio.currentTime = 0;
-            this.audio.removeEventListener('ended', this.onAudioEnded);
-            this.audio = new Audio();
 
-        }
-    
-        // Clear game-related arrays
-        this.beatCircles_Array = []; 
-        this.recordedMoments_Array = []; 
-        this.SweetSpotCircleArray[0].reset();
-        this.SweetSpotCircleArray[1].reset();
-        this.uiManager.draw();
-        this.resetVariables();
-
-        if (this.uiManager) {
-            this.canvas.removeEventListener('click', this.uiManager.handleClick);
-            this.canvas.removeEventListener('mousemove', this.uiManager.handleMouseMove);
-            this.canvas.removeEventListener('mousedown', this.uiManager.handleMouseDown);
-            this.canvas.removeEventListener('mouseup', this.uiManager.handleMouseUp);
-        }
-    
-        // Remove other document event listeners
-        // You need to have references to these functions as well
-        document.removeEventListener('BeatMissed', this.beatMissedHandler);
-        document.removeEventListener('beatTimeDataReady', this.beatTimeDataReadyHandler);
-        document.removeEventListener('StartStop', this.startStopHandler);
-        document.removeEventListener('Reset', this.resetHandler);
-        document.removeEventListener('ExportBeats', this.exportBeatsHandler);
-        document.removeEventListener('LoadBeats', this.loadBeatsHandler);
-        document.removeEventListener('LoadSong', this.loadSongHandler);
-        document.removeEventListener('Record', this.recordHandler);
-    
-
-    }
-*/
 
 }
 
