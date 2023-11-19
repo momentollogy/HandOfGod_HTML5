@@ -13,159 +13,126 @@ import { GameStats } from './GameStats.js';
 
 export default class Level_BasicTouch
 {
-    constructor(_levelArrayDataObject,audio)
-    {
-
-        this.mediaPipe = MediaPipeTracker.getInstance()
-        this.canvas = document.getElementById("output_canvas");;
+    constructor(_levelArrayDataObject, audio) {
+        // Initialize MediaPipe and drawing utilities
+        this.mediaPipe = MediaPipeTracker.getInstance();
+        this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
         this.drawEngine = DrawEngine.getInstance();
-       // this.fileInput = document.getElementById('fileInput');
-        
+    
+        // Audio setup
         this.audio = new Audio();
-        this.audio.volume = 0.04; 
-
-        this.jsonManager = new JsonManager(); // Ensure this is initialized
-
-
-        // Assign mp3Path and jsonPath from the level data object first
+        this.audio.volume = 0.04; // Set initial volume
+    
+        // JSON management for level data
+        this.jsonManager = new JsonManager(); 
         this.mp3Path = _levelArrayDataObject.mp3Path;
         this.jsonPath = _levelArrayDataObject.jsonPath;
+        this.jsonManager.loadJsonFileByPath(this.jsonPath); // Load JSON file
+        this.levelArrayDataObject = _levelArrayDataObject; // Store level data
     
-        // Then use them to set the audio source and load JSON
-        this.jsonManager.loadJsonFileByPath(this.jsonPath);
-        
-
-        this.levelArrayDataObject = _levelArrayDataObject; //important, has all mp3,json etc..
-
-
+        // UI component for volume control
         this.volumeSlider = UIUtilities.createVolumeSlider(this.audio, this.canvas);
-       
-        // Bind the audioEnded method and add it as an event listener
+    
+        // Event binding for audio end
         this.boundAudioEnded = this.audioEnded.bind(this);
         this.audio.addEventListener('ended', this.boundAudioEnded);
-
-        
-        //ALL SCORES/STATS CAPTURED HERE
+    
+        // Initialize game statistics
         this.stats = new GameStats(14); 
-        this.stats.reset(); // Reset the game stats including the buffer
-
-       
-        this.SweetSpotCircleArray=[];
-        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 0)',     { x: this.canvas.width /2 -135, y: this.canvas.height/2+100}  );
-        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio,  'rgb(0, 255, 200)',   { x: this.canvas.width /2 +135, y: this.canvas.height/2+100} );
-        this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -90;
-        this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -90;
-        this.SweetSpotCircleArray[0].name="LeftSSCir";
-        this.SweetSpotCircleArray[1].name="RightSSCir";
-
-     //   this.scoreNumber = 0;
-      //  this.comboNumber = 0;
-
-        this.beatArray=[];
+        this.stats.reset(); 
+    
+        // Setup sweet spot circles
+        this.SweetSpotCircleArray = [];
+        // Define sweet spot circles and their properties
+        this.setupSweetSpotCircles();
+    
+        // Initialize beat arrays
+        this.beatArray = [];
         this.beatCircles_Array = [];
-
-
-        //showing Percentage accuacies when touch beats.
+    
+        // Overlay for displaying accuracy
         this.overlayText = new OverlayText();
-
-
-        this.calculateRank = (score) => {
-            // Logic to determine rank based on the score argument
-            if (score > 200) return 'A';
-            if (score > 100) return 'B';
-            return 'C';
-        };
-        this.checkNewHighScore = (score) => {
-            // For now, any score greater than 50 is considered a high score
-            return score > 50;
-        };
-
-
-        // Button positions (You may need to adjust these positions to fit your layout)
-        const leftButtonX = 100; // for example, 100 pixels from the left
-        const rightButtonX = this.canvas.width - 300; // for example, 300 pixels from the right edge
-        const buttonY = this.canvas.height / 2 + 400; // vertical center for demonstration
-        const buttonWidth = 150;
-        const buttonHeight = 50;
-        const buttonRadius = 10;
-
-
-        // 'Level Select' button specific code
-        this.levelSelectButton = new BlueButton
-        (
-            leftButtonX,
-            buttonY,
-            buttonWidth,
-            buttonHeight,
-            buttonRadius,
-            "#00008B",
-            "#0000CD",
-            "Level Select",
-            "rgba(0, 0, 0, 0.5)",
-            { levelName: "Level_StageSelect",leaderBoardState: "latestScores"},
-            (actionData) => 
-            {
-            console.log("Level select button clicked. Current buffer:", this.stats.buffer);
-            document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
-            }
-        );
-
-
-        // 'Restart' button specific code
-        this.restartButton = new BlueButton
-        (
-            rightButtonX,
-            buttonY,
-            buttonWidth,
-            buttonHeight,
-            buttonRadius,
-            "#8B0000",
-            "#CD5C5C",
-            "Restart",
-            "rgba(0, 0, 0, 0.5)",
-            this.levelArrayDataObject,
-            (actionData) => 
-            {
-                // Dispatching event to restart the game or level
-                console.log("Level Basic Touch Restart Button clicked, dispatching levelChange event with details:", actionData);
-                document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
-            
-                
-            }
-        );
-
+    
+        // Scoring and ranking logic
+        this.calculateRank = this.defineRankLogic();
+        this.checkNewHighScore = this.defineHighScoreLogic();
+    
+        // Initialize UI buttons
+        this.setupUIButtons();
+    
+        // Leaderboard box initialization
         this.leaderBoardBoxInstance = new LeaderBoard_Box();
-
-
-        // event handler for when json is fully loaded
+    
+        // Event listener for JSON data processing
         document.addEventListener('beatTimeDataReady', event => {
             this.SweetSpotCircleArray[0].receiveAndProcessCircleData(this.jsonManager.leftCircleData);
             this.SweetSpotCircleArray[1].receiveAndProcessCircleData(this.jsonManager.rightCircleData);
         });
-        
-        // Add these lines in the constructor
+    
+        // Event listener for missed beats
         this.handleBeatMissed = this.beatMissed.bind(this);
         document.addEventListener("BeatMissed", this.handleBeatMissed);
-
     
-
-        // listen for when song ends to log level complete
-        this.audio.addEventListener('ended', this.audioEnded.bind(this));
-
-        
-      // Set the audio source
+        // Audio source setup and event listener for loading
         this.audio.src = _levelArrayDataObject.mp3Path;
-
-        // Add an event listener to start playing the audio once it's loaded
-        this.audio.addEventListener('loadeddata', () => {
-            this.startAudio();
+        this.audio.addEventListener('loadeddata', () => this.startAudio());
+    }
+    
+    // Sweet spot circles setup
+    setupSweetSpotCircles() {
+        // Initialize two sweet spot circles with specific attributes
+        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio, 'rgb(0, 255, 0)', { x: this.canvas.width /2 -135, y: this.canvas.height/2+100 });
+        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio, 'rgb(0, 255, 200)', { x: this.canvas.width /2 +135, y: this.canvas.height/2+100 });
+        // Setting additional properties
+        this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -90;
+        this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -90;
+        this.SweetSpotCircleArray[0].name = "LeftSSCir";
+        this.SweetSpotCircleArray[1].name = "RightSSCir";
+    }
+    
+    // Rank calculation logic
+    defineRankLogic() {
+        // Function returns a lambda function for rank calculation
+        return (score) => {
+            if (score > 200) return 'A';
+            if (score > 100) return 'B';
+            return 'C';
+        };
+    }
+    
+    // High score check logic
+    defineHighScoreLogic() {
+        // Function returns a lambda function for high score check
+        return (score) => score > 50;
+    }
+    
+    // UI Buttons setup
+    setupUIButtons() {
+        // Define positions and dimensions for buttons
+        const leftButtonX = 100;
+        const rightButtonX = this.canvas.width - 300;
+        const buttonY = this.canvas.height / 2 + 400;
+        const buttonWidth = 150;
+        const buttonHeight = 50;
+        const buttonRadius = 10;
+    
+        // 'Level Select' button
+        this.levelSelectButton = new BlueButton(leftButtonX, buttonY, buttonWidth, buttonHeight, buttonRadius, "#00008B", "#0000CD", "Level Select", "rgba(0, 0, 0, 0.5)", { levelName: "Level_StageSelect", leaderBoardState: "latestScores"}, actionData => {
+            console.log("Level select button clicked. Current buffer:", this.stats.buffer);
+            document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
         });
-
-       
-
+    
+        // 'Restart' button
+        this.restartButton = new BlueButton(rightButtonX, buttonY, buttonWidth, buttonHeight, buttonRadius, "#8B0000", "#CD5C5C", "Restart", "rgba(0, 0, 0, 0.5)", this.levelArrayDataObject, actionData => {
+            console.log("Restart button clicked, dispatching levelChange event with details:", actionData);
+            document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
+        });
     }
 
+    /////////////////////
+    //END OF CONSTUCTOR//
+    /////////////////////
 
     async startAudio() 
     {
