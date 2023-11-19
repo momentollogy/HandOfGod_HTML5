@@ -75,7 +75,7 @@ export class UIUtilities
 
 
 
-    static drawScore(ctx, scoreNumber, comboNumber, missesNumber) 
+    static drawScore(ctx, scoreNumber, comboNumber, bufferValue) 
     {
         // Positioning for the score and combo display
         const baseXPosition = 10; // left padding
@@ -103,11 +103,15 @@ export class UIUtilities
         const scoreNumberX = baseXPosition + (lineWidth / 2);
         ctx.fillText(scoreNumber, scoreNumberX, baseYPosition + 160);
 
-        // Misses stuff
-        ctx.fillRect(baseXPosition, baseYPosition + 200, lineWidth, 2);
-        ctx.font = "24px Verdana";
-        const missNumberX = baseXPosition + (lineWidth / 2);
-        ctx.fillText(missesNumber, missNumberX, baseYPosition + 250);
+      // Misses stuff
+      ctx.fillRect(baseXPosition, baseYPosition + 200, lineWidth, 2);
+      ctx.font = "24px Verdana";
+
+      // Calculate the number of misses based on bufferValue
+      const missesNumber = 14 - bufferValue; // Use the passed bufferValue
+
+      const missNumberX = baseXPosition + (lineWidth / 2);
+      ctx.fillText(missesNumber, missNumberX, baseYPosition + 250);
 
     }   
 }

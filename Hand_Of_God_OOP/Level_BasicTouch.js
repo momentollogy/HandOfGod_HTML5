@@ -27,8 +27,6 @@ export default class Level_BasicTouch
         this.audio = new Audio();
         this.audio.volume = 0.04; 
 
-        
-
         this.jsonManager = new JsonManager(); // Ensure this is initialized
 
 
@@ -37,23 +35,25 @@ export default class Level_BasicTouch
         this.jsonPath = _levelArrayDataObject.jsonPath;
     
         // Then use them to set the audio source and load JSON
-        this.audio.src = this.mp3Path;
         this.jsonManager.loadJsonFileByPath(this.jsonPath);
-
-
-        this.startAudio(); // Instead of this.audio.play();
-
-        
-        this.jsonManager = new JsonManager();
 
         this.levelArrayDataObject = _levelArrayDataObject; //important, has all mp3,json etc..
 
-       
 
         this.volumeSlider = UIUtilities.createVolumeSlider(this.audio, this.canvas);
        
+        // Bind the audioEnded method and add it as an event listener
+        this.boundAudioEnded = this.audioEnded.bind(this);
+        this.audio.addEventListener('ended', this.boundAudioEnded);
+
+        
+
+
         //ALL SCORES/STATS CAPTURED HERE
-        this.stats = new GameStats();
+        this.stats = new GameStats(14); 
+        this.stats.reset(); // Reset the game stats including the buffer
+        console.log("Level_BasicTouch started. Initial buffer:", this.stats.buffer);
+
        
 
         this.SweetSpotCircleArray=[];
@@ -67,15 +67,10 @@ export default class Level_BasicTouch
 
         this.recordedMoments_Array=[];
         this.recordMode = false;
-        this.beatsMissed=0;
+
         this.scoreNumber = 0;
         this.comboNumber = 0;
-        this.stats.misses=0
-        console.log("basicTouch Constructor misses = ",this.stats.misses);
 
-        
-
-        this.beatsMissedPrevious=0;
         this.beatArray=[];
         this.beatCircles_Array = [];
         this.lastfingerposition;
@@ -133,9 +128,11 @@ export default class Level_BasicTouch
             { levelName: "Level_StageSelect",leaderBoardState: "latestScores"},
             (actionData) => 
             {
+            console.log("Level select button clicked. Current buffer:", this.stats.buffer);
+
                 // Dispatching event for a different level selections
                // actionData.leaderBoardState = "latestScores";
-               console.log("Level_BasicTouch Select Button clicked, dispatching levelChange event with details:", actionData);
+              // console.log("Level_BasicTouch Select Button clicked, dispatching levelChange event with details:", actionData);
                 document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
 
             }
@@ -171,8 +168,6 @@ export default class Level_BasicTouch
 
 
 
-       // this.playerName = 'momentology'; // Add this line with a default test player name
-      //  const leaderBoardVisual = new LeaderBoardVisual();
         this.leaderBoardBoxInstance = new LeaderBoard_Box();
 
 
@@ -182,37 +177,47 @@ export default class Level_BasicTouch
             this.SweetSpotCircleArray[1].receiveAndProcessCircleData(this.jsonManager.rightCircleData);
         });
         
-        // event handler for when beat missed ( this is dispatched from SweetSpotCircles )
-        document.addEventListener("BeatMissed", (data) => {;
-            this.beatMissed();
-        });
+        // Add these lines in the constructor
+        this.handleBeatMissed = this.beatMissed.bind(this);
+        document.addEventListener("BeatMissed", this.handleBeatMissed);
+
+    
 
         // listen for when song ends to log level complete
         this.audio.addEventListener('ended', this.audioEnded.bind(this));
 
         
-        // load mp3, json, and play
-        this.audio.src = this.mp3Path; 
-         
+      // Set the audio source
         this.audio.src = _levelArrayDataObject.mp3Path;
+
+        // Add an event listener to start playing the audio once it's loaded
         this.audio.addEventListener('loadeddata', () => {
             this.startAudio();
-        });        
+        });
+
+        // Load the JSON data
         this.jsonManager.loadJsonFileByPath(this.jsonPath);
-        this.audio.play();        
+
 
     }
 
 
     async startAudio() 
     {
+        console.log("Attempting to start audio. Is audio already playing?", !this.audio.paused);
+
+        if (!this.audio.paused) {
+            console.log("Audio is already playing.");
+            return;
+        }
+    
         try {
             await this.audio.play();
         } catch (err) {
             console.error("Error starting audio playback:", err);
         }
     }
-
+    
 
     level_loop() 
     {
@@ -234,7 +239,7 @@ export default class Level_BasicTouch
         this.levelSelectButton.draw();
 
         //Draw Score from GameStat.js
-        UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.misses);
+        UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.buffer);
 
 
         // Update and draw percentage overlay texts with succesful beat hits
@@ -275,7 +280,7 @@ export default class Level_BasicTouch
         //Simplifed gamestats logic
         increaseComboNumber() {this.stats.increaseCombo();}
         resetComboNumber() {this.stats.resetCombo();}
-        removeMiss() {this.stats.removeMiss();}
+        //removeMiss() {this.stats.removeMiss();}
     
     
 
@@ -293,28 +298,31 @@ export default class Level_BasicTouch
             this.stats.addScore(percentAccuracy);  // Adjust this if you need to include comboNumber in the calculation
         
             // Assuming you always want to remove a miss after a successful touch
-            this.stats.removeMiss();     
+            this.stats.removeMiss();   
+            console.log("Touched: ", this.stats.buffer);
+            //console.log("Miss Removed: ", this.stats.misses);
+  
         }
         
 
         ////////////////////////////////////////////////////////////////////
         ////////////// NEW Beat Missed. Total Beats Tallied ////////////////////
         ////////////////////////////////////////////////////////////////////
-
-        beatMissed() 
-        {
-
+        beatMissed() {
             this.stats.addMiss();
-            this.resetComboNumber();  // Make sure this method updates this.stats.combo
+            console.log("Miss Added from beatMissed. Buffer remaining: ", this.stats.buffer);
         
-            if (this.stats.misses > 14) {
-                console.log("you lose");
+            this.resetComboNumber();  // Resets the combo count
+          //  console.log("Combo reset after miss. Current combo: ", this.stats.combo);
+        
+            // Check if the buffer is depleted
+            if (this.stats.buffer === 0) {
+                console.log("Buffer depleted. You lose.");
+        
                 if (!this.audio.paused) {
                     this.audio.pause();
                 }
-
                 this.resetVariables();
-
         
                 // Dispatch a levelChange event for level failure
                 const levelFailureData = {
@@ -335,7 +343,8 @@ export default class Level_BasicTouch
         console.log('Score is:', this.stats.score);
         console.log('Player Name:', window.playerName);
         console.log('Level Array Data Object:', this.levelArrayDataObject);
-        
+       // this.stats.reset(); // Reset the buffer here
+
         
 
         // Dispatch a levelChange event with the required data for the Level Results Stage
@@ -362,21 +371,33 @@ export default class Level_BasicTouch
       
 
 
-
+/*
     resetVariables(){
         this.scoreNumber = 0;
         this.comboNumber = 0;
         this.beatsMissed = 0;
         
         this.stats.misses=0
+        console.log("Variables Reset, Misses: ", this.stats.misses);
+
         this.beatsMissedPrevious=0;
         for(let sweetspotcircle of this.SweetSpotCircleArray)
         {sweetspotcircle.beatsMissed = 0;}
     }
+    */
     
+    resetVariables() {
+        this.stats.reset(); // Reset all game stats
+        console.log("Game stats reset. Buffer: ", this.stats.buffer);
+    
+        this.beatsMissedPrevious = 0;
+        for (let sweetspotcircle of this.SweetSpotCircleArray) {
+            sweetspotcircle.beatsMissed = 0;
+        }
+    }
 
     dispose() {
-        console.log("Disposing Level_BasicTouch...");
+        console.log("Level_BasicTouch ending. Final buffer:", this.stats.buffer);
 
         // Stop and reset the audio
         if (this.audio) {
@@ -385,8 +406,9 @@ export default class Level_BasicTouch
             if (this.audio.src) {
                 URL.revokeObjectURL(this.audio.src); // Release any object URL
             }
+
             this.audio.src = '';
-            this.audio.removeEventListener('ended', this.audioEnded.bind(this)); // Corrected the event listener removal
+            this.audio.removeEventListener('ended', this.boundAudioEnded);
         }
     
         // Clear game-related arrays
@@ -411,12 +433,16 @@ export default class Level_BasicTouch
             this.restartButton.dispose();
         }
     
+        document.removeEventListener("BeatMissed", this.handleBeatMissed);
+
         // Resetting variables to their initial state
         this.resetVariables();
+
+
+
     
         // Remove references to DOM elements and external objects
         this.canvas = null;
-        this.ctx = null;
         this.fileInput = null;
         this.volumeSlider = null;
     

@@ -1,58 +1,76 @@
-export class GameStats 
+export class GameStats
 {
-   constructor(missLimit = 20) {
-       this.score = 0;
-       this.combo = 0;
-       this.misses = 0;
-       this.comboMultiplier = 1;
-       this.missLimit = missLimit;
-   }
+    constructor(bufferLimit = 14) 
+    { // Default buffer limit
+        this.bufferLimit = bufferLimit;
+        this.score = 0;
+        this.combo = 0;
+        this.buffer = this.bufferLimit; // Initialize buffer with bufferLimit
+        console.log("GameStats initialized. Buffer limit:", this.bufferLimit, "Current buffer:", this.buffer);
 
-   increaseCombo() {
-       this.combo++;
-       this.updateComboMultiplier();
-   }
+        this.comboMultiplier = 1;
+    }
 
-   resetCombo() {
-       this.combo = 0;
-       this.comboMultiplier = 1;
-   }
+    increaseCombo() {
+        this.combo++;
+        this.updateComboMultiplier();
+    }
 
-   addMiss() {
-       this.misses++;
-   }
+    resetCombo() {
+        this.combo = 0;
+        this.comboMultiplier = 1;
+    }
 
-   removeMiss() {
-       if (this.misses > 0) {
-           this.misses--;
-       }
-   }
+    addMiss() {
 
-   addScore(percentAccuracy) {
-       this.score += percentAccuracy * this.comboMultiplier;
-   }
+        if (this.buffer > 0) {
+            this.buffer--;
+        }
+        console.log("addMiss called. Current buffer:", this.buffer);
 
-   updateComboMultiplier() {
-       if (this.combo >= 14) {
-           this.comboMultiplier = 8;
-       } else if (this.combo >= 6) {
-           this.comboMultiplier = 4;
-       } else if (this.combo >= 2) {
-           this.comboMultiplier = 2;
-       } else {
-           this.comboMultiplier = 1;
-       }
-   }
+    }
 
-   dispose() 
-   {
-    // Reset all properties to their initial values
-    this.score = 0;
-    this.combo = 0;
-    this.misses = 0;
-    this.comboMultiplier = 1;
+    removeMiss() {
 
-    // If there are additional resources or references, clean them up here
+        if (this.buffer < 14) { // Ensure the buffer does not exceed the initial limit
+            this.buffer++;
+            console.log("removeMiss called. Current buffer:", this.buffer);
+
+        }
+    }
+
+    addScore(percentAccuracy) {
+        this.score += percentAccuracy * this.comboMultiplier;
+    }
+
+    updateComboMultiplier() {
+        if (this.combo >= 14) {
+            this.comboMultiplier = 8;
+        } else if (this.combo >= 6) {
+            this.comboMultiplier = 4;
+        } else if (this.combo >= 2) {
+            this.comboMultiplier = 2;
+        } else {
+            this.comboMultiplier = 1;
+        }
+    }
+
+
+    reset() 
+    {
+        this.score = 0;
+        this.combo = 0;
+        this.buffer = this.bufferLimit; // Reset buffer to the initial limit
+        console.log("Gamestats reset called. Current buffer:", this.buffer);
+
+        this.comboMultiplier = 1;
+    }
+
+    dispose() 
+    {
+        console.log("disposing GameStats...")
+        this.reset();
     }
 
 }
+
