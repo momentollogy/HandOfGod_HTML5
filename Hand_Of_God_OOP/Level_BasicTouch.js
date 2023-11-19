@@ -237,6 +237,33 @@ export default class Level_BasicTouch
 
     }
     
+    
+    //no cheating one?
+    checkForFingerTouchCircles() {
+        for(let sweetspotcircle of this.SweetSpotCircleArray){
+            const isTouchingNow = this.mediaPipe.checkForTouchWithShape(sweetspotcircle, this.mediaPipe.BOTH, 8).length > 0;
+            
+            if (isTouchingNow) {
+                sweetspotcircle.puffy = true;
+                // Only call touch() if the finger was not touching in the previous frame
+                if (!sweetspotcircle.wasTouching) {
+                    let percentAccuracyIfTouched = sweetspotcircle.touch();
+                    if (percentAccuracyIfTouched) {
+                        this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                    }
+                }
+            } else {
+                sweetspotcircle.puffy = false;
+            }
+    
+            // Update the wasTouching state for the next frame
+            sweetspotcircle.wasTouching = isTouchingNow;
+        }
+    }
+    
+
+    
+    /*original one
     checkForFingerTouchCircles()
     {
         for(let sweetspotcircle of this.SweetSpotCircleArray){
@@ -253,6 +280,8 @@ export default class Level_BasicTouch
             }
         }
     }
+    */
+
         //Simplifed gamestats logic
         increaseComboNumber() {this.stats.increaseCombo();}
         resetComboNumber() {this.stats.resetCombo();}
