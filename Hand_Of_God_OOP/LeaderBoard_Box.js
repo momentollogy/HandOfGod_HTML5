@@ -27,6 +27,12 @@ export default class LeaderBoard_Box
         // Bind event handlers for handling events like level selection
         this.bindEventHandlers();
 
+        
+        //When hovering over buttons pop up will appear.
+        this.tooltip = { visible: false, text: '', x: 0, y: 0 };
+       // this.tooltip = { visible: false, text: '', x: 0, y: 0, width: 150, height: 30 }; // Adjusted size
+        //this.hoverTimer = null;
+        //this.hoverDelay = 1000; // Delay in milliseconds
 
 
 
@@ -35,47 +41,53 @@ export default class LeaderBoard_Box
         // Step 1: Define Button Properties
         this.buttons = {
             topScores: {
-                x: 70, // Example position
-                y: 420, // Example position
-                width: 35, // Example size
-                height: 35, // Example size
-                imagePath: 'images/topScores.png', // Adjust path as needed
-                state: 'topScores'
+                x: 70, y: 420, width: 35, height: 35,
+                imagePath: 'images/topScores.png',
+                hoverImagePath: 'images/topScoresHover.png', 
+                selectedImagePath: 'images/topScoresSelected.png', 
+                state: 'topScores',
+                isHovered: false,
+                isSelected: false  // Tracks if the button is selected
             },
+
             latestScores: {
-                x: 70,
-                y: 520,
-                width: 35,
-                height: 35,
+                x: 70, y: 520, width: 35, height: 35,
                 imagePath: 'images/latestScores.png',
-                state: 'latestScores'
+                hoverImagePath: 'images/latestScoresHover.png', 
+                selectedImagePath: 'images/latestScoresSelected.png', 
+                isHovered: false,
+                state: 'latestScores',
+                isSelected: false  // Tracks if the button is selected
+
             },
             playerTopScores: {
-                x: 70,
-                y:620,
-                width: 35,
-                height: 35,
+                x: 70, y:620, width: 35, height: 35,
                 imagePath: 'images/playerTopScores.png',
-                state: 'PlayerTopScores'
+                hoverImagePath: 'images/playerTopScoresHover.png', 
+                selectedImagePath: 'images/playerTopScoresSelected.png', 
+                state: 'PlayerTopScores',
+                isHovered: false,
+                isSelected: false  // Tracks if the button is selected
+
             }
         };
 
         // Step 2: Load Button Images
         this.loadButtonIcons();
 
-        // ... rest of the constructor code ...
-
         // Step 4: Add event listener for clicks
         this.canvas.addEventListener('click', this.handleButtonClick.bind(this));
 
         
     }
+
     //END OF CONSTUCTOR
 
       // Utility function to check if a click is inside a button's area
-      isInside(point, rect) {
+    isInside(point, rect) 
+    {
         return point.x >= rect.x && point.x <= rect.x + rect.width &&
-               point.y >= rect.y && point.y <= rect.y + rect.height;
+        point.y >= rect.y && point.y <= rect.y + rect.height;
     }
 
 
@@ -84,15 +96,30 @@ export default class LeaderBoard_Box
     Object.values(this.buttons).forEach(button => {
         button.image = new Image();
         button.image.src = button.imagePath;
+        button.hoverImage = new Image();
+        button.hoverImage.src = button.hoverImagePath;
+        button.selectedImage = new Image();
+        button.selectedImage.src = button.selectedImagePath;
     });
 }
 
-    // Draw buttons
     drawButtons() {
         Object.values(this.buttons).forEach(button => {
-            this.ctx.drawImage(button.image, button.x, button.y, button.width, button.height);
+            let imageToDraw = button.image; // Default image
+
+            // Check if the button is selected
+            if (button.isSelected) {
+                imageToDraw = button.selectedImage;
+            } 
+            // Check if the button is hovered (and not selected)
+            else if (button.isHovered) {
+                imageToDraw = button.hoverImage;
+            }
+
+            this.ctx.drawImage(imageToDraw, button.x, button.y, button.width, button.height);
         });
     }
+
 
     // Handle button clicks
     handleButtonClick(event) {
@@ -102,22 +129,84 @@ export default class LeaderBoard_Box
         const clickX = (event.clientX - rect.left) * scaleX;
         const clickY = (event.clientY - rect.top) * scaleY;
     
+        // Deselect all buttons initially
+        Object.values(this.buttons).forEach(button => button.isSelected = false);
+    
         Object.values(this.buttons).forEach(button => {
             if (clickX >= button.x && clickX <= button.x + button.width &&
                 clickY >= button.y && clickY <= button.y + button.height) {
+                // Select the clicked button
+                button.isSelected = true;
+    
                 // Check if the currentFireBaseLevelLeaderBoard is set
                 if (this.currentFireBaseLevelLeaderBoard) {
                     this.populateAndDraw(this.currentFireBaseLevelLeaderBoard, button.state);
                 } else {
                     console.error("No current Firebase leaderboard set");
                 }
+    
+                // Break the loop once a button is found and clicked
+                return;
             }
         });
+    
+        // Redraw buttons to reflect the new selected state
+        this.drawButtons();
     }
     
+
+    handleMouseMove(event) 
+    {
+        const rect = this.canvas.getBoundingClientRect();
+        const mouseX = (event.clientX - rect.left) * (this.canvas.width / rect.width);
+        const mouseY = (event.clientY - rect.top) * (this.canvas.height / rect.height);
+    
+        let anyButtonHovered = false;
+    
+        Object.values(this.buttons).forEach(button => {
+            if (mouseX >= button.x && mouseX <= button.x + button.width &&
+                mouseY >= button.y && mouseY <= button.y + button.height) {
+                button.isHovered = true;
+                anyButtonHovered = true;
+    
+                // Set tooltip properties when hovering over a button
+                this.tooltip = {
+                    visible: true,
+                    text: this.getTooltipText(button.state), // Assuming a method to get the tooltip text based on button state
+                    x: button.x,
+                    y: button.y - 50 // Position the tooltip above the button
+                };
+    
+            } else {
+                button.isHovered = false;
+            }
+        });
+    
+        if (!anyButtonHovered) {
+            this.tooltip.visible = false;
+        }     
+       
+     
+        
+    }
     
 
-    
+
+
+
+    // Helper method to get tooltip text based on button state
+    getTooltipText(state) {
+        switch (state) {
+            case 'topScores':
+                return "Top Scores";
+            case 'latestScores':
+                return "Latest Scores";
+            case 'PlayerTopScores':
+                return "Player Top Scores";
+            default:
+                return "";
+        }
+    }
     
     
 
@@ -167,6 +256,10 @@ export default class LeaderBoard_Box
         // Bind the levelSelected method to handle level selection events
         this.boundLevelSelected = this.levelSelected.bind(this);
         window.addEventListener('levelSelected', this.boundLevelSelected);
+
+        //this is for the 3 buttons hover and click
+        this.canvas.addEventListener('click', this.handleButtonClick.bind(this));
+        this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
     }
 
 
@@ -248,6 +341,16 @@ export default class LeaderBoard_Box
                     startY + (i * this.SCORE_LINE_HEIGHT)
                 );
             }
+
+            if (this.tooltip.visible) {
+                // Draw the tooltip
+                this.ctx.fillStyle = 'black'; // Background color of the tooltip
+                this.ctx.fillRect(this.tooltip.x, this.tooltip.y, 100, 20); // Adjust size as needed
+                this.ctx.fillStyle = 'white'; // Text color
+                this.ctx.font = '12px Arial';
+                this.ctx.fillText(this.tooltip.text, this.tooltip.x + 5, this.tooltip.y + 15); // Adjust text position as needed
+            }
+
         }
     
         // Draw buttons
@@ -258,16 +361,6 @@ export default class LeaderBoard_Box
 
     currentFireBaseLevelLeaderBoard = null;
 
-
-   /* // Handle the levelSelected event
-    levelSelected(event) 
-    {
-        const selectedLevelLeaderboard = event.detail.fireBaseLevelLeaderBoard;
-        this.populateAndDraw(selectedLevelLeaderboard, 'latestScores');
-
-    }
-    //topScores   latestScores //topPlayerscores
-*/
 
     // Modify levelSelected to update currentFireBaseLevelLeaderBoard
     levelSelected(event) {
@@ -334,6 +427,8 @@ export default class LeaderBoard_Box
 
     dispose() {
         window.removeEventListener('levelSelected', this.boundLevelSelected);
+        this.canvas.removeEventListener('click', this.handleButtonClick.bind(this));
+        this.canvas.removeEventListener('mousemove', this.handleMouseMove.bind(this));
       }
 }
 
