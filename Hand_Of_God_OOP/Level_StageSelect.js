@@ -18,7 +18,6 @@ export default class Level_StageSelect
         this.detail=detail;
 
 
-
         //BACKGOUND IMAGE
         this.backgroundImage = new Image();
         this.backgroundImage.onload = () => 
@@ -28,8 +27,6 @@ export default class Level_StageSelect
         };
         this.backgroundImage.src = 'images/bg_imageda66opacity.jpeg'; 
     
-
-
     
         this.playInfoBoxVisual = new PlayInfoBoxVisual();
         this.leaderboardbox = new LeaderBoard_Box(detail.leaderBoardState);
@@ -42,10 +39,6 @@ export default class Level_StageSelect
             //this.leaderboardbox.setState(this.currentLevelData.fireBaseLevelLeaderBoard,detail.leaderBoardState);
         }
         
-        
-       
-
-
 
         this.playInfoBoxVisual.songselect_box=this.songselect_box;
         this.playInfoBoxVisual.currentLevelData=this.songselect_box.levelArray;
@@ -66,10 +59,9 @@ export default class Level_StageSelect
     }
 
 
-
     level_loop() 
     {
-        //added this for bg image.
+        //Added this for bg image.
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         // Draw the background image
@@ -78,9 +70,10 @@ export default class Level_StageSelect
         // mediapipe stuff
         let results = this.mediaPipe.results;
         if (results == undefined) { return; }
+
        this.leaderboardbox.draw(); 
        this.songselect_box.draw();  
-      this.playInfoBoxVisual.draw(); 
+       this.playInfoBoxVisual.draw(); 
 
     }
 
@@ -112,8 +105,6 @@ export default class Level_StageSelect
         this.songselect_box = null;
         this.leaderboardbox = null;
         this.mediaPipe = null;
-
-        // ... any other cleanup needed for this level ...
     }
 }
 

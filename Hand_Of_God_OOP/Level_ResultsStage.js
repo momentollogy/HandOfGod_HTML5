@@ -2,7 +2,8 @@ import MediaPipeTracker from './MediaPipeTracker.js';
 import Results_Box from './Results_Box.js'; // Make sure the path is correct
 
 export default class LevelResultsStage {
-    constructor(_data) {
+    constructor(_data) 
+    {
         this.mediaPipe = MediaPipeTracker.getInstance();
         this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
@@ -18,13 +19,6 @@ export default class LevelResultsStage {
         };
         this.backgroundImage.src = 'images/bg_imageda66opacity.jpeg'; 
 
-
-        // Instantiate the ResultsBox with the canvas context
-    
-        this.results_Box = new Results_Box(_data);
-
-
-       // this.results_Box.setState('levelComplete', _data.score, _data.grade, _data.isNewHighScore);
 
     }
 

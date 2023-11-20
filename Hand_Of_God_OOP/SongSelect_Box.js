@@ -253,13 +253,6 @@ export default class SongSelect_Box
         window.dispatchEvent(event);
     }
 
-    // This method is added to your class
-    dispose() 
-    {
-        window.removeEventListener('keydown', this.handleKeyDown);
-        this.canvas.removeEventListener('click', this.handleMouseClick);
-    }
-
     draw() 
     {
         this.ctx.save();
@@ -287,6 +280,27 @@ export default class SongSelect_Box
 
         this.ctx.restore();
     }
+
+        // This method is added to your class
+        dispose() 
+        {
+            // Remove event listeners to prevent memory leaks
+            window.removeEventListener('keydown', this.handleKeyDown);
+            this.canvas.removeEventListener('click', this.handleMouseClick);
+    
+            // If BoxUI has a dispose method, call it
+            if (this.box && typeof this.box.dispose === 'function') {
+                this.box.dispose();
+            }
+    
+            // Clear any references to DOM elements or external objects
+            this.canvas = null;
+            this.playInfoBoxVisual = null;
+    
+            // Optionally, reset internal states or variables
+            this.currentSelectedLevelIndex = 0;
+            this.levelArray = [];
+        }
     
     
 
