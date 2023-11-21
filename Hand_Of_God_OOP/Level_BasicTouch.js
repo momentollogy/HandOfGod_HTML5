@@ -263,7 +263,7 @@ export default class Level_BasicTouch
         }
     }
         
-
+/*
     async audioEnded() {
         console.log('Level Complete');
         console.log('Score is:', this.stats.score);
@@ -301,7 +301,38 @@ export default class Level_BasicTouch
         }
     }
     
-      
+      */
+
+    audioEnded() 
+    {
+        console.log('Level Complete');
+        console.log('Score is:', this.stats.score);
+        console.log('Player Name:', window.playerName);
+        console.log('Level Array Data Object:', this.levelArrayDataObject);
+        // Dispatch a levelChange event with the required data for the Level Results Stage
+        const levelResultsData = 
+        {
+            levelName: 'Level_ResultsStage', // The name of the results level/stage
+            state: 'levelComplete',
+            score: this.stats.score,
+            playerName: window.playerName,
+            levelData: this.levelArrayDataObject
+        };
+
+        document.dispatchEvent(new CustomEvent('levelChange', { detail: levelResultsData }));
+
+
+
+        addScore(window.playerName, this.stats.score,this.levelArrayDataObject).then(() => {
+            this.leaderBoardBoxInstance.populateAndDraw();
+            console.log("populateanddraw with leaderBoardBoxInstance=",this.leaderBoardBoxInstance);
+            console.log( "score=", this.stats.score);
+            console.log("levelarray=",this.levelArrayDataObject);
+
+        }).catch(error => {
+            console.error("Error adding score: ", error);
+        });
+    }
 
     resetVariables() 
     {
