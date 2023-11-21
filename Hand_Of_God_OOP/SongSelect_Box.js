@@ -107,6 +107,14 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/Apache/Apache.json"
                         },
                         {   
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "'Houdini'  Dua Lipa", 
+                            fireBaseLevelLeaderBoard: "Houdini_LB", 
+                            duration: ":56",
+                            mp3Path:"Level_Mp3AndJson/Houdini/Houdini.mp3", 
+                            jsonPath:"Level_Mp3AndJson/Houdini/Houdini.json"
+                        },
+                        {   
                             fileName: "Level_05_Recorder", 
                             levelDisplayName: "RECORDER", 
                             fireBaseLevelLeaderBoard: "TBD", 

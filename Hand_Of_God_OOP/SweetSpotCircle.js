@@ -19,7 +19,7 @@ export default class SweetSpotCircle {
         this.beatCircles_Array = [];
         this.dirArray=[];
         this.beatIndex = 0;
-        this.velocity = 300;
+        this.velocity = 400;
         this.beatCirclePathDirectionAngle = -90;
         this.pulseOnBeats = true;
         this.puffy = false;
@@ -114,7 +114,7 @@ export default class SweetSpotCircle {
 
         if(!this.recordMode && this.beatCircles_Array.length > 0){
             this.updateForPlay();
-            this.drawBeatRanges();
+           // this.drawBeatRanges();
         }else{
             this.updateForRecording();
         }

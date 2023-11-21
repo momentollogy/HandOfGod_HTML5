@@ -5,6 +5,8 @@ import LeaderBoard_Box from './LeaderBoard_Box.js';
 import PlayInfoBoxVisual from './PlayInfoBoxVisual.js';
 import SongSelect_BoxSelectVisual from './SongSelect_Box.js';
 import SongSelect_Box from './SongSelect_Box.js';
+import BlueButton from './BlueButton.js';
+
 
 
 export default class Level_StageSelect
@@ -57,6 +59,41 @@ export default class Level_StageSelect
             }
         }, 0); // A timeout of 0 ms means execute as soon as the stack is clear    
 
+
+
+
+
+        // Button positions (You may need to adjust these positions to fit your layout)
+        const leftButtonX = 100; // for example, 100 pixels from the left
+        const rightButtonX = this.canvas.width - 300; // for example, 300 pixels from the right edge
+        const buttonY = this.canvas.height / 2 + 400; // vertical center for demonstration
+        const buttonWidth = 150;
+        const buttonHeight = 50;
+        const buttonRadius = 10;
+
+         // 'Level Select' button specific code
+         this.titlePage = new BlueButton
+         (
+             leftButtonX,
+             buttonY,
+             buttonWidth,
+             buttonHeight,
+             buttonRadius,
+             "#00008B",
+             "#0000CD",
+             "Tite Page",
+             "rgba(0, 0, 0, 0.5)",
+             { levelName: "TitlePage"},
+             (actionData) => 
+             {
+                 // Dispatching event for a different level selections
+                // actionData.leaderBoardState = "latestScores";
+                console.log("Level_BasicTouch Select Button clicked, dispatching levelChange event with details:", actionData);
+                 document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
+ 
+             }
+         );
+ 
     }
 
 
@@ -75,6 +112,9 @@ export default class Level_StageSelect
        this.leaderboardbox.draw(); 
        this.songselect_box.draw();  
        this.playInfoBoxVisual.draw(); 
+
+       this.titlePage .draw();
+
 
     }
 
@@ -95,6 +135,13 @@ export default class Level_StageSelect
         if (this.leaderboardbox && typeof this.leaderboardbox.dispose === 'function') {
             this.leaderboardbox.dispose();
         }
+
+
+        // Dispose of buttons if they have a dispose method
+        if (this.titlePage  && typeof this.titlePage .dispose === 'function') {
+        this.titlePage .dispose();
+        }
+    
 
         // Nullify references to DOM elements and external objects
         this.canvas = null;

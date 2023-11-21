@@ -1,5 +1,3 @@
-
-
 // LeaderBoard_Box.js
 
 import BoxUI from './BoxUI.js';
@@ -283,8 +281,11 @@ export default class LeaderBoard_Box
         this.populateAndDraw(fb,LB_state);
         
     }
-   
+    
 
+    
+
+//old working Draw
     draw() 
     {
         this.ctx.save();
@@ -367,6 +368,10 @@ export default class LeaderBoard_Box
         
         this.ctx.restore();
     }
+
+    
+
+   
 
     currentFireBaseLevelLeaderBoard = null;
 
