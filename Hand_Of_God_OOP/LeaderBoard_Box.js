@@ -27,6 +27,16 @@ export default class LeaderBoard_Box
         // Bind event handlers for handling events like level selection
         this.bindEventHandlers();
 
+            // Bind event handlers for handling events like level selection and store them as properties
+        this.boundLevelSelected = this.levelSelected.bind(this);
+        this.boundHandleButtonClick = this.handleButtonClick.bind(this);
+        this.boundHandleMouseMove = this.handleMouseMove.bind(this);
+
+    // Add event listeners using the bound functions
+    window.addEventListener('levelSelected', this.boundLevelSelected);
+    this.canvas.addEventListener('click', this.boundHandleButtonClick);
+    this.canvas.addEventListener('mousemove', this.boundHandleMouseMove);
+
         
         //When hovering over buttons pop up will appear.
         this.tooltip = { visible: false, text: '', x: 0, y: 0 };
@@ -157,6 +167,10 @@ export default class LeaderBoard_Box
 
     handleMouseMove(event) 
     {
+        if (!this.canvas) {
+            console.error("Canvas is null in handleMouseMove");
+            return;
+        }
         const rect = this.canvas.getBoundingClientRect();
         const mouseX = (event.clientX - rect.left) * (this.canvas.width / rect.width);
         const mouseY = (event.clientY - rect.top) * (this.canvas.height / rect.height);
@@ -253,13 +267,7 @@ export default class LeaderBoard_Box
 
     bindEventHandlers() 
     {
-        // Bind the levelSelected method to handle level selection events
-        this.boundLevelSelected = this.levelSelected.bind(this);
-        window.addEventListener('levelSelected', this.boundLevelSelected);
-
-        //this is for the 3 buttons hover and click
-        this.canvas.addEventListener('click', this.handleButtonClick.bind(this));
-        this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    
     }
 
 
@@ -369,8 +377,13 @@ export default class LeaderBoard_Box
     }
 
 
-    async populateAndDraw(fireBaseLevelLeaderBoard, dataType) {
+
+    async populateAndDraw(fireBaseLevelLeaderBoard, dataType='topScores') {
         console.log("populateAndDraw called with:", fireBaseLevelLeaderBoard, dataType); // Log received parameters
+
+        if (!fireBaseLevelLeaderBoard) {
+            fireBaseLevelLeaderBoard = this.currentFireBaseLevelLeaderBoard || "Default_Leaderboard_ID";
+        }
 
         let transformedScores;
     
@@ -416,9 +429,9 @@ export default class LeaderBoard_Box
                 break;
             }
         }
-    
-        this.update(transformedScores);
         this.draw();
+        this.update(transformedScores);
+        
     }
 
     update(newScores) {
@@ -426,9 +439,21 @@ export default class LeaderBoard_Box
     }
 
     dispose() {
+        console.log("Disposing Leaderboard_Box...")
+
+        if (this.canvas) {
+            this.canvas.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+        }
+    
         window.removeEventListener('levelSelected', this.boundLevelSelected);
-        this.canvas.removeEventListener('click', this.handleButtonClick.bind(this));
-        this.canvas.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+        this.canvas.removeEventListener('click', this.boundHandleButtonClick);
+        this.canvas.removeEventListener('mousemove', this.boundHandleMouseMove);
+       // this.canvas = null;
+      //  this.ctx = null;
+
+          // Remove event listeners using the stored bound functions
+      
+
       }
 }
 

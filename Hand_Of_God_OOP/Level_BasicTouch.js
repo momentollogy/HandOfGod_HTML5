@@ -264,32 +264,43 @@ export default class Level_BasicTouch
     }
         
 
-    audioEnded() 
-    {
+    async audioEnded() {
         console.log('Level Complete');
         console.log('Score is:', this.stats.score);
         console.log('Player Name:', window.playerName);
         console.log('Level Array Data Object:', this.levelArrayDataObject);
-        // Dispatch a levelChange event with the required data for the Level Results Stage
-        const levelResultsData = 
-        {
-            levelName: 'Level_ResultsStage', // The name of the results level/stage
-            state: 'levelComplete',
-            score: this.stats.score,
-            playerName: window.playerName,
-            levelData: this.levelArrayDataObject
-        };
-
-        document.dispatchEvent(new CustomEvent('levelChange', { detail: levelResultsData }));
-
-
-
-        addScore(window.playerName, this.stats.score,this.levelArrayDataObject).then(() => {
-            this.leaderBoardBoxInstance.populateAndDraw();
-        }).catch(error => {
+    
+        const currentLeaderboardId = this.levelArrayDataObject.fireBaseLevelLeaderBoard;
+    
+        try {
+            await addScore(window.playerName, this.stats.score, this.levelArrayDataObject);
+            
+            // Update Leaderboard
+            if (this.leaderBoardBoxInstance) {
+                this.leaderBoardBoxInstance.populateAndDraw(currentLeaderboardId, 'topScores');
+                console.log("Leaderboard updated");
+            }
+    
+            // Dispose Leaderboard if needed
+            if (this.leaderBoardBoxInstance) {
+                this.leaderBoardBoxInstance.dispose();
+                console.log("LeaderBoard_Box disposed");
+            }
+    
+            // Transition to Results Stage
+            const levelResultsData = {
+                levelName: 'Level_ResultsStage',
+                state: 'levelComplete',
+                score: this.stats.score,
+                playerName: window.playerName,
+                levelData: this.levelArrayDataObject
+            };
+            document.dispatchEvent(new CustomEvent('levelChange', { detail: levelResultsData }));
+        } catch (error) {
             console.error("Error adding score: ", error);
-        });
+        }
     }
+    
       
 
     resetVariables() 

@@ -18,6 +18,7 @@ export default class LevelResultsStage {
             this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
         };
         this.backgroundImage.src = 'images/bg_imageda66opacity.jpeg'; 
+       // this.results_Box = new Results_Box();
 
 
     }
