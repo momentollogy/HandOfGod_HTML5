@@ -1,3 +1,4 @@
+/*
 import MediaPipeTracker from './MediaPipeTracker.js';
 import SweetSpotCircle from './SweetSpotCircle.js';
 import JsonManager from './JsonManager.js';
@@ -353,9 +354,25 @@ export default class Level_BasicTouch
     }
     
 }
+*/
 
 
-/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import MediaPipeTracker from './MediaPipeTracker.js';
 import SweetSpotCircle from './SweetSpotCircle.js';
 import JsonManager from './JsonManager.js';
@@ -620,7 +637,8 @@ export default class Level_BasicTouch
             document.dispatchEvent(new CustomEvent('levelChange', { detail: levelFailureData }));
         }
     }
-        
+      
+    /*
 ////COMMENTED OUT
     async audioEnded() {
         console.log('Level Complete');
@@ -660,7 +678,7 @@ export default class Level_BasicTouch
     }
     //COMMENDED OUT
    
-
+*/
 
 
     audioEnded() 
@@ -755,4 +773,3 @@ export default class Level_BasicTouch
     }
     
 }
- */
