@@ -128,7 +128,22 @@ export default class Level_BasicTouch
             console.log("Restart button clicked, dispatching levelChange event with details:", actionData);
             document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
         });
+
+
+        //Playable Keys version
+        document.addEventListener('keydown', this.onKeyDown.bind(this));
+        document.addEventListener('keyup', this.onKeyUp.bind(this));
+    
+
+
+        this.spacePressed = false;
+        this.A_pressed = false;
+        this.S_pressed = false;
+
     }
+
+
+
 
     /////////////////////
     //END OF CONSTUCTOR//
@@ -143,6 +158,27 @@ export default class Level_BasicTouch
          catch (err) 
         {console.error("Error starting audio playback:", err);}
     }
+
+    onKeyDown(event) {
+        if (event.code === 'Space' && !this.spacePressed) {
+            this.spacePressed = true;
+            console.log("Spacebar Down");
+            // Perform actions for spacebar down
+        }
+        if (event.code === 'KeyA' && !this.A_pressed) {  this.A_pressed = true; }
+        if (event.code === 'KeyS' && !this.S_pressed) {  this.S_pressed = true; }
+    }
+    
+    onKeyUp(event) {
+        if (event.code === 'Space') {
+            this.spacePressed = false;
+            console.log("Spacebar Up");
+            // Perform actions for spacebar up
+        }
+        if (event.code === 'KeyA') {  this.A_pressed = false; }
+        if (event.code === 'KeyS') {  this.S_pressed = false; }
+    }
+
     
 
     level_loop() 
@@ -161,6 +197,11 @@ export default class Level_BasicTouch
         // update display stuff and process classes stuff
         for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
         
+        //for keyboard inputs
+        this.checkForClick();
+        this. checkIndividualClicks();
+
+
         this.restartButton.draw();
         this.levelSelectButton.draw();
 
@@ -200,6 +241,62 @@ export default class Level_BasicTouch
             sweetspotcircle.wasTouching = isTouchingNow;
         }
     }
+
+
+
+    checkForClick()
+    {
+        for(let sweetspotcircle of this.SweetSpotCircleArray){
+            if (this.spacePressed)
+            {
+                console.log("mousePessed in Check method");
+                sweetspotcircle.puffy = true;  
+                let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
+                if(percentAccuracyIfTouched){
+
+                    this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                }
+            }else{
+                sweetspotcircle.puffy = false;
+            }
+        }
+    }
+
+
+    //For keyboard clicks
+    checkIndividualClicks(){
+        let sweetspotcircle = this.SweetSpotCircleArray[0];
+        if (this.A_pressed)
+        {
+            console.log("A pressed in Check method");
+            sweetspotcircle.puffy = true;  
+            let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
+            if(percentAccuracyIfTouched){
+
+                this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+            }
+        }
+        else
+        {
+            sweetspotcircle.puffy = false;
+        }
+        sweetspotcircle = this.SweetSpotCircleArray[1];
+        if (this.S_pressed)
+        {
+            console.log("S pressed in Check method");
+            sweetspotcircle.puffy = true;  
+            let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
+            if(percentAccuracyIfTouched){
+
+                this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+            }
+        }else{
+            sweetspotcircle.puffy = false;
+        }
+
+
+    }
+
     
 
         //Simplifed gamestats logic
@@ -334,6 +431,12 @@ export default class Level_BasicTouch
         }
     
         document.removeEventListener("BeatMissed", this.handleBeatMissed);
+
+
+        //Playable Keys version
+        document.removeEventListener('keydown', this.onKeyDown.bind(this));
+        document.removeEventListener('keyup', this.onKeyUp.bind(this));
+
 
         // Resetting variables to their initial state
         this.resetVariables();
