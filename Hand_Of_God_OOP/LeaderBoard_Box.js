@@ -1,16 +1,17 @@
-// LeaderBoardVisual.js
+// LeaderBoard_Box.js
 // Class for visualizing the leaderboard, including text and interactions with Firebase.
 
 import BoxUI from './BoxUI.js';
 import { getTopScores, getLatestScore, getPlayerTopScores } from './Leaderboard.js'; // Adjust the path if necessary
 
 
-export default class LeaderBoardVisual {
+export default class LeaderBoard_Box {
     constructor() {
         this.scores = []; // Placeholder for scores
         this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
-
+    
+        this.currentSongData;
 
         this.boundLevelSelected = this.levelSelected.bind(this);
         window.addEventListener('levelSelected', this.boundLevelSelected);
@@ -52,10 +53,21 @@ export default class LeaderBoardVisual {
       // this.setState(detail.leaderBoardState);
     }
 
-    setState(LB_state)
+    setCurrentSongLevel(songData)
     {
-        this.populateAndDraw("JustDance_easy_LeaderBoard",LB_state);
+        this.currentSongData = songData;
     }
+
+    setState(fb,LB_state)
+    {
+        //console.log(LB_state)
+        this.populateAndDraw(fb,LB_state);
+        
+    }
+
+    //window.myCurrentLevelIndex = 0;
+
+   
 
     draw() {
 
@@ -89,7 +101,7 @@ export default class LeaderBoardVisual {
                // console.log(`Setting fillStyle for ${scoreItem.playerName}: `, scoreItem.isLatest ? "red" : "white");
 
     
-                // ß the rank or index
+                //  the rank or index
                 this.ctx.font = `${this.SCORE_FONT_SIZE}px Verdana`;
                // this.ctx.fillStyle = "white";
                this.ctx.fillStyle = scoreItem.isLatest ? "red" : "white";
@@ -132,15 +144,13 @@ export default class LeaderBoardVisual {
         this.ctx.restore();
     }
 
-
-
     
 
     // Handle the levelSelected event
     levelSelected(event) 
     {
         const selectedLevelLeaderboard = event.detail.fireBaseLevelLeaderBoard;
-        this.populateAndDraw(selectedLevelLeaderboard, 'latestScores');
+        this.populateAndDraw(selectedLevelLeaderboard, 'topScores');
        // console.log(`Drawing score for ${scoreItem.playerName}, isLatest in levelSelected loop: `, scoreItem.isLatest);
 
     }
@@ -202,7 +212,6 @@ export default class LeaderBoardVisual {
         window.removeEventListener('levelSelected', this.boundLevelSelected);
       }
 }
-
 
 
 
