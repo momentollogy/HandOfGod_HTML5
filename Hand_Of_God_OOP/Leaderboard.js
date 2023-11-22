@@ -5,20 +5,39 @@ import { db } from './firebase.js';
 import { collection, query, orderBy, limit, getDocs, where, addDoc,startAt, endBefore, startAfter } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 
 
-// Function to add a score
-export async function addScore(name, score,levelArrayDataObject) {
 
-
+export async function addScore(name, score, levelArrayDataObject) {
   try {
-    const docRef = await addDoc(collection(db,levelArrayDataObject.fireBaseLevelLeaderBoard), {
+    // Add the score to the database.
+    const docRef = await addDoc(collection(db, levelArrayDataObject.fireBaseLevelLeaderBoard), {
       name: name,
       score: score,
-      timestamp: new Date() // Firestore will convert this into its Timestamp type
+      timestamp: new Date()
     });
-    //console.log("Document written with ID: ", docRef.id);
+
+    // After adding the score, calculate the rank.
+    const scoresQuery = query(collection(db, levelArrayDataObject.fireBaseLevelLeaderBoard), orderBy("score", "desc"));
+    const scoresSnapshot = await getDocs(scoresQuery);
+    
+    // Initialize rank at 1.
+    let rank = 1;
+    for (const doc of scoresSnapshot.docs) {
+      if (doc.id === docRef.id) {
+        // This is the rank of the newly added score.
+        break;
+      }
+      rank++; // Increment rank until the new score is found.
+    }
+
+    // Return the document reference ID and the rank.
+    return { id: docRef.id, rank: rank };
   } catch (e) {
+    console.error("Error adding score: ", e);
+    throw e; // Re-throw the error to handle it in the calling function.
   }
 }
+
+
 
 
 //Function to retrieve top scores

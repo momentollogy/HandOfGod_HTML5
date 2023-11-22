@@ -274,14 +274,14 @@ export default class LeaderBoard_Box
     {
         this.currentSongData = songData;
     }
-
+/*
     setState(fb,LB_state)
     {
         //console.log(LB_state)
         this.populateAndDraw(fb,LB_state);
         
     }
-    
+    */
 
     
 
@@ -379,7 +379,7 @@ export default class LeaderBoard_Box
     // Modify levelSelected to update currentFireBaseLevelLeaderBoard
     levelSelected(event) {
         this.currentFireBaseLevelLeaderBoard = event.detail.fireBaseLevelLeaderBoard;
-        this.populateAndDraw(this.currentFireBaseLevelLeaderBoard, 'latestScores');
+        this.populateAndDraw(this.currentFireBaseLevelLeaderBoard, 'topScores');
     }
 
 

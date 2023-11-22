@@ -4,8 +4,11 @@ import BlueButton from './BlueButton.js'; // Import the BlueButton class
 
 export default class Results_Box 
 {
-  constructor(_resultsData)
+  constructor(_resultsData,rank)
+  
   {
+    console.log("Passed rank to Results_Box constructor: ", rank);
+
 
     this.canvas = document.getElementById("output_canvas");;
     this.ctx = this.canvas.getContext("2d");
@@ -36,8 +39,8 @@ export default class Results_Box
     //this.state = 'levelComplete'; // Default state
     this.state = _resultsData.state;
     this.score = _resultsData.score;
-    this.rank = this.calculateGrade(this.score); 
-    this.misses = "5";
+    this.grade = this.calculateGrade(this.score); 
+    this.rank = _resultsData.rank;
     this.isNewHighScore = true;
 
 
@@ -139,14 +142,14 @@ export default class Results_Box
         this.ctx.font = `${this.fontSize / 2.5}px Arial`;
         this.ctx.fillText('SCORE', this.offsetX + this.width / 2, this.offsetY +140);
 
-         //Draw "RAnk" text
+         //Draw "GRADE" text
          this.ctx.font = `${this.fontSize / 2.5}px Arial`;
-         this.ctx.fillText('RANK', this.offsetX + this.width / 2 +300, this.offsetY +140);
+         this.ctx.fillText('GRADE', this.offsetX + this.width / 2 +300, this.offsetY +140);
 
 
-        //Draw "Misses" text
+        //Draw "RANK" text
         this.ctx.font = `${this.fontSize / 2.5}px Arial`;
-        this.ctx.fillText('MISSES', this.offsetX + this.width / 2 -300, this.offsetY +140);
+        this.ctx.fillText('RANK', this.offsetX + this.width / 2 -300, this.offsetY +140);
     
  
          
@@ -164,14 +167,14 @@ export default class Results_Box
         this.ctx.font = `${this.fontSize * 1.25}px Arial`; // Larger font for score
         this.ctx.fillText(this.score, this.offsetX + this.width / 2, this.offsetY + 200);
 
+        // Draw Calulated Grade
+        this.ctx.font = `${this.fontSize * 1.25}px Arial`; // Even larger font for grade
+        this.ctx.fillText(this.grade, this.offsetX + this.width / 2 +300, this.offsetY +200);
+
+
         // Draw Calulated RANK
         this.ctx.font = `${this.fontSize * 1.25}px Arial`; // Even larger font for rank
-        this.ctx.fillText(this.rank, this.offsetX + this.width / 2 +300, this.offsetY +200);
-
-
-        // Draw Calulated MISSES
-        this.ctx.font = `${this.fontSize * 1.25}px Arial`; // Even larger font for rank
-        this.ctx.fillText(this.misses, this.offsetX + this.width / 2 -300, this.offsetY +200);
+        this.ctx.fillText(this.rank, this.offsetX + this.width / 2 -300, this.offsetY +200);
 
    
 
@@ -204,11 +207,12 @@ export default class Results_Box
 
 
 
-  setState(newState, score, rank, isNewHighScore) 
+  setState(newState, score, grade, isNewHighScore, rank) 
   {
     this.state = newState;
     this.score = score || 0;
-    this.rank = rank || 'C';
+    this.grade = grade || 'C';
+    this.rank = rank || 'N/A'; 
     this.isNewHighScore = isNewHighScore || false;
   }
 

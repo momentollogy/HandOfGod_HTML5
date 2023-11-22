@@ -353,36 +353,38 @@ export default class Level_BasicTouch
     }
       
 
-    audioEnded() 
-    {
+    audioEnded() {
         console.log('Level Complete');
         console.log('Score is:', this.stats.score);
         console.log('Player Name:', window.playerName);
         console.log('Level Array Data Object:', this.levelArrayDataObject);
-        // Dispatch a levelChange event with the required data for the Level Results Stage
-        const levelResultsData = 
-        {
+        
+        // Define the levelResultsData object with the available data
+        const levelResultsData = {
             levelName: 'Level_ResultsStage', // The name of the results level/stage
             state: 'levelComplete',
             score: this.stats.score,
             playerName: window.playerName,
             levelData: this.levelArrayDataObject
+            // Do not dispatch the event here yet, because we don't have the rank
         };
-
-        document.dispatchEvent(new CustomEvent('levelChange', { detail: levelResultsData }));
-
-
-
-        addScore(window.playerName, this.stats.score,this.levelArrayDataObject).then(() => {
-            this.leaderBoardBoxInstance.populateAndDraw();
-            console.log("populateanddraw with leaderBoardBoxInstance=",this.leaderBoardBoxInstance);
-            console.log( "score=", this.stats.score);
-            console.log("levelarray=",this.levelArrayDataObject);
-
+    
+        // Add the score and get the rank
+        addScore(window.playerName, this.stats.score, this.levelArrayDataObject).then(({ id, rank }) => {
+            console.log("Received rank in audioEnded: ", rank);
+    
+            // Now that we have the rank, update levelResultsData with it
+            levelResultsData.rank = rank;
+    
+            // Now dispatch the levelChange event with the complete levelResultsData
+            document.dispatchEvent(new CustomEvent('levelChange', { detail: levelResultsData }));
+    
+            console.log("New score added with rank: ", rank);
         }).catch(error => {
             console.error("Error adding score: ", error);
         });
     }
+    
 
     resetVariables() 
     {
