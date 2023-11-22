@@ -285,7 +285,7 @@ export default class LeaderBoard_Box
 
     
 
-//old working Draw
+// working Draw
     draw() 
     {
         this.ctx.save();
@@ -408,20 +408,18 @@ export default class LeaderBoard_Box
 
             case 'latestScores': {
                 console.log("Fetching latestScores with:", fireBaseLevelLeaderBoard); // Log parameter for Firebase call
-
+            
                 let latestScoreData = await getLatestScore(fireBaseLevelLeaderBoard);
-                transformedScores = latestScoreData.surroundingScores.map((score, index) => {
-                    let rankAdjustment = index - latestScoreData.surroundingScores.indexOf(latestScoreData.recentScoreData);
-                    let rank = latestScoreData.rank + rankAdjustment;
-                    return {
-                        rank: rank,
-                        playerName: score.name,
-                        score: score.score,
-                        isLatest: index === latestScoreData.surroundingScores.indexOf(latestScoreData.recentScoreData)
-                    };
-                });
+                // Use the rank directly from the score data, no need to adjust it here
+                transformedScores = latestScoreData.surroundingScores.map(score => ({
+                    rank: score.rank, // Use the assigned rank directly
+                    playerName: score.name,
+                    score: score.score,
+                    isLatest: score.isLatest // Use the isLatest flag from the score data
+                }));
                 break;
             }
+            
 
 
             case 'PlayerTopScores': {
