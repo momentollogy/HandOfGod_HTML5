@@ -7,7 +7,6 @@ export default class Results_Box
   constructor(_resultsData,rank)
   
   {
-    console.log("Passed rank to Results_Box constructor: ", rank);
 
 
     this.canvas = document.getElementById("output_canvas");;
@@ -21,7 +20,6 @@ export default class Results_Box
     this.boxColor = 'rgba(0, 0, 0, 0.4)';
     this.textColor = 'white';
     this.levelArrayDataObject = _resultsData.levelData;
-    console.log(this.levelArrayDataObject);
 
     // Define properties for the text for different states
     this.fontSize = 48; // Base font size, can be scaled for different texts
@@ -39,7 +37,11 @@ export default class Results_Box
     //this.state = 'levelComplete'; // Default state
     this.state = _resultsData.state;
     this.score = _resultsData.score;
+
+    this.totalNotes = _resultsData.totalNotes; // Store total notes from results data
+    
     this.grade = this.calculateGrade(this.score); 
+
     this.rank = _resultsData.rank;
     this.isNewHighScore = true;
 
@@ -72,7 +74,6 @@ export default class Results_Box
         (actionData) => {
             // Dispatching event for a different level selection
            // actionData.leaderBoardState = "latestScores";
-          console.log("resultsbox Level Select Button clicked, dispatching levelChange event with details:", actionData);
 
           document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
         }
@@ -97,7 +98,6 @@ export default class Results_Box
             (actionData) => 
             {
               this.dispose();
-              console.log("ResultsBox.js Restart Button clicked, dispatching levelChange event with details:", actionData);
 
                 // Dispatching event to restart the game or level
                 document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
@@ -106,17 +106,59 @@ export default class Results_Box
 
   }
 
-  
-        calculateGrade(score) 
-        {
-          if (score > 200) {
-              return 'A';
-          } else if (score >= 100) { // Include 100 in the B grade range
-              return 'B';
-          } else {
-              return 'C';
-          }
+
+      calculateMaxPossibleScore(totalNotes) {
+        let scorePerNote = 100;
+        let maxScore = 0;
+        let comboMultiplier = 1;
+
+        console.log("Calculating max score for total notes:", this.totalNotes);
+
+
+        for (let i = 1; i <= this.totalNotes; i++) {
+            if (i >= 14) {
+                comboMultiplier = 8;
+            } else if (i >= 6) {
+                comboMultiplier = 4;
+            } else if (i >= 2) {
+                comboMultiplier = 2;
+            }
+            maxScore += scorePerNote * comboMultiplier;
+            console.log(`Note ${i}: Combo Multiplier: ${comboMultiplier}, Max Score: ${maxScore}`);
+
         }
+
+        return maxScore;
+    }
+
+    calculateGrade(score, totalNotes) {
+      console.log("Total notes in calulate grade method:", this.totalNotes);
+
+      let maxScore = this.calculateMaxPossibleScore(this.totalNotes);
+      let scorePercentage = (score / maxScore) * 100;
+
+      console.log("Calculating grade - Score:", score, "Max Score:", maxScore, "Score Percentage:", scorePercentage);
+
+  
+      if (scorePercentage >= 100) {
+          return 'SSS'; // Exactly 100% for SSS
+      } else if (scorePercentage >= 90) {
+          return 'SS'; // 90% to less than 100% for SS
+      } else if (scorePercentage >= 80) {
+          return 'S'; // 80% to less than 90% for S
+      } else if (scorePercentage >= 65) {
+          return 'A'; // 65% to less than 80% for A
+      } else if (scorePercentage >= 50) {
+          return 'B'; // 50% to less than 65% for B
+      } else if (scorePercentage >= 35) {
+          return 'C'; // 35% to less than 50% for C
+      } else if (scorePercentage >= 20) {
+          return 'D'; // 20% to less than 35% for D
+      } else {
+          return 'E'; // Below 20% for E
+      }
+  }
+  
 
 
   draw() 
@@ -228,21 +270,21 @@ export default class Results_Box
   }
 
 
-dispose() {
-  console.log("Disposing Results_Box...");
+  dispose() {
+    console.log("Disposing Results_Box...");
 
-  if (this.box) {
-      this.box.dispose();
-  }
+    if (this.box) {
+        this.box.dispose();
+    }
 
-  if (this.levelSelectButton) {
-      this.levelSelectButton.dispose();
-  }
+    if (this.levelSelectButton) {
+        this.levelSelectButton.dispose();
+    }
 
-  if (this.restartButton) {
-      this.restartButton.dispose();
+    if (this.restartButton) {
+        this.restartButton.dispose();
+    }
   }
-}
 
   
 }

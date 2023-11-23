@@ -28,7 +28,24 @@ export default class Level_BasicTouch
         this.jsonManager = new JsonManager(); 
         this.mp3Path = _levelArrayDataObject.mp3Path;
         this.jsonPath = _levelArrayDataObject.jsonPath;
-        this.jsonManager.loadJsonFileByPath(this.jsonPath); // Load JSON file
+
+
+
+
+            this.handleBeatTimeDataReady = (event) => {
+                this.totalNotes = this.jsonManager.leftCircleData.length + this.jsonManager.rightCircleData.length;
+                console.log("Total notes calculated:", this.totalNotes);
+            };
+
+            // Set up the event listener
+            document.addEventListener('beatTimeDataReady', this.handleBeatTimeDataReady);
+
+
+            // Trigger JSON loading
+            this.jsonManager.loadJsonFileByPath(this.jsonPath);
+
+            
+
         this.levelArrayDataObject = _levelArrayDataObject; // Store level data
     
         // UI component for volume control
@@ -41,6 +58,10 @@ export default class Level_BasicTouch
         // Initialize game statistics
         this.stats = new GameStats(14); 
         this.stats.reset(); 
+
+        //for grade using json total notes/beats
+        this.totalNotes = 0; // Initialize total notes property
+
     
         // Setup sweet spot circles
         this.SweetSpotCircleArray = [];
@@ -365,21 +386,23 @@ export default class Level_BasicTouch
             state: 'levelComplete',
             score: this.stats.score,
             playerName: window.playerName,
-            levelData: this.levelArrayDataObject
+            levelData: this.levelArrayDataObject,
+            totalNotes: this.totalNotes
+
             // Do not dispatch the event here yet, because we don't have the rank
         };
     
         // Add the score and get the rank
         addScore(window.playerName, this.stats.score, this.levelArrayDataObject).then(({ id, rank }) => {
-            console.log("Received rank in audioEnded: ", rank);
-    
+           // console.log("Received rank in audioEnded: ", rank);
+
+
             // Now that we have the rank, update levelResultsData with it
             levelResultsData.rank = rank;
     
             // Now dispatch the levelChange event with the complete levelResultsData
             document.dispatchEvent(new CustomEvent('levelChange', { detail: levelResultsData }));
     
-            console.log("New score added with rank: ", rank);
         }).catch(error => {
             console.error("Error adding score: ", error);
         });
@@ -396,7 +419,6 @@ export default class Level_BasicTouch
 
     dispose() 
     {
-        console.log("Level_BasicTouch ending. Final buffer:", this.stats.buffer);
 
         // Stop and reset the audio
         if (this.audio) {
@@ -433,6 +455,9 @@ export default class Level_BasicTouch
         }
     
         document.removeEventListener("BeatMissed", this.handleBeatMissed);
+
+        document.removeEventListener('beatTimeDataReady', this.handleBeatTimeDataReady);
+
 
 
         //Playable Keys version
