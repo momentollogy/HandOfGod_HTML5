@@ -488,7 +488,7 @@ export default class SongSelect_Box
             }
     
             // Clear any references to DOM elements or external objects
-            this.canvas = null;
+           // this.canvas = null;
             this.playInfoBoxVisual = null;
     
             // Optionally, reset internal states or variables

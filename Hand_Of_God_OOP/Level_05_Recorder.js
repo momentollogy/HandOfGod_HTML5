@@ -144,6 +144,9 @@ export default class Level_05
             this.jsonManager.promptForFile(); 
         });
 
+
+
+        /*
         document.addEventListener('LoadSong', () => {
             //console.log("load Song pressed");
             
@@ -169,6 +172,37 @@ export default class Level_05
         document.addEventListener('Record', (data) => {
             this.setRecordMode();
         });
+
+
+        */
+
+
+        document.addEventListener('LoadSong', () => {
+            //console.log("Load Song pressed");
+        
+            // if there is no file input node on the HTML, then create one
+            if (!this.songInput) {
+                this.songInput = document.createElement('input');
+                this.songInput.type = 'file';
+                this.songInput.accept = '.mp3,.wav';
+                this.songInput.style.display = 'none';
+                document.body.appendChild(this.songInput);
+        
+                // when the file is loaded use it as the new src for the audio object
+                this.songInput.addEventListener('change', (event) => {
+                    event.stopPropagation();  // Stop the event from propagating
+        
+                    const selectedFile = this.songInput.files[0];
+                    if (selectedFile) {
+                        this.audio.src = URL.createObjectURL(selectedFile);
+                        //this.audio.load();
+                    }
+                });
+            }
+        
+            this.songInput.click();
+        });
+        
 
     }
 

@@ -5,7 +5,9 @@ import DrawEngine from './DrawEngine.js';
 import LeaderBoard_Box from './LeaderBoard_Box.js';
 import { addScore } from './Leaderboard.js';
 import BlueButton from './BlueButton.js';
-import { OverlayText } from './OverlayText.js';
+//import { OverlayText } from './OverlayText.js';
+import { OverlayText, MissesOverlay } from './OverlayText.js';
+
 import { UIUtilities } from './UIUtilities.js';
 import { GameStats } from './GameStats.js'; 
 
@@ -87,6 +89,8 @@ export default class Level_BasicTouch
     
         // Overlay for displaying accuracy
         this.overlayText = new OverlayText();
+        this.missesOverlay = new MissesOverlay();
+
     
         // Scoring and ranking logic
         this.calculateRank = this.defineRankLogic();
@@ -326,7 +330,9 @@ onKeyUp(event) {
 }
 
 
-    
+    /////////////////////
+    /////LEVEL LOOP//////
+    ////////////////////
 
     level_loop() 
     {
@@ -359,6 +365,12 @@ onKeyUp(event) {
         // Update and draw percentage overlay texts with succesful beat hits
         this.overlayText.update(); 
         this.overlayText.draw(this.ctx); 
+
+        //misses.
+        this.missesOverlay.update();
+        this.missesOverlay.draw(this.ctx);
+
+
 
         //Draw volume slider
         this.volumeSlider.drawVolumeSlider();
@@ -469,11 +481,18 @@ onKeyUp(event) {
     
 
     ////////////// NEW Beat Missed. Total Beats Tallied ////////////////////
-    beatMissed() 
+    beatMissed(sweetspotcircle) 
     {
         this.stats.addMiss();
         console.log("Miss Added from beatMissed. Buffer remaining: ", this.stats.buffer);
+       
+        //TRIGGER MISS ANIMATION
+        const centerX = this.canvas.width / 2;
+        const centerY = this.canvas.height / 2;
     
+        this.missesOverlay.addMiss({ x: centerX, y: centerY });
+       // this.missesOverlay.addMiss(sweetspotcircle.color);
+
         this.resetComboNumber();  // Resets the combo count
     
         // Check if the buffer is depleted

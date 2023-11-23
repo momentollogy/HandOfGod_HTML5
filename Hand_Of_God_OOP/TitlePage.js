@@ -79,6 +79,10 @@ export default class Level_TitlePage
             console.log('Username set to:', window.playerName);
             // Proceed to level selection
         }
+
+
+
+
 );
 
 
@@ -114,6 +118,28 @@ export default class Level_TitlePage
         if (results == undefined) { return; }
         
     }
+
+
+    dispose() {
+      
+        // Remove event listeners from buttons
+        // Assuming you have a method in your BlueButton class to remove event listeners
+       
+    
+        // Clear the canvas
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+        this.levelSelectButton = null;
+        this.usernameButton = null;
+
+     // Dispose of buttons if they have a dispose method
+     if (this.levelSelectButton && typeof this.levelSelectButton.dispose === 'function') {
+        this.levelSelectButton.dispose();
+    }
+    
+    }
+    
+
 }
 
 

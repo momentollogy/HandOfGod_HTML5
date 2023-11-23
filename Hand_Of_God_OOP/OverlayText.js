@@ -65,3 +65,55 @@ export class OverlayText {
     }
     
 }
+
+
+
+
+export class MissesOverlay {
+    constructor() {
+        this.missObjects = [];
+        this.fadeDuration = 100; // Number of frames over which the text will fade out
+        this.horizontalMoveDistance = -3; // The horizontal distance text will move each frame
+        this.verticalMoveDistance = 3; // The vertical distance text will move each frame
+        this.startSize = 40; // Start size of the text
+        this.sizeIncrease = 0.5; // How much the text size increases each frame
+        this.maxSize = 100; // Example maximum size
+
+    }
+
+    addMiss(centerPosition) {
+        const newMissObject = {
+            text: "MISS",
+            x: centerPosition.x,
+            y: centerPosition.y,
+            size: this.startSize,
+            opacity: 1
+        };
+        this.missObjects.push(newMissObject);
+    }
+
+    update() {
+        this.missObjects.forEach(missObject => {
+            // Vertical movement
+            missObject.y += this.verticalMoveDistance;
+            // Increase the size
+            missObject.size += this.sizeIncrease;
+            // Fade out the text
+            missObject.opacity = Math.max(missObject.opacity - 1 / this.fadeDuration, 0);
+        });
+    
+        // Remove miss objects that are fully faded out or grown too large
+        this.missObjects = this.missObjects.filter(missObject => missObject.opacity > 0 && missObject.size < this.maxSize);
+    }
+
+    draw(ctx) {
+        this.missObjects.forEach(missObject => {
+            ctx.save();
+            ctx.fillStyle = `rgba(255, 255, 255, ${missObject.opacity})`;
+            ctx.font = `${missObject.size}px Arial`;
+            ctx.fillText(missObject.text, missObject.x, missObject.y);
+            ctx.restore();
+        });
+    }
+}
+
