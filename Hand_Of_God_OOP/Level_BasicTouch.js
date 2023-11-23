@@ -31,6 +31,19 @@ export default class Level_BasicTouch
 
 
 
+           // Mouse event listeners for SweetspotCircle Calibration might move or kill
+        this.selectedCircle = null;
+        this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+        this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+        this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
+
+
+
+
+        // Keyboard event listeners for adjusting SweetSpotCircles
+        this.movementStep = 20; // Adjust this value for normal movement speed
+        this.fastMovementStep = 45; // Adjust for faster movement speed
+
 
             this.handleBeatTimeDataReady = (event) => {
                 this.totalNotes = this.jsonManager.leftCircleData.length + this.jsonManager.rightCircleData.length;
@@ -170,6 +183,7 @@ export default class Level_BasicTouch
     //END OF CONSTUCTOR//
     /////////////////////
 
+
     //Code to fix weird DOM issue with audio. 
     async startAudio() 
     {
@@ -180,25 +194,111 @@ export default class Level_BasicTouch
         {console.error("Error starting audio playback:", err);}
     }
 
-    onKeyDown(event) {
-        if (event.code === 'Space' && !this.spacePressed) {
-            this.spacePressed = true;
-            console.log("Spacebar Down");
-            // Perform actions for spacebar down
-        }
-        if (event.code === 'KeyA' && !this.A_pressed) {  this.A_pressed = true; }
-        if (event.code === 'KeyS' && !this.S_pressed) {  this.S_pressed = true; }
+
+//////////////////
+//next few functions are for sweetspotcircle calibration, allowing users to move them in level.
+    onMouseDown(event) {
+        const mousePos = this.getMousePos(event);
+        this.SweetSpotCircleArray.forEach(circle => {
+            if (this.isInsideCircle(mousePos, circle)) {
+                this.selectedCircle = circle;
+            }
+        });
     }
     
-    onKeyUp(event) {
-        if (event.code === 'Space') {
-            this.spacePressed = false;
-            console.log("Spacebar Up");
-            // Perform actions for spacebar up
+    onMouseMove(event) {
+        if (this.selectedCircle) {
+            const mousePos = this.getMousePos(event);
+            const deltaX = mousePos.x - this.selectedCircle.position.x;
+            const deltaY = mousePos.y - this.selectedCircle.position.y;
+    
+            // Update positions
+            this.selectedCircle.position.x += deltaX;
+            this.selectedCircle.position.y += deltaY;
+    
+            // Mirror movement for the other circle
+            const otherCircle = this.SweetSpotCircleArray.find(circle => circle !== this.selectedCircle);
+            otherCircle.position.x -= deltaX;
+            otherCircle.position.y += deltaY;
         }
-        if (event.code === 'KeyA') {  this.A_pressed = false; }
-        if (event.code === 'KeyS') {  this.S_pressed = false; }
     }
+    
+    
+    onMouseUp() {
+        this.selectedCircle = null;
+    }
+
+
+    
+    getMousePos(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        return {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top
+        };
+    }
+
+
+
+    isInsideCircle(mousePos, circle) {
+        const dx = mousePos.x - circle.position.x;
+        const dy = mousePos.y - circle.position.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        return distance < circle.radius;
+    }
+    //MIGht get rid of all this later above
+//////////////////
+//////////////////
+
+
+
+
+onKeyDown(event) {
+    // Your existing key handling logic
+    if (event.code === 'Space' && !this.spacePressed) {
+        this.spacePressed = true;
+        console.log("Spacebar Down");
+        // Perform actions for spacebar down
+    }
+    if (event.code === 'KeyA' && !this.A_pressed) { this.A_pressed = true; }
+    if (event.code === 'KeyS' && !this.S_pressed) { this.S_pressed = true; }
+
+    // Additional logic for moving SweetSpotCircles
+    let step = event.shiftKey ? this.fastMovementStep : this.movementStep; // Define these steps in your class
+
+    switch(event.key) {
+        case 'ArrowLeft':
+            // Move circles closer together
+            this.SweetSpotCircleArray[0].position.x -= step;
+            this.SweetSpotCircleArray[1].position.x += step;
+            break;
+        case 'ArrowRight':
+            // Move circles further apart
+            this.SweetSpotCircleArray[0].position.x += step;
+            this.SweetSpotCircleArray[1].position.x -= step;
+            break;
+        case 'ArrowUp':
+            // Move circles up
+            this.SweetSpotCircleArray.forEach(circle => circle.position.y -= step);
+            break;
+        case 'ArrowDown':
+            // Move circles down
+            this.SweetSpotCircleArray.forEach(circle => circle.position.y += step);
+            break;
+    }
+}
+
+onKeyUp(event) {
+    // Your existing key up handling logic
+    if (event.code === 'Space') {
+        this.spacePressed = false;
+        console.log("Spacebar Up");
+        // Perform actions for spacebar up
+    }
+    if (event.code === 'KeyA') { this.A_pressed = false; }
+    if (event.code === 'KeyS') { this.S_pressed = false; }
+}
+
 
     
 
