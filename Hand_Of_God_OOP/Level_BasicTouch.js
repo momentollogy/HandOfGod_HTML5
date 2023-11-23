@@ -142,7 +142,8 @@ export default class Level_BasicTouch
     }
     
     // UI Buttons setup
-    setupUIButtons() {
+    setupUIButtons() 
+    {
         // Define positions and dimensions for buttons
         const leftButtonX = 100;
         const rightButtonX = this.canvas.width - 300;
@@ -157,10 +158,16 @@ export default class Level_BasicTouch
             document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
         });
     
+
+        /*
         // 'Restart' button
         this.restartButton = new BlueButton(rightButtonX, buttonY, buttonWidth, buttonHeight, buttonRadius, "#8B0000", "#CD5C5C", "Restart", "rgba(0, 0, 0, 0.5)", this.levelArrayDataObject, actionData => {
             console.log("Restart button clicked, dispatching levelChange event with details:", actionData);
             document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
+        });
+        */
+        this.restartButton = new BlueButton(rightButtonX, buttonY, buttonWidth, buttonHeight, buttonRadius, "#8B0000", "#CD5C5C", "Restart", "rgba(0, 0, 0, 0.5)", this.levelArrayDataObject, () => {
+            this.resetLevel();
         });
 
 
@@ -178,10 +185,29 @@ export default class Level_BasicTouch
 
 
 
-
     /////////////////////
     //END OF CONSTUCTOR//
     /////////////////////
+
+
+
+    resetLevel() {
+        // Reset audio
+        this.audio.pause();
+        this.audio.currentTime = 0;
+        this.audio.play();
+    
+        // Reset stats and other game variables
+        this.stats.reset();
+        this.beatCircles_Array.length = 0;
+    
+        for(let sweetspotcircle of this.SweetSpotCircleArray)
+        {
+            sweetspotcircle.beatsMissed = 0;
+        }
+    
+        this.draw(); // Assuming you have a method to redraw the game state
+    }
 
 
     //Code to fix weird DOM issue with audio. 
