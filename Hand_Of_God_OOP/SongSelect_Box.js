@@ -69,47 +69,7 @@ export default class SongSelect_Box
                             duration: "1:07",
                             mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
                             jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
-                        },
-
-
-
-
-
-
-
-
-
-
-
-
-                        
-                        {
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'hi man'  cool", 
-                            fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
-                            jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
-                        },
-                        {
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'thr'  6yuu", 
-                            fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
-                            jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
-                        },
-
-
-
-
-
-
-
-
-
-
-                        
+                        },     
                         {   
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "'Pneuma'  Tool", 

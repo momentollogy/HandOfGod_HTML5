@@ -4,7 +4,7 @@ import BlueButton from './BlueButton.js'; // Import the BlueButton class
 
 export default class Results_Box 
 {
-  constructor(_resultsData,rank)
+  constructor(_resultsData,rank,leaderboardBox)
   
   {
 
@@ -45,6 +45,7 @@ export default class Results_Box
     this.rank = _resultsData.rank;
     this.isNewHighScore = true;
 
+    this.leaderboardBox = leaderboardBox;
 
 
   // Button positions (You may need to adjust these positions to fit your layout)
@@ -56,7 +57,7 @@ export default class Results_Box
     const buttonRadius = 10;
 
 
-
+/*
     // 'Level Select' button specific code
     this.levelSelectButton = new BlueButton
     (
@@ -78,8 +79,36 @@ export default class Results_Box
           document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
         }
     );
+*/
 
 
+
+// 'Level Select' button specific code
+this.levelSelectButton = new BlueButton(
+  leftButtonX,  // X-coordinate for the button
+  buttonY,      // Y-coordinate for the button
+  buttonWidth,  // Width of the button
+  buttonHeight, // Height of the button
+  buttonRadius, // Border radius of the button
+  "#00008B",    // Primary color of the button
+  "#0000CD",    // Hover color of the button
+  "Level Select", // Button text
+  "rgba(0, 0, 0, 0.5)", // Text color
+  { levelName: "Level_StageSelect", leaderBoardState: "latestScores" },
+  (actionData) => {
+      // Prepare the songEvent based on the actionData or current application state
+      // (This needs to be tailored to your application's logic)
+      let songEvent = new CustomEvent('songSelect', { detail: { fireBaseLevelLeaderBoard: actionData.levelName }});
+
+      // Call the songSelected method of leaderboardBox with 'latestScores' state
+     // leaderboardBox.songSelected(songEvent, actionData.leaderBoardState);
+      this.leaderboardBox.songSelected(songEvent, actionData.leaderBoardState);
+
+
+      // Dispatching event for a different level selection
+      document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
+  }
+);
 
 
         // 'Restart' button specific code

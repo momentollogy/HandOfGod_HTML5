@@ -26,6 +26,8 @@ export default class LeaderBoard_Box
         // Bind event handlers for handling events like level selection
         this.bindEventHandlers();
 
+        
+
             // Bind event handlers for handling events like level selection and store them as properties
         this.boundSongSelected = this.songSelected.bind(this);
         this.boundHandleButtonClick = this.handleButtonClick.bind(this);
@@ -39,11 +41,7 @@ export default class LeaderBoard_Box
         
         //When hovering over buttons pop up will appear.
         this.tooltip = { visible: false, text: '', x: 0, y: 0 };
-       // this.tooltip = { visible: false, text: '', x: 0, y: 0, width: 150, height: 30 }; // Adjusted size
-        //this.hoverTimer = null;
-        //this.hoverDelay = 1000; // Delay in milliseconds
-
-
+      
 
 
 
@@ -79,6 +77,8 @@ export default class LeaderBoard_Box
                 isSelected: false  // Tracks if the button is selected
 
             }
+
+            
         };
 
         // Step 2: Load Button Images
@@ -87,10 +87,39 @@ export default class LeaderBoard_Box
         // Step 4: Add event listener for clicks
         this.canvas.addEventListener('click', this.handleButtonClick.bind(this));
 
+
+
+
+        this.setDefaultLeaderboardState('latestScores');
+
         
     }
 
-    //END OF CONSTUCTOR
+
+
+//END OF CONSTUCTOR
+
+
+
+    //testing lb default state
+    setDefaultLeaderboardState(defaultState) {
+        // Reset all buttons to not selected
+        Object.values(this.buttons).forEach(button => {
+            button.isSelected = false;
+        });
+    
+        // Set the specified button as selected
+        if (this.buttons[defaultState]) {
+            this.buttons[defaultState].isSelected = true;
+        }
+    
+        // Redraw the buttons to reflect the new state
+        this.drawButtons();
+    }
+    
+
+
+
 
       // Utility function to check if a click is inside a button's area
     isInside(point, rect) 
@@ -366,7 +395,7 @@ export default class LeaderBoard_Box
 
 
 
-
+/*
     songSelected(event) {
         this.currentFireBaseLevelLeaderBoard = event.detail.fireBaseLevelLeaderBoard;
     
@@ -381,8 +410,26 @@ export default class LeaderBoard_Box
         // Then draw the leaderboard
         this.populateAndDraw(this.currentFireBaseLevelLeaderBoard, 'topScores');
     }
-    
+    */
 
+    songSelected(event, defaultState = 'topScores') {
+        this.currentFireBaseLevelLeaderBoard = event.detail.fireBaseLevelLeaderBoard;
+    
+        // Ensuring the cache is populated for the selected level
+        getCachedTopScores(this.currentFireBaseLevelLeaderBoard).then(() => {
+        });
+        getCachedLatestScore(this.currentFireBaseLevelLeaderBoard).then(() => {
+        });
+        getCachedPlayerTopScores(this.currentFireBaseLevelLeaderBoard).then(() => {
+        });
+    
+        // Set the default leaderboard state
+        this.setDefaultLeaderboardState(defaultState);
+    
+        // Then draw the leaderboard
+        this.populateAndDraw(this.currentFireBaseLevelLeaderBoard, defaultState);
+    }
+    
 
 
 
