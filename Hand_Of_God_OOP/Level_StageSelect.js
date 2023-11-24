@@ -123,7 +123,7 @@ export default class Level_StageSelect
     {
         console.log("Disposing LevelSelect_Stage...")
         // Remove any global event listeners related to this level
-        window.removeEventListener('levelSelected', this.boundUpdateCurrentLevel);
+        window.removeEventListener('songSelected', this.boundUpdateCurrentLevel);
 
         // Dispose of components that have their own dispose methods
         if (this.playInfoBoxVisual && typeof this.playInfoBoxVisual.dispose === 'function') {

@@ -208,7 +208,7 @@ export default class SongSelect_Box
          // Call the function to set up event listeners
          this.bindEvents();
 
-         this.dispatchLevelSelectedEvent()
+         this.dispatchSongSelectedEvent()
     }
 
 
@@ -290,7 +290,7 @@ export default class SongSelect_Box
         }
         
         this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[this.currentSelectedLevelIndex]);
-        this.dispatchLevelSelectedEvent();
+        this.dispatchSongSelectedEvent();
         this.draw();
     }
     
@@ -324,7 +324,7 @@ export default class SongSelect_Box
                     this.setCurrentLevelIndex(index);
                     this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[this.currentSelectedLevelIndex]);
                     this.draw();
-                    this.dispatchLevelSelectedEvent(); // Ensure this is called to update the leaderboard
+                    this.dispatchSongSelectedEvent(); // Ensure this is called to update the leaderboard
                     console.log("Event dispatched for:", this.levelArray[index]); // Log the data for which the event is dispatched
 
                     break;
@@ -412,10 +412,10 @@ export default class SongSelect_Box
 
 
     // This method is added to your class
-    dispatchLevelSelectedEvent() 
+    dispatchSongSelectedEvent() 
     {
         const selectedLevel = this.levelArray[this.currentSelectedLevelIndex];
-        const event = new CustomEvent('levelSelected', { detail: selectedLevel });
+        const event = new CustomEvent('songSelected', { detail: selectedLevel });
         window.dispatchEvent(event);
     }
 

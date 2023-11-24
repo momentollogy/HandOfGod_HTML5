@@ -27,12 +27,12 @@ export default class LeaderBoard_Box
         this.bindEventHandlers();
 
             // Bind event handlers for handling events like level selection and store them as properties
-        this.boundLevelSelected = this.levelSelected.bind(this);
+        this.boundSongSelected = this.songSelected.bind(this);
         this.boundHandleButtonClick = this.handleButtonClick.bind(this);
         this.boundHandleMouseMove = this.handleMouseMove.bind(this);
 
     // Add event listeners using the bound functions
-    window.addEventListener('levelSelected', this.boundLevelSelected);
+    window.addEventListener('songSelected', this.boundSongSelected);
     this.canvas.addEventListener('click', this.boundHandleButtonClick);
     this.canvas.addEventListener('mousemove', this.boundHandleMouseMove);
 
@@ -367,7 +367,7 @@ export default class LeaderBoard_Box
 
 
 
-    levelSelected(event) {
+    songSelected(event) {
         this.currentFireBaseLevelLeaderBoard = event.detail.fireBaseLevelLeaderBoard;
     
         // Ensuring the cache is populated for the selected level
@@ -448,7 +448,7 @@ export default class LeaderBoard_Box
             this.canvas.removeEventListener('mousemove', this.handleMouseMove.bind(this));
         }
     
-        window.removeEventListener('levelSelected', this.boundLevelSelected);
+        window.removeEventListener('songSelected', this.boundSongSelected);
         this.canvas.removeEventListener('click', this.boundHandleButtonClick);
         this.canvas.removeEventListener('mousemove', this.boundHandleMouseMove);
            
