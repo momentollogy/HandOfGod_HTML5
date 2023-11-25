@@ -15,7 +15,8 @@ import { GameStats } from './GameStats.js';
 
 export default class Level_BasicTouch
 {
-    constructor(_levelArrayDataObject, audio) {
+    constructor(_levelArrayDataObject, audio) 
+    {
         // Initialize MediaPipe and drawing utilities
         this.mediaPipe = MediaPipeTracker.getInstance();
         this.canvas = document.getElementById("output_canvas");
@@ -42,6 +43,7 @@ export default class Level_BasicTouch
 
 
 
+        
         // Keyboard event listeners for adjusting SweetSpotCircles
         this.movementStep = 20; // Adjust this value for normal movement speed
         this.fastMovementStep = 45; // Adjust for faster movement speed
@@ -83,6 +85,8 @@ export default class Level_BasicTouch
         // Define sweet spot circles and their properties
         this.setupSweetSpotCircles();
     
+
+        
         // Initialize beat arrays
         this.beatArray = [];
         this.beatCircles_Array = [];
@@ -117,8 +121,12 @@ export default class Level_BasicTouch
         this.audio.addEventListener('loadeddata', () => this.startAudio());
     }
     
+
+
+
     // Sweet spot circles setup
-    setupSweetSpotCircles() {
+    setupSweetSpotCircles() 
+    {
         // Initialize two sweet spot circles with specific attributes
         this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio, 'rgb(0, 255, 0)', { x: this.canvas.width /2 -135, y: this.canvas.height/2+100 });
         this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio, 'rgb(0, 255, 200)', { x: this.canvas.width /2 +135, y: this.canvas.height/2+100 });
@@ -163,13 +171,7 @@ export default class Level_BasicTouch
         });
     
 
-        /*
-        // 'Restart' button
-        this.restartButton = new BlueButton(rightButtonX, buttonY, buttonWidth, buttonHeight, buttonRadius, "#8B0000", "#CD5C5C", "Restart", "rgba(0, 0, 0, 0.5)", this.levelArrayDataObject, actionData => {
-            console.log("Restart button clicked, dispatching levelChange event with details:", actionData);
-            document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
-        });
-        */
+
         this.restartButton = new BlueButton(rightButtonX, buttonY, buttonWidth, buttonHeight, buttonRadius, "#8B0000", "#CD5C5C", "Restart", "rgba(0, 0, 0, 0.5)", this.levelArrayDataObject, () => {
             this.resetLevel();
         });
@@ -181,6 +183,17 @@ export default class Level_BasicTouch
     
 
 
+        // Event listener for toggling beat ranges
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'b' || event.key === 'B') {
+                // Assuming SweetSpotCircleArray is an array of your SweetSpotCircle instances
+                this.SweetSpotCircleArray.forEach(circle => {
+                    circle.showBeatRanges = !circle.showBeatRanges;
+                });
+            }
+        });
+
+
         this.spacePressed = false;
         this.A_pressed = false;
         this.S_pressed = false;
@@ -189,9 +202,6 @@ export default class Level_BasicTouch
 
 
 
-    /////////////////////
-    //END OF CONSTUCTOR//
-    /////////////////////
 
 
 

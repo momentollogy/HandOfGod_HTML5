@@ -35,7 +35,7 @@ export default class SweetSpotCircle {
         this.beatBufferTime = 300; //how many ms before and after to define length of beatrange
         this.beatsMissed = 0;
         this.touchable = false;
-        //this.loadedCircleData;
+        this.showBeatRanges = false; // default is to show beat ranges
         this.recordModeTouched=false;
         this.name="";
     }
@@ -108,21 +108,29 @@ export default class SweetSpotCircle {
         }
     }
     
-    updateAndDraw(){
-        // return radius to it's base size if it's larger ( this is basically restoring a pulse to it's normal size )
-        if(this.radius > this.baseRadius){this.radius-=3}
 
-        if(!this.recordMode && this.beatCircles_Array.length > 0){
-            this.updateForPlay();
-            this.drawBeatRanges();
-        }else{
-            this.updateForRecording();
-        }
 
-      //  this.drawMotionIndicatorLine();        
-        this.draw();
-        this.updateAndDrawBeatCircles()
+updateAndDraw() {
+    // Your existing logic
+    if (this.radius > this.baseRadius) {
+        this.radius -= 3;
     }
+
+    if (!this.recordMode && this.beatCircles_Array.length > 0) {
+        this.updateForPlay();
+        
+        // Only draw beat ranges if the flag is true
+        if (this.showBeatRanges) {
+            this.drawBeatRanges();
+        }
+    } else {
+        this.updateForRecording();
+    }
+
+    // Your existing drawing and updating methods
+    this.draw();
+    this.updateAndDrawBeatCircles();
+}
 
     updateForRecording(){
         
