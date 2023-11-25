@@ -22,7 +22,7 @@ export default class Level_TitlePage
          const buttonRadius = 10;
  
          
- 
+ /*
         // 'Start' button specific code
         this.levelSelectButton = new BlueButton
         (
@@ -48,19 +48,19 @@ export default class Level_TitlePage
                 document.dispatchEvent(new CustomEvent('levelChange', { detail: { levelName: "Level_StageSelect",leaderBoardState:"topScores"} }));
             }
         ); 
-
+*/
 
 
         // 'Username' button specific code
-    this.usernameButton = new BlueButton(
-        rightButtonX,  // X position of the button
+    this.startButton = new BlueButton(
+        leftButtonX,  // X position of the button
         buttonY,       // Y position of the button
         buttonWidth,   // Button width
         buttonHeight,  // Button height
         buttonRadius,  // Button corner radius
-        "#006400",     // Button color
-        "#008000",     // Hover color
-        "Username",    // Button text
+        "#003a46",
+        "#0000CD",    // Hover color
+        "START",    // Button text
         "rgba(0, 0, 0, 0.5)", // Shadow color
         {},  // No specific actionData needed for username button
         () => {
@@ -109,8 +109,8 @@ export default class Level_TitlePage
     level_loop() 
     {   
         this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
-        this.levelSelectButton.draw();
-        this.usernameButton.draw();
+        this.startButton.draw();
+      //  this.usernameButton.draw();
 
 
         // mediapipe stuff
@@ -129,12 +129,11 @@ export default class Level_TitlePage
         // Clear the canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     
-        this.levelSelectButton = null;
-        this.usernameButton = null;
+        this.startButton = null;
 
      // Dispose of buttons if they have a dispose method
-     if (this.levelSelectButton && typeof this.levelSelectButton.dispose === 'function') {
-        this.levelSelectButton.dispose();
+     if (this.startButton && typeof this.startButton.dispose === 'function') {
+        this.startButton.dispose();
     }
     
     }

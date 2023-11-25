@@ -19,7 +19,6 @@ export default class SweetSpotCircle {
         this.beatCircles_Array = [];
         this.dirArray=[];
         this.beatIndex = 0;
-        this.velocity = 250;
         this.beatCirclePathDirectionAngle = -90;
         this.pulseOnBeats = true;
         this.puffy = false;
@@ -32,10 +31,11 @@ export default class SweetSpotCircle {
         this.touched=false;
         this.checkedForMiss = false;
         this.beatPassed = false;
+        this.velocity = 250;
+        this.showBeatRanges = false; // default is to show beat ranges
         this.beatBufferTime = 300; //how many ms before and after to define length of beatrange
         this.beatsMissed = 0;
         this.touchable = false;
-        this.showBeatRanges = false; // default is to show beat ranges
         this.recordModeTouched=false;
         this.name="";
     }
@@ -131,6 +131,49 @@ updateAndDraw() {
     this.draw();
     this.updateAndDrawBeatCircles();
 }
+
+
+
+
+
+    //methods to change beatRangers on the fly
+    increaseBeatBufferTime(amount) {this.beatBufferTime += amount;}
+    decreaseBeatBufferTime(amount) {if (this.beatBufferTime - amount >= 0) {this.beatBufferTime -= amount;}}
+
+
+    // //methods to change velocity on the fly
+    increaseVelocity(amount) {this.velocity += amount;}
+    decreaseVelocity(amount) {this.velocity = Math.max(0, this.velocity - amount);} // Prevents negative values
+
+
+
+    //Using this reset method to reset all default values EXCEPT velocity, beatrange toggle, and beatranger value.
+    reset() {
+        // Resetting properties to their initial values as defined in the constructor
+        this.radius = this.baseRadius;
+        this.handInside = false;
+        this.newCircleMade = false;
+        this.beatCircles_Array = [];
+        this.dirArray = [];
+        this.beatIndex = 0;
+        this.pulseOnBeats = true;
+        this.puffy = false;
+        this.slash = undefined;  // If slash has a default value, use it here
+        this.swipeDirectionPos_arr = [];
+        this.recordMode = false;
+        this.recordedMomentsArr = [];
+        this.recordedTimesArr = [];
+        this.recordedDirectionsArr = [];
+        this.touched = false;
+        this.checkedForMiss = false;
+        this.beatPassed = false;
+        this.beatsMissed = 0;
+        this.touchable = false;
+        this.recordModeTouched = false;
+        this.name = "";
+
+        // Not resetting velocity, showBeatRanges, and beatBufferTime
+    }
 
     updateForRecording(){
         
@@ -247,6 +290,8 @@ updateAndDraw() {
         return beatRangeStart
     }
 
+
+    /*
     drawBeatRanges(){
         let radians = (this.beatCirclePathDirectionAngle * Math.PI) / 180;
         let lineStart = (this.velocity/1000) * (this.findBeatRangeStartForCurrentBeatRange() - this.audio.currentTime * 1000);
@@ -266,6 +311,45 @@ updateAndDraw() {
         this.ctx.stroke();
         this.ctx.restore();
     }
+*/
+
+drawBeatRanges() {
+    let radians = (this.beatCirclePathDirectionAngle * Math.PI) / 180;
+    let lineStart = (this.velocity/1000) * (this.findBeatRangeStartForCurrentBeatRange() - this.audio.currentTime * 1000);
+    let lineEnd   = (this.velocity/1000) * (this.findBeatRangeEndForCurrentBeatRange()   - this.audio.currentTime * 1000);
+
+    const lineStartpointX = this.position.x + lineStart * Math.cos(radians);
+    const lineStartpointY = this.position.y + lineStart * Math.sin(radians);
+    const lineEndpointX = this.position.x + lineEnd * Math.cos(radians);
+    const lineEndpointY = this.position.y + lineEnd * Math.sin(radians);
+
+    this.ctx.save();
+    // Drawing the beat range line
+    this.ctx.beginPath();
+    this.ctx.moveTo(lineStartpointX, lineStartpointY);
+    this.ctx.lineTo(lineEndpointX, lineEndpointY);
+    this.ctx.strokeStyle = 'RGBA(0,0,255,.33)'; // Set the line color
+    this.ctx.lineWidth = 70; // Set the line width
+    this.ctx.stroke();
+
+    // Display beatBufferTime at the midpoint of the line
+    let midPointX = (lineStartpointX + lineEndpointX) / 2;
+    let midPointY = (lineStartpointY + lineEndpointY) / 2;
+    this.ctx.fillStyle = 'white'; // Text color
+    this.ctx.font = '20px Arial'; // Text size and font
+    this.ctx.textAlign = 'center'; // Align text centrally
+    this.ctx.textBaseline = 'middle'; // Align text in the middle
+    this.ctx.fillText(`${this.beatBufferTime}`, midPointX, midPointY);
+
+    // Display velocity to the right of the line endpoint
+    let velocityTextX = lineEndpointX - 90; // Adjust the 20px offset as needed
+    let velocityTextY = lineEndpointY;
+    this.ctx.fillText(`v=${this.velocity}`, velocityTextX, velocityTextY);
+
+    this.ctx.restore();
+}
+
+
 
     drawMotionIndicatorLine(){
         let radians = (this.beatCirclePathDirectionAngle * Math.PI) / 180;

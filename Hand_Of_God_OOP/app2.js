@@ -57,6 +57,13 @@ function onEnableCamButtonClicked(event) {
   } else {
     toggleVideoDisplay();
   }
+
+    // Toggle the button label
+    if (enableWebcamButton.innerText === 'ENABLE WEBCAM') {
+      enableWebcamButton.innerText = 'DISABLE WEBCAM';
+  } else {
+      enableWebcamButton.innerText = 'DISABLED';
+  }
 }
 
 // Initialize the webcam and elements when the camera starts up

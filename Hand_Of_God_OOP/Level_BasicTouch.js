@@ -5,7 +5,7 @@ import DrawEngine from './DrawEngine.js';
 import LeaderBoard_Box from './LeaderBoard_Box.js';
 import { addScore } from './Leaderboard.js';
 import BlueButton from './BlueButton.js';
-//import { OverlayText } from './OverlayText.js';
+import BoxUI from './BoxUI.js'; // Ensure BoxUI.js is in the same directory
 import { OverlayText, MissesOverlay } from './OverlayText.js';
 
 import { UIUtilities } from './UIUtilities.js';
@@ -119,6 +119,12 @@ export default class Level_BasicTouch
         // Audio source setup and event listener for loading
         this.audio.src = _levelArrayDataObject.mp3Path;
         this.audio.addEventListener('loadeddata', () => this.startAudio());
+
+        //END OF CONSTRUCTOR//
+
+         // Initialize the box UI and visibility flag
+         this.boxUI = new BoxUI(this.ctx, this.canvas.width - 300, 20, 280, 300, 10); // Adjusted dimensions for larger size
+         this.boxVisible = false;
     }
     
 
@@ -153,7 +159,7 @@ export default class Level_BasicTouch
         return (score) => score > 50;
     }
     
-    // UI Buttons setup
+    ///// UI Buttons plus KeybaordShortCuts setup//////
     setupUIButtons() 
     {
         // Define positions and dimensions for buttons
@@ -170,7 +176,6 @@ export default class Level_BasicTouch
             document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
         });
     
-
 
         this.restartButton = new BlueButton(rightButtonX, buttonY, buttonWidth, buttonHeight, buttonRadius, "#8B0000", "#CD5C5C", "Restart", "rgba(0, 0, 0, 0.5)", this.levelArrayDataObject, () => {
             this.resetLevel();
@@ -193,15 +198,96 @@ export default class Level_BasicTouch
             }
         });
 
+        //Keyboard "L and  Carrots" to adjust beatRangers on the fly
+        document.addEventListener('keydown', (event) => {
+            const adjustmentAmount = 10; // Adjust this value as needed
+    
+            if (event.key === ',') {
+                // Decrease beatBufferTime
+                this.SweetSpotCircleArray.forEach(circle => {
+                    circle.decreaseBeatBufferTime(adjustmentAmount);
+                });
+            } else if (event.key === '.') {
+                // Increase beatBufferTime
+                this.SweetSpotCircleArray.forEach(circle => {
+                    circle.increaseBeatBufferTime(adjustmentAmount);
+                });
+            }
+        });
 
-        this.spacePressed = false;
+
+        document.addEventListener('keydown', (event) => {
+            const velocityAdjustmentAmount = 10; // Adjust this value as needed
+    
+            if (event.key === '-') {
+                // Decrease velocity
+                this.SweetSpotCircleArray.forEach(circle => {
+                    circle.decreaseVelocity(velocityAdjustmentAmount);
+                });
+            } else if (event.key === '=') {
+                // Increase velocity
+                this.SweetSpotCircleArray.forEach(circle => {
+                    circle.increaseVelocity(velocityAdjustmentAmount);
+                });
+            }
+        });
+
+
+
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'p' || event.key === 'P') {
+                // Toggle play/pause
+                if (this.audio.paused) {
+                    this.audio.play();
+                } else {
+                    this.audio.pause();
+                }
+            }
+        });
+
+        
+        // Event listener for toggling the box with keyboard shortcuts
+        document.addEventListener('keydown', (event) => {
+        if (event.key === ' ') {
+            this.boxVisible = !this.boxVisible;
+            }
+        });
+        
+
+        //this.spacePressed = false;
         this.A_pressed = false;
         this.S_pressed = false;
 
     }
 
+    drawShortcutsBox() {
+        if (!this.boxVisible) return;
 
+        // Set transparency for the box
+        this.ctx.globalAlpha = 0.7; // Adjust transparency as needed
+        //this.boxUI.draw();
+        this.ctx.globalAlpha = 1.0; // Reset alpha to fully opaque for text
 
+        // Text settings
+        this.ctx.fillStyle = 'white'; // White text color
+        this.ctx.font = '24px Arial'; // Adjust font size as needed
+        const shortcuts = [
+            "P = Pause",
+            "B = Toggle BeatRanges + Data",
+            "</> = Inc. BeatRange",
+            "+/- = Speed",
+            "Arrows = Move Target Circles",
+            "SpaceBar = hide/key."
+        ];
+        
+        // Draw each line of text
+        let textY = this.boxUI.y + 50; // Starting Y position for text
+        for (const line of shortcuts) {
+            this.ctx.fillText(line, this.boxUI.x + 20, textY);
+            textY += 34; // Increase Y for the next line, adjust spacing as needed
+        }
+    }
 
 
 
@@ -215,9 +301,9 @@ export default class Level_BasicTouch
         this.stats.reset();
         this.beatCircles_Array.length = 0;
     
-        for(let sweetspotcircle of this.SweetSpotCircleArray)
-        {
-            sweetspotcircle.beatsMissed = 0;
+          // Call reset on each SweetSpotCircle instance
+          for (let sweetspotcircle of this.SweetSpotCircleArray) {
+            sweetspotcircle.reset();
         }
     
         this.draw(); // Assuming you have a method to redraw the game state
@@ -295,11 +381,7 @@ export default class Level_BasicTouch
 
 onKeyDown(event) {
     // Your existing key handling logic
-    if (event.code === 'Space' && !this.spacePressed) {
-        this.spacePressed = true;
-        console.log("Spacebar Down");
-        // Perform actions for spacebar down
-    }
+   
     if (event.code === 'KeyA' && !this.A_pressed) { this.A_pressed = true; }
     if (event.code === 'KeyS' && !this.S_pressed) { this.S_pressed = true; }
 
@@ -330,11 +412,7 @@ onKeyDown(event) {
 
 onKeyUp(event) {
     // Your existing key up handling logic
-    if (event.code === 'Space') {
-        this.spacePressed = false;
-        console.log("Spacebar Up");
-        // Perform actions for spacebar up
-    }
+  
     if (event.code === 'KeyA') { this.A_pressed = false; }
     if (event.code === 'KeyS') { this.S_pressed = false; }
 }
@@ -380,6 +458,8 @@ onKeyUp(event) {
         this.missesOverlay.update();
         this.missesOverlay.draw(this.ctx);
 
+        this.drawShortcutsBox();
+
 
 
         //Draw volume slider
@@ -413,19 +493,17 @@ onKeyUp(event) {
 
 
 
-    checkForClick()
-    {
-        for(let sweetspotcircle of this.SweetSpotCircleArray){
-            if (this.spacePressed)
-            {
-                console.log("mousePessed in Check method");
-                sweetspotcircle.puffy = true;  
+    checkForClick() {
+        for (let sweetspotcircle of this.SweetSpotCircleArray) {
+            // Check if 'A' or 'S' key is pressed
+            if (this.A_Pressed || this.S_Pressed) {
+                console.log("Key pressed in Check method");
+                sweetspotcircle.puffy = true;
                 let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
-                if(percentAccuracyIfTouched){
-
+                if (percentAccuracyIfTouched) {
                     this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
                 }
-            }else{
+            } else {
                 sweetspotcircle.puffy = false;
             }
         }
