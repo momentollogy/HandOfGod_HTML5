@@ -247,13 +247,12 @@ export default class Level_BasicTouch
         });
 
         
-        // Event listener for toggling the box with keyboard shortcuts
+        // Event listener for toggling the box with the 'K' key
         document.addEventListener('keydown', (event) => {
-        if (event.key === ' ') {
-            this.boxVisible = !this.boxVisible;
+            if (event.key === 'k' || event.key === 'K') {
+                this.boxVisible = !this.boxVisible;
             }
         });
-        
 
         //this.spacePressed = false;
         this.A_pressed = false;
@@ -278,7 +277,7 @@ export default class Level_BasicTouch
             "</> = Inc. BeatRange",
             "+/- = Speed",
             "Arrows = Move Target Circles",
-            "SpaceBar = hide/key."
+            "K = hide/key."
         ];
         
         // Draw each line of text

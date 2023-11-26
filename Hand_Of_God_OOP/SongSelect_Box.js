@@ -70,45 +70,39 @@ export default class SongSelect_Box
                             mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
                             jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
                         },
-
-
-
-
-
-
-
-
-
-
-
-
                         
                         {
                             fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'hi man'  cool", 
-                            fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
-                            jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
+                            levelDisplayName: "'Rhythm is a Dancer'  SNAP", 
+                            fireBaseLevelLeaderBoard: "RhythmIsADancer_LB",
+                            duration: ":48",
+                            mp3Path:"Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancer.wav",
+                            jsonPath:"Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancer.json"
                         },
                         {
                             fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'thr'  6yuu", 
-                            fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",
+                            levelDisplayName: "'Havana'  Camila Cabello", 
+                            fireBaseLevelLeaderBoard: "Havana_LB",
                             duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
-                            jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
+                            mp3Path:"Level_Mp3AndJson/Havana/Havana.mp3",
+                            jsonPath:"Level_Mp3AndJson/Havana/Havana.json"
                         },
-
-
-
-
-
-
-
-
-
-
+                        {
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "'Lovely Day'  Bill Winters", 
+                            fireBaseLevelLeaderBoard: "LovelyDay_LB",
+                            duration: "1:07",
+                            mp3Path:"Level_Mp3AndJson/LovelyDay/LovelyDay.wav",
+                            jsonPath:"Level_Mp3AndJson/LovelyDay/LovelyDay.json"
+                        },
+                        {
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "'BlankSpace'  Taylor Swift", 
+                            fireBaseLevelLeaderBoard: "BlankSpace_LB",
+                            duration: "1:07",
+                            mp3Path:"Level_Mp3AndJson/BlankSpace/BlankSpace.wav",
+                            jsonPath:"Level_Mp3AndJson/BlankSpace/BlankSpace.json"
+                        },
                         
                         {   
                             fileName: "Level_BasicTouch", 
@@ -169,7 +163,7 @@ export default class SongSelect_Box
                         {   
                             fileName: "Level_05_Recorder", 
                             levelDisplayName: "RECORDER", 
-                            fireBaseLevelLeaderBoard: "TBD", 
+                            fireBaseLevelLeaderBoard: "Houdini_LB", 
                             duration: "",
                             mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
                             jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"
