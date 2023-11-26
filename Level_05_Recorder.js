@@ -203,6 +203,9 @@ export default class Level_05
             this.songInput.click();
         });
         
+        document.addEventListener('Record', (data) => {
+            this.setRecordMode();
+        });
 
     }
 
