@@ -31,9 +31,9 @@ export default class SweetSpotCircle {
         this.touched=false;
         this.checkedForMiss = false;
         this.beatPassed = false;
-        this.velocity = 250;
+        this.velocity = 500;
         this.showBeatRanges = false; // default is to show beat ranges
-        this.beatBufferTime = 300; //how many ms before and after to define length of beatrange
+        this.beatBufferTime = 200; //how many ms before and after to define length of beatrange
         this.beatsMissed = 0;
         this.touchable = false;
         this.recordModeTouched=false;

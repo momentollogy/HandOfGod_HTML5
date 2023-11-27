@@ -1,6 +1,6 @@
 export class GameStats
 {
-    constructor(bufferLimit = 14) 
+    constructor(bufferLimit = 5) 
     { // Default buffer limit
         this.bufferLimit = bufferLimit;
         this.score = 0;
@@ -32,7 +32,7 @@ export class GameStats
 
     removeMiss() {
 
-        if (this.buffer < 14) 
+        if (this.buffer < 5) 
         { // Ensure the buffer does not exceed the initial limit
             this.buffer++;
         }

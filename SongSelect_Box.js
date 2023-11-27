@@ -89,10 +89,18 @@ export default class SongSelect_Box
                         },
                         {
                             fileName: "Level_BasicTouch", 
+                            levelDisplayName: "'Back On 74'  Jungle", 
+                            fireBaseLevelLeaderBoard: "BackOn74_LB",
+                            duration: "1:07",
+                            mp3Path:"Level_Mp3AndJson/BackOn74/BackOn74.mp3",
+                            jsonPath:"Level_Mp3AndJson/BackOn74/BackOn74.json"
+                        },
+                        {
+                            fileName: "Level_BasicTouch", 
                             levelDisplayName: "'Lovely Day'  Bill Winters", 
                             fireBaseLevelLeaderBoard: "LovelyDay_LB",
                             duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/LovelyDay/LovelyDay.wav",
+                            mp3Path:"Level_Mp3AndJson/LovelyDay/LovelyDay.mp3",
                             jsonPath:"Level_Mp3AndJson/LovelyDay/LovelyDay.json"
                         },
                         {
@@ -100,7 +108,7 @@ export default class SongSelect_Box
                             levelDisplayName: "'BlankSpace'  Taylor Swift", 
                             fireBaseLevelLeaderBoard: "BlankSpace_LB",
                             duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/BlankSpace/BlankSpace.wav",
+                            mp3Path:"Level_Mp3AndJson/BlankSpace/BlankSpace.mp3",
                             jsonPath:"Level_Mp3AndJson/BlankSpace/BlankSpace.json"
                         },
                         
@@ -160,6 +168,16 @@ export default class SongSelect_Box
                             mp3Path:"Level_Mp3AndJson/Houdini/Houdini.mp3", 
                             jsonPath:"Level_Mp3AndJson/Houdini/Houdini.json"
                         },
+                
+                        
+                        {   
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "3_Note_Test", 
+                            fireBaseLevelLeaderBoard: "Level_3NoteTest_LB", 
+                            duration: ":07",
+                            mp3Path:"Level_Mp3AndJson/LevelRecorder/7secTest.mp3", 
+                            jsonPath:"Level_Mp3AndJson/LevelRecorder/7secTest.json"
+                        },
                         {   
                             fileName: "Level_05_Recorder", 
                             levelDisplayName: "RECORDER", 
@@ -167,15 +185,6 @@ export default class SongSelect_Box
                             duration: "",
                             mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
                             jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"
-                        },
-                        
-                        {   
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "Level_3NoteTest", 
-                            fireBaseLevelLeaderBoard: "Level_3NoteTest_LB", 
-                            duration: ":07",
-                            mp3Path:"Level_Mp3AndJson/LevelRecorder/7secTest.mp3", 
-                            jsonPath:"Level_Mp3AndJson/LevelRecorder/7secTest.json"
                         }
                      
                        

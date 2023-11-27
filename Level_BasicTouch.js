@@ -73,7 +73,7 @@ export default class Level_BasicTouch
         this.audio.addEventListener('ended', this.boundAudioEnded);
     
         // Initialize game statistics
-        this.stats = new GameStats(14); 
+        this.stats = new GameStats(); 
         this.stats.reset(); 
 
         //for grade using json total notes/beats

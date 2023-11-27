@@ -108,7 +108,7 @@ export class UIUtilities
       ctx.font = "24px Verdana";
 
       // Calculate the number of misses based on bufferValue
-      const missesNumber = 14 - bufferValue; // Use the passed bufferValue
+      const missesNumber = 5 - bufferValue; // Use the passed bufferValue
 
       const missNumberX = baseXPosition + (lineWidth / 2);
       ctx.fillText(missesNumber, missNumberX, baseYPosition + 250);
