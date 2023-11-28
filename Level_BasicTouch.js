@@ -254,6 +254,14 @@ export default class Level_BasicTouch
             }
         });
 
+
+                // Event listener for restarting the level with the 'R' key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'r' || event.key === 'R') {
+                this.resetLevel();
+            }
+        });
+
         //this.spacePressed = false;
         this.A_pressed = false;
         this.S_pressed = false;
@@ -273,6 +281,7 @@ export default class Level_BasicTouch
         this.ctx.font = '24px Arial'; // Adjust font size as needed
         const shortcuts = [
             "P = Pause",
+            "R = Restart",
             "B = Toggle BeatRanges + Data",
             "</> = Inc. BeatRange",
             "+/- = Speed",

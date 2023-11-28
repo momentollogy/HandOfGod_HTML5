@@ -21,34 +21,7 @@ export default class Level_TitlePage
          const buttonHeight = 50;
          const buttonRadius = 10;
  
-         
- /*
-        // 'Start' button specific code
-        this.levelSelectButton = new BlueButton
-        (
-           // this.ctx,
-            leftButtonX,
-            buttonY,
-            buttonWidth,
-            buttonHeight,
-            buttonRadius,
-            "#003a46",
-            "#0000CD",
-            "Start",
-            "rgba(0, 0, 0, 0.5)",
-            { levelName: "Level_StageSelect" },
-            () => 
-            {
-                if (typeof window.playerName === 'undefined') {
-                    window.playerName = "Guest" + Math.floor(Math.random() * 10000);
-                    console.log('Default playerName set:', window.playerName);
-                }
-            
-                // Dispatch the event to proceed to level selection
-                document.dispatchEvent(new CustomEvent('levelChange', { detail: { levelName: "Level_StageSelect",leaderBoardState:"topScores"} }));
-            }
-        ); 
-*/
+        
 
 
         // 'Username' button specific code

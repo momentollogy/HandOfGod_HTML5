@@ -47,6 +47,12 @@ export default class PlayInfoBoxVisual
     this.boundOnMouseDown = this.onMouseDown.bind(this);
     this.boundOnMouseUp = this.onMouseUp.bind(this);
     this.boundOnPlayButtonClick = this.onPlayButtonClick.bind(this);
+
+    this.boundOnKeyUp = this.onKeyUp.bind(this);
+    window.addEventListener('keyup', this.boundOnKeyUp);
+
+    
+  
   
     // Add mouse event listeners for the button interactions
     this.canvas.addEventListener('mousemove', this.boundOnMouseMove);
@@ -73,7 +79,11 @@ export default class PlayInfoBoxVisual
 
 
 
-
+  onKeyUp(event) {
+    if (event.key === 'Enter' || event.key === 'Return') {
+      this.onPlayButtonClick();
+    }
+  }
 
 
       initializeButtonPosition() 
@@ -232,22 +242,24 @@ export default class PlayInfoBoxVisual
 
 
 
-    onPlayButtonClick(event) 
-    {
-     const mouseX = event.offsetX;
-     const mouseY = event.offsetY;
-   
-     // Check if the click is inside the button area
-     if ( mouseX >= this.BUTTON_X && mouseX <= this.BUTTON_X + this.BUTTON_WIDTH &&
-          mouseY >= this.BUTTON_Y && mouseY <= this.BUTTON_Y + this.BUTTON_HEIGHT) {
-
-       // Ensure that the currentLevelData is available
-       if (this.currentLevelData) {
-        //GameManagerInstance.setCurrentLevelData(this.currentLevelData); //add to send to GM
-
-        const detailData = 
-        {
-          
+    onPlayButtonClick(event = null) {
+      let isButtonClick = false;
+    
+      // Check if the event is a mouse event and if the click is inside the button area
+      if (event && event.offsetX !== undefined && event.offsetY !== undefined) {
+        const mouseX = event.offsetX;
+        const mouseY = event.offsetY;
+    
+        isButtonClick = mouseX >= this.BUTTON_X && mouseX <= this.BUTTON_X + this.BUTTON_WIDTH &&
+                        mouseY >= this.BUTTON_Y && mouseY <= this.BUTTON_Y + this.BUTTON_HEIGHT;
+      } else {
+        // If there's no event, assume it's a 'Return' key press
+        isButtonClick = true;
+      }
+    
+      // Execute the level change if it's a valid button click or 'Return' key press
+      if (isButtonClick && this.currentLevelData) {
+        const detailData = {
           levelName: this.currentLevelData.fileName,
           levelDisplayName: this.currentLevelData.levelDisplayName,
           fireBaseLevelLeaderBoard: this.currentLevelData.fireBaseLevelLeaderBoard,
@@ -255,15 +267,16 @@ export default class PlayInfoBoxVisual
           mp3Path: this.currentLevelData.mp3Path,
           jsonPath: this.currentLevelData.jsonPath
           // Add other properties from this.currentLevelData as needed
-          
-        };        
+        };
+    
         console.log('Dispatching levelChange with details:', detailData);
         document.dispatchEvent(new CustomEvent('levelChange', { detail: detailData }));
-        
-        }
       }
     }
-   
+    
+
+
+    
 
     dispose() 
     {
@@ -274,6 +287,8 @@ export default class PlayInfoBoxVisual
       this.canvas.removeEventListener('mouseup', this.onMouseUp.bind(this));
       this.canvas.removeEventListener('click', this.onPlayButtonClick.bind(this));
       window.removeEventListener('levelSelected', this.boundUpdateCurrentLevel);
+      window.removeEventListener('keyup', this.boundOnKeyUp);
+
 
       // Nullify DOM references
       this.canvas = null;
