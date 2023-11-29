@@ -119,6 +119,14 @@ export default class SongSelect_Box
                             mp3Path:"Level_Mp3AndJson/Rush/Rush.mp3",
                             jsonPath:"Level_Mp3AndJson/Rush/Rush.json"
                         },
+                        {
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "'Rush (hard)'  Troye Sivan", 
+                            fireBaseLevelLeaderBoard: "RushHard_LB",
+                            duration: "1:07",
+                            mp3Path:"Level_Mp3AndJson/Rush/Rush.mp3",
+                            jsonPath:"Level_Mp3AndJson/Rush/RushHard.json"
+                        },
                         
                         {   
                             fileName: "Level_BasicTouch", 
