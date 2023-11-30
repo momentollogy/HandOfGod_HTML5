@@ -187,8 +187,15 @@ export default class SongSelect_Box
                             mp3Path:"Level_Mp3AndJson/Houdini/Houdini.mp3", 
                             jsonPath:"Level_Mp3AndJson/Houdini/Houdini.json"
                         },
+                        {   
+                            fileName: "Level_BasicTouch", 
+                            levelDisplayName: "'Magical Mystery Tour'  Beatles", 
+                            fireBaseLevelLeaderBoard: "MagicalMysteryTour_LB", 
+                            duration: ":56",
+                            mp3Path:"Level_Mp3AndJson/MagicalMysteryTour/MagicalMysteryTour.mp3", 
+                            jsonPath:"Level_Mp3AndJson/MagicalMysteryTour/MagicalMysteryTour.json"
+                        },
                 
-                        
                         {   
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "3_Note_Test", 

@@ -1,12 +1,13 @@
 export class GameStats
 {
-    constructor(bufferLimit = 5) 
-    { // Default buffer limit
-        this.bufferLimit = bufferLimit;
+    constructor(bufferLimit = 5) { // Set the maximum buffer limit aka how many misses player can have here 
+        this.maxBufferLimit = bufferLimit;
+        this.buffer = this.maxBufferLimit; 
+
+        // Initialize other properties
         this.score = 0;
         this.combo = 0;
-        this.buffer = this.bufferLimit; // Initialize buffer with bufferLimit
-        console.log("GameStats initialized. Buffer limit:", this.bufferLimit, "Current buffer:", this.buffer);
+        console.log("GameStats initialized. Buffer limit:", this.maxBufferLimit, "Current buffer:", this.buffer);
 
         this.comboMultiplier = 1;
     }
@@ -31,9 +32,7 @@ export class GameStats
     }
 
     removeMiss() {
-
-        if (this.buffer < 5) 
-        { // Ensure the buffer does not exceed the initial limit
+        if (this.buffer < this.maxBufferLimit) { //maxBuggerLimit in this case the default above which is "5"
             this.buffer++;
         }
     }
@@ -59,7 +58,9 @@ export class GameStats
     {
         this.score = 0;
         this.combo = 0;
-        this.buffer = this.bufferLimit; // Reset buffer to the initial limit
+       // this.buffer = this.bufferLimit; // Reset buffer to the initial limit
+        this.buffer = this.maxBufferLimit; // Correctly reset buffer to the initial limit
+
         this.comboMultiplier = 1;
     }
 

@@ -74,8 +74,8 @@ export class UIUtilities
     }
 
 
-
-    static drawScore(ctx, scoreNumber, comboNumber, bufferValue) 
+/*
+    static drawScore(ctx, scoreNumber, comboNumber, bufferValue, maxBufferLimit) 
     {
         // Positioning for the score and combo display
         const baseXPosition = 10; // left padding
@@ -103,15 +103,54 @@ export class UIUtilities
         const scoreNumberX = baseXPosition + (lineWidth / 2);
         ctx.fillText(scoreNumber, scoreNumberX, baseYPosition + 160);
 
-      // Misses stuff
-      ctx.fillRect(baseXPosition, baseYPosition + 200, lineWidth, 2);
-      ctx.font = "24px Verdana";
+        // Misses stuff
+        ctx.fillRect(baseXPosition, baseYPosition + 200, lineWidth, 2);
+        ctx.font = "24px Verdana";
 
-      // Calculate the number of misses based on bufferValue
-      const missesNumber = 5 - bufferValue; // Use the passed bufferValue
+        // Calculate the number of misses left based on bufferValue
+        const missesLeft = bufferValue; // bufferValue should decrement with each miss
+        const missesText = "Misses Left: " + missesLeft;
 
-      const missNumberX = baseXPosition + (lineWidth / 2);
-      ctx.fillText(missesNumber, missNumberX, baseYPosition + 250);
+        const missesTextX = baseXPosition + (lineWidth / 2);
+        ctx.fillText(missesText, missesTextX, baseYPosition + 250);
 
     }   
+    */
+
+    static drawScore(ctx, scoreNumber, comboNumber, bufferValue, maxBufferLimit) {
+        // Base position and scale factor
+        const baseXPosition = 80; // Base X position for the entire score display
+        const baseYPosition = 50;  // Base Y position for the entire score display
+        const scale = 1.0;         // Scale factor (1.0 = original size, adjust as needed)
+    
+        // Component layout adjustments (don't need to be changed)
+        const lineHeight = 2 * scale;
+        const lineSpacing = 60 * scale; // Spacing between lines
+        const textSpacing = 20 * scale; // Spacing for text
+        const fontSize = 24 * scale;    // Base font size, scaled
+    
+        // Style for the text labels
+        ctx.fillStyle = "rgb(255,255,255)"; // Text color (white)
+        ctx.textAlign = "center";           // Center align text
+    
+        // Function to scale a value
+        const scaled = (value) => value * scale;
+    
+        // Combo display
+        ctx.fillRect(baseXPosition, baseYPosition, scaled(150), lineHeight);
+        ctx.font = scaled(fontSize) + "px Verdana";
+        ctx.fillText("Combo", baseXPosition + scaled(75), baseYPosition + textSpacing);
+    
+        // Combo number
+        ctx.fillText(comboNumber, baseXPosition + scaled(75), baseYPosition + lineSpacing);
+    
+        // Score display
+        ctx.fillRect(baseXPosition, baseYPosition + scaled(120), scaled(150), lineHeight);
+        ctx.fillText(scoreNumber, baseXPosition + scaled(75), baseYPosition + scaled(160));
+    
+        // Misses left
+        ctx.fillRect(baseXPosition, baseYPosition + scaled(200), scaled(150), lineHeight);
+        ctx.fillText("Misses Left: " + bufferValue, baseXPosition + scaled(75), baseYPosition + scaled(250));
+    }
+    
 }

@@ -262,6 +262,22 @@ export default class Level_BasicTouch
             }
         });
 
+
+                // Event listener for decreasing the maxBufferLimit with the '1' key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === '1') {
+                this.stats.maxBufferLimit = Math.max(1, this.stats.maxBufferLimit - 1); // Decrease limit but keep it at least 1
+            }
+        });
+
+        // Event listener for increasing the maxBufferLimit with the '2' key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === '2') {
+                this.stats.maxBufferLimit += 1; // Increase limit
+            }
+        });
+
+
         //this.spacePressed = false;
         this.A_pressed = false;
         this.S_pressed = false;
@@ -286,7 +302,9 @@ export default class Level_BasicTouch
             "</> = Inc. BeatRange",
             "+/- = Speed",
             "Arrows = Move Target Circles",
+            "1/2 = Dec/Inc Misses Allowed (" + this.stats.maxBufferLimit + ")",
             "K = hide/key."
+            
         ];
         
         // Draw each line of text
@@ -455,7 +473,8 @@ onKeyUp(event) {
         this.levelSelectButton.draw();
 
         //Draw Score from GameStat.js
-        UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.buffer);
+       // UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.buffer);
+        UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.buffer, this.stats.maxBufferLimit);
 
 
         // Update and draw percentage overlay texts with succesful beat hits
