@@ -21,6 +21,9 @@ export default class SongSelect_Box
         this.itemsToShow = 10; // Display 10 items at a time
         this.scrollPosition = 0; // Start at the beginning of the list
 
+        this.initialMouseY = 0;
+        this.initialThumbPosition = 0;
+
         //for scrollbar mouse clicking
         this.isDraggingScrollbar = false;
         this.lastMouseY = 0;
@@ -269,8 +272,9 @@ export default class SongSelect_Box
         console.log('Potential new scrollPosition:', potentialNewPosition);
     
         // Constrain within bounds without floor rounding
-        this.scrollPosition = Math.max(0, Math.min(potentialNewPosition, this.levelArray.length - this.itemsToShow));
-    
+       // this.scrollPosition = Math.max(0, Math.min(potentialNewPosition, this.levelArray.length - this.itemsToShow));
+        this.scrollPosition = Math.round(Math.max(0, Math.min(potentialNewPosition, this.levelArray.length - this.itemsToShow)));
+
         console.log('Updated scrollPosition:', this.scrollPosition);
     
         this.draw();
@@ -317,52 +321,65 @@ export default class SongSelect_Box
     //for song select clicking working but not withupdating leadboard
     handleMouseClick(event) {
         const rect = this.canvas.getBoundingClientRect();
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
+        const scaleX = this.canvas.width / rect.width; // Scale for the X coordinate
+        const scaleY = this.canvas.height / rect.height; // Scale for the Y coordinate
         const clickX = (event.clientX - rect.left) * scaleX;
         const clickY = (event.clientY - rect.top) * scaleY;
-        const clickMargin = 120; // Define clickMargin here
-
     
-        const Y_OFFSET = this.SCORE_LINE_HEIGHT / 2;
+        // Constants for layout calculation
+        const Y_OFFSET = this.SCORE_LINE_HEIGHT / 2; // Vertical offset for alignment
+        const itemHeight = this.SCORE_LINE_HEIGHT; // Height of each item
     
         for (let i = 0; i < this.itemsToShow; i++) {
-            let index = i + this.scrollPosition;
-            if (index < this.levelArray.length) {
-                let level = this.levelArray[index];
-                let levelTopY = this.LEADERBOARD_Y + this.HEADER_HEIGHT + this.SCORE_MARGIN_TOP + (i * this.SCORE_LINE_HEIGHT) - Y_OFFSET;
-                let levelBottomY = levelTopY + this.SCORE_LINE_HEIGHT;
-                let textWidth = this.ctx.measureText(level.levelDisplayName).width;
-                let levelLeftX = this.TEXT_CENTER_X - (textWidth / 2) - clickMargin;
-                let levelRightX = this.TEXT_CENTER_X + (textWidth / 2) + clickMargin;
+            let index = i + this.scrollPosition; // Index in the levelArray, adjusted for scroll position
     
+
+               // Debugging logs
+        console.log("Clicked item index:", index);
+        console.log("Total levels:", this.levelArray.length);
+
+
+              if (index < this.levelArray.length) {
+            let level = this.levelArray[index];
+            if (!level) {
+                console.error("Level is undefined at index:", index);
+                continue; // Skip this iteration if level is undefined
+            }
+    
+                // Calculate the Y position for the top and bottom of each song item
+                let levelTopY = this.LEADERBOARD_Y + this.HEADER_HEIGHT + this.SCORE_MARGIN_TOP + (i * itemHeight) - Y_OFFSET;
+                let levelBottomY = levelTopY + itemHeight;
+    
+                // Calculate the width of the text for horizontal alignment
+                let textWidth = this.ctx.measureText(level.levelDisplayName).width;
+                let levelLeftX = this.TEXT_CENTER_X - (textWidth / 2);
+                let levelRightX = this.TEXT_CENTER_X + (textWidth / 2);
+    
+                // Check if the click coordinates are within the bounds of the song item
                 if (clickX >= levelLeftX && clickX <= levelRightX && clickY >= levelTopY && clickY <= levelBottomY) {
-                    console.log("Clicked index:", index); // Log the clicked index
-                    console.log("Clicked song:", level); // Log the clicked song data
-
                     this.setCurrentLevelIndex(index);
-                    this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[this.currentSelectedLevelIndex]);
-                    this.draw();
-                    this.dispatchSongSelectedEvent(); // Ensure this is called to update the leaderboard
-                    console.log("Event dispatched for:", this.levelArray[index]); // Log the data for which the event is dispatched
-
-                    break;
+                    this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[index]); // Update the current level based on the clicked song
+                    this.draw(); // Redraw the component to reflect changes
+                    this.dispatchSongSelectedEvent(); // Dispatch an event for the song selection
+                    break; // Exit the loop as the click has been handled
                 }
             }
         }
     }
     
+    
+    
 
-    //for scroll bar holding mosue
     handleMouseDown(event) {
         const rect = this.canvas.getBoundingClientRect();
         const mouseY = (event.clientY - rect.top) * (this.canvas.height / rect.height);
         const scrollbarThumbY = this.calculateThumbY();
     
-        // Check if click is within the scrollbar thumb
         if (mouseY >= scrollbarThumbY && mouseY <= scrollbarThumbY + this.calculateThumbHeight()) {
             this.isDraggingScrollbar = true;
             this.lastMouseY = mouseY;
+            this.initialMouseY = mouseY;
+            this.initialThumbPosition = this.scrollPosition;
         }
     }
     
@@ -370,20 +387,27 @@ export default class SongSelect_Box
         if (this.isDraggingScrollbar) {
             const rect = this.canvas.getBoundingClientRect();
             const mouseY = (event.clientY - rect.top) * (this.canvas.height / rect.height);
-            const deltaY = mouseY - this.lastMouseY;
     
-            // Update scroll position based on deltaY
-            const sensitivity = 0.05; // Adjust as needed to get mouse to match scroll bar
-            this.scrollPosition += deltaY * sensitivity;
-            this.scrollPosition = Math.max(0, Math.min(this.scrollPosition, this.levelArray.length - this.itemsToShow));
+            // Calculate the difference in mouse position since mouse down
+            const deltaY = mouseY - this.initialMouseY;
     
-            this.lastMouseY = mouseY;
+            // Calculate the proportional movement of the scrollbar
+            // Adjust these calculations as per your specific UI dimensions and behavior
+            const scrollRange = this.levelArray.length - this.itemsToShow;
+            const thumbHeight = this.calculateThumbHeight();
+            const scrollbarRange = this.LEADERBOARD_HEIGHT - thumbHeight;
+            const scrollMovement = (deltaY / scrollbarRange) * scrollRange;
+    
+            // Calculate new scroll position
+            const newScrollPosition = this.initialThumbPosition + scrollMovement;
+            this.scrollPosition = Math.round(Math.max(0, Math.min(newScrollPosition, scrollRange)));
+    
             this.draw();
         }
     }
-    
-  
 
+ 
+    
 
     handleMouseUp(event) {
         this.isDraggingScrollbar = false;
