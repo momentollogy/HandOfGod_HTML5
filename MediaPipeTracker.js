@@ -31,12 +31,17 @@ export default class MediaPipeTracker
         this.video = _vid;
     }
 
+    /*
     createLandmarks(){
         this.createHandLandmarker().then(() => {
             //console.log("Hand Landmark model loaded!");
         });
     }
+*/
 
+    createLandmarks() {
+        return this.createHandLandmarker(); // Now returns a Promise
+    }
     static getInstance() {
         if (!MediaPipeTracker.instance) {
             MediaPipeTracker.instance = new MediaPipeTracker();

@@ -69,6 +69,7 @@ export default class DrawEngine {
         }
     }
 
+    /*
     toggleLoop()
     {
         this.looping = ! this.looping;
@@ -88,6 +89,7 @@ export default class DrawEngine {
         this.video.style.display = "none";
     }
 
+    
     setInfoText(...args){
         this.ctx.fillStyle = "rgba(0,0,255,.15)";
         this.ctx.fillRect(10,10,350,this.canvas.height-20);
@@ -98,7 +100,7 @@ export default class DrawEngine {
             this.ctx.fillText(args[i], 185 , 40 + (i*36));
         }
     }
-
+*/
     loop(timestamp) 
     {
         this.deltaTime = timestamp - this.lastTimestamp;

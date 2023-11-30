@@ -7,76 +7,74 @@ export default class Level_TitlePage
 {
     constructor()
     {
-        this.mediaPipe = MediaPipeTracker.getInstance()
-        this.canvas = document.getElementById("output_canvas");;
+        this.mediaPipe = MediaPipeTracker.getInstance();
+        this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
-        
-   
-         // Button positions (You may need to adjust these positions to fit your layout)
-         const scaleFactor = 1;
-         const leftButtonX = this.canvas.width / 2 -30 * scaleFactor; // for example, 100 pixels from the left
-         const rightButtonX = this.canvas.width - 500 * scaleFactor; // for example, 300 pixels from the right edge
-         const buttonY = this.canvas.height / 2 + 430 * scaleFactor; // vertical center for demonstration
-         const buttonWidth = 150;
-         const buttonHeight = 50;
-         const buttonRadius = 10;
- 
-        
 
+        // Button dimensions and properties
+        const buttonWidth = 150;
+        const buttonHeight = 50;
+        const buttonRadius = 10;
 
-        // 'Username' button specific code
-    this.startButton = new BlueButton(
-        leftButtonX,  // X position of the button
-        buttonY,       // Y position of the button
-        buttonWidth,   // Button width
-        buttonHeight,  // Button height
-        buttonRadius,  // Button corner radius
-        "#003a46",
-        "#0000CD",    // Hover color
-        "START",    // Button text
-        "rgba(0, 0, 0, 0.5)", // Shadow color
-        {},  // No specific actionData needed for username button
-        () => {
-            let playerName = window.prompt("Enter Player Name (max 14 characters):", "Guest" + Math.floor(Math.random() * 10000));
-            while (playerName && playerName.length > 14) {
-                playerName = window.prompt("Name too long. Enter Player Name (max 14 characters):", playerName);
-            }
-            if (playerName) {
-                window.playerName = playerName;
-                document.dispatchEvent(new CustomEvent('levelChange', { detail: { levelName: "Level_StageSelect", leaderBoardState: "topScores" } }));
+        // Initialize 'Start' button with temporary positions
+        this.startButton = new BlueButton(
+            0, // Temporary X position, will be set in updateButtonPositions
+            0, // Temporary Y position, will be set in updateButtonPositions
+            buttonWidth,
+            buttonHeight,
+            buttonRadius,
+            "#003a46", // Base color
+            "#0000CD", // Hover color
+            "START", // Button text
+            "rgba(0, 0, 0, 0.5)", // Shadow color
+            {}, // No specific actionData needed
+            this.startButtonAction // Action on button click
+        );
 
-            } else {
-                console.log('User did not enter a name, using default.');
-                window.playerName = "Guest" + Math.floor(Math.random() * 10000);
-            }
-            console.log('Username set to:', window.playerName);
-            // Proceed to level selection
-        }
+        // Set initial button positions
+        this.updateButtonPositions();
 
-
-
-
-);
-
-
-
-
-
-
-
-
-         
-         this.backgroundImage = new Image();
-         this.backgroundImage.onload = () => 
-          // Draw the image onto the canvas once it's loaded
-         {
-             this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
-         };
-         this.backgroundImage.src = 'images/TitlePageImage_v1.jpeg'; 
- 
-
+        // Load and draw background image
+        this.loadBackgroundImage();
     }
-    
+
+    updateButtonPositions() {
+        const scaleFactor = 1;
+        const leftButtonX = this.canvas.width / 2 + 775 * scaleFactor;
+        const buttonY = this.canvas.height / 2 + 880 * scaleFactor;
+
+        // Update startButton position
+        this.startButton.x = leftButtonX;
+        this.startButton.y = buttonY;
+    }
+
+    startButtonAction() {
+        // Existing code for start button action
+        let playerName = window.prompt("Enter Player Name (max 14 characters):", "Guest" + Math.floor(Math.random() * 10000));
+        while (playerName && playerName.length > 14) {
+            playerName = window.prompt("Name too long. Enter Player Name (max 14 characters):", playerName);
+        }
+        if (playerName) {
+            window.playerName = playerName;
+            document.dispatchEvent(new CustomEvent('levelChange', { detail: { levelName: "Level_StageSelect", leaderBoardState: "topScores" } }));
+        } else {
+            console.log('User did not enter a name, using default.');
+            window.playerName = "Guest" + Math.floor(Math.random() * 10000);
+        }
+        console.log('Username set to:', window.playerName);
+    }
+
+    loadBackgroundImage() {
+        this.backgroundImage = new Image();
+        this.backgroundImage.onload = () => {
+            this.ctx.globalAlpha = 0.5; // Adjust opacity as needed
+            this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.globalAlpha = 1.0; // Reset opacity
+        };
+        this.backgroundImage.src = 'images/TitlePageImage_v1.jpeg';
+    }
+
+
 
 
     level_loop() 

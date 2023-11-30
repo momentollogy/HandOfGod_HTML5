@@ -12,14 +12,26 @@ const canvas = document.getElementById("output_canvas");
 const container = document.getElementById("container");
 const webcamList = document.getElementById("webcamList");
 
-// Initialize selected camera ID
+// Initialize selected camera ID - incorrect?
 let selectedCameraId = null;
 
-// Set canvas dimensions
-mpcanvas.width = 1920;
-mpcanvas.height = 1080;
-canvas.width = 1920;
-canvas.height = 1080;
+// Set the canvas dimensions dynamically
+function setCanvasSize() {
+  const videoWidth = video.videoWidth || window.innerWidth;
+  const videoHeight = video.videoHeight || window.innerHeight;
+
+  mpcanvas.width = videoWidth;
+  mpcanvas.height = videoHeight;
+  canvas.width = videoWidth;
+  canvas.height = videoHeight;
+
+    if (levelTitlePageInstance) {
+      levelTitlePageInstance.updateButtonPositions();
+  }
+}
+
+// Call setCanvasSize function after the video has loaded data
+video.addEventListener('loadeddata', setCanvasSize);
 
 // Create a GameManager instance
 let gm = new GameManager();
@@ -27,48 +39,61 @@ let gm = new GameManager();
 // Create a MediaPipeTracker instance and configure it
 let mp = MediaPipeTracker.getInstance();
 mp.setVid(video);
-mp.createLandmarks();
+
+mp.createLandmarks().then(() => {
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      enableWebcamButton.addEventListener("click", onEnableCamButtonClicked);
+  } else {
+      enableWebcamButton.removeEventListener("click", onEnableCamButtonClicked);
+      enableWebcamButton.innerText = "Camera Not Found";
+  }
+});
 
 // Create a DrawEngine instance and set the GameManager
 let de = DrawEngine.getInstance();
 de.setGameManager(gm);
 
-// Check if webcam access is supported and handle the button accordingly
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  enableWebcamButton.addEventListener("click", onEnableCamButtonClicked);
-} else {
-  enableWebcamButton.removeEventListener("click", onEnableCamButtonClicked);
-  enableWebcamButton.innerText = "Camera Not Found";
-}
+
+
 
 // Enable the live webcam view and start detection
 function onEnableCamButtonClicked(event) {
+  // If the webcam hasn't been started yet
   if (!video.srcObject) {
-    const videoConstraints = {
-      deviceId: selectedCameraId,
-      width: 1920,
-      height: 1080,
-    };
+      const videoConstraints = {
+          deviceId: selectedCameraId,
+          width: 1920,
+          height: 1080,
+      };
 
-    navigator.mediaDevices.getUserMedia({ video: videoConstraints }).then((stream) => {
-      video.srcObject = stream;
-      video.addEventListener("loadeddata", onCamStartup);
-    });
-  } else {
-    toggleVideoDisplay();
-  }
+      navigator.mediaDevices.getUserMedia({ video: videoConstraints }).then((stream) => {
+          video.srcObject = stream;
+          video.addEventListener("loadeddata", onCamStartup);
 
-    // Toggle the button label
-    if (enableWebcamButton.innerText === 'ENABLE WEBCAM') {
-      enableWebcamButton.innerText = 'DISABLE WEBCAM';
+          // Start playing the video stream but keep it hidden
+          video.play();
+          video.style.display = 'none';  // Make sure the video is not visible
+
+          // Change button text to indicate that the webcam feed can be shown
+          enableWebcamButton.innerText = 'SHOW WEBCAM';
+      });
   } else {
-      enableWebcamButton.innerText = 'DISABLED';
+      // If the webcam is already started, this will toggle the video display on or off
+      toggleVideoDisplay();
+
+      // Adjust the button text based on whether the video is displayed or not
+      if (video.style.display === 'none') {
+          enableWebcamButton.innerText = 'SHOW WEBCAM';
+      } else {
+          enableWebcamButton.innerText = 'HIDE WEBCAM';
+      }
   }
 }
 
-// Initialize the webcam and elements when the camera starts up
+
+// Initialize the webcam and elements when the camera starts up //
 function onCamStartup(event) {
-  container.style.width = "75%";
+  container.style.width = "75%"; //everything once again needs to not be harded and be dynmaically drawned and sized. so base level and full screen. 
   video.style.width = "100%";
   mpcanvas.width = video.videoWidth;
   mpcanvas.height = video.videoHeight;
@@ -134,5 +159,6 @@ function setMirroring() {
 
 // Toggle video display (show/hide)
 function toggleVideoDisplay() {
-  video.style.display = (video.style.display === "none") ? "block" : "none";
+  video.style.display = (video.style.display === 'none') ? 'block' : 'none';
 }
+
