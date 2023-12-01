@@ -8,7 +8,6 @@ export default class SongSelect_Box
     constructor(playInfoBoxVisual) 
     {
         this.playInfoBoxVisual = playInfoBoxVisual;
-        //console.log(this.playInfoBoxVisual);
 
     
         
@@ -65,6 +64,15 @@ export default class SongSelect_Box
 
         // Initialize the level array and selected index here
         this.levelArray = [
+
+                        {
+                            fileName: "Level_BasicSwipe", 
+                            levelDisplayName: "'Lovely Day SWIPE TEST'", 
+                            fireBaseLevelLeaderBoard: "LovelyDay_LB",
+                            duration: "1:07",
+                            mp3Path:"Level_Mp3AndJson/LovelyDay/LovelyDay.mp3",
+                            jsonPath:"Level_Mp3AndJson/LovelyDay/LovelyDay.json"
+                        },
                         {
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "'Just Dance'  Lady Gaga", 
@@ -269,20 +277,16 @@ export default class SongSelect_Box
     handleScroll(event) {
         event.preventDefault();
     
-        // Enhanced logging
-        console.log('Scroll event deltaY:', event.deltaY);
     
         // Increased sensitivity for testing
         const sensitivity = 0.2;
         const potentialNewPosition = this.scrollPosition + (event.deltaY * sensitivity);
     
-        console.log('Potential new scrollPosition:', potentialNewPosition);
     
         // Constrain within bounds without floor rounding
        // this.scrollPosition = Math.max(0, Math.min(potentialNewPosition, this.levelArray.length - this.itemsToShow));
         this.scrollPosition = Math.round(Math.max(0, Math.min(potentialNewPosition, this.levelArray.length - this.itemsToShow)));
 
-        console.log('Updated scrollPosition:', this.scrollPosition);
     
         this.draw();
     }
@@ -341,15 +345,12 @@ export default class SongSelect_Box
             let index = i + this.scrollPosition; // Index in the levelArray, adjusted for scroll position
     
 
-               // Debugging logs
-        console.log("Clicked item index:", index);
-        console.log("Total levels:", this.levelArray.length);
+    
 
 
               if (index < this.levelArray.length) {
             let level = this.levelArray[index];
             if (!level) {
-                console.error("Level is undefined at index:", index);
                 continue; // Skip this iteration if level is undefined
             }
     
@@ -449,7 +450,6 @@ export default class SongSelect_Box
         }
       
         this.currentSelectedLevelIndex = window.myCurrentLevelIndex
-       // console.log("Window Index is:", window.myCurrentLevelIndex)
         return this.currentSelectedLevelIndex;
     }
     

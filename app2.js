@@ -25,10 +25,12 @@ function setCanvasSize() {
   canvas.width = videoWidth;
   canvas.height = videoHeight;
 
-    if (levelTitlePageInstance) {
-      levelTitlePageInstance.updateButtonPositions();
-  }
+  
 }
+
+/*if (levelTitlePageInstance) {
+  levelTitlePageInstance.updateButtonPositions();
+}*/
 
 // Call setCanvasSize function after the video has loaded data
 video.addEventListener('loadeddata', setCanvasSize);

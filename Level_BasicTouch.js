@@ -459,6 +459,8 @@ onKeyUp(event) {
         // mediapipe stuff
         let results = this.mediaPipe.results;
         if (results == undefined) { return; }
+
+     
         
         this.checkForFingerTouchCircles(); 
         // update display stuff and process classes stuff
@@ -735,5 +737,7 @@ onKeyUp(event) {
         this.volumeSlider = null;
     
     }
+
+
     
 }

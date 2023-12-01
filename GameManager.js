@@ -3,6 +3,8 @@
 import TitlePage from './TitlePage.js';
 import Level_StageSelect from './Level_StageSelect.js'
 import Level_ResultsStage from './Level_ResultsStage.js'; // Make sure the path is correct
+import Level_BasicSwipe from './Level_BasicSwipe.js';
+
 
 
 
@@ -12,6 +14,8 @@ export default class GameManager
     constructor() 
     {
             this.currentLevel = new TitlePage(); // Start the game with the title page
+            //this.currentLevel = new Level_BasicSwipe(); // Start the game with the title page
+
             // this.currentLevel = new Level_ResultsStage();
 
             this.currentLevelData = null; // To keep track of level-specific data
