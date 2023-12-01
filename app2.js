@@ -25,9 +25,10 @@ function setCanvasSize() {
   canvas.width = videoWidth;
   canvas.height = videoHeight;
 
+
     if (levelTitlePageInstance) {
       levelTitlePageInstance.updateButtonPositions();
-  }
+   }
 }
 
 // Call setCanvasSize function after the video has loaded data
@@ -121,23 +122,30 @@ function requestCameraPermission() {
 }
 
 function getAvailableWebcams() {
-  webcamList.innerHTML = '';
-
   navigator.mediaDevices.enumerateDevices().then(devices => {
-    devices.forEach(device => {
-      if (device.kind === 'videoinput') {
+    const videoInputs = devices.filter(device => device.kind === 'videoinput');
+
+    if (videoInputs.length === 1) {
+      // Only one webcam detected, select it by default
+      selectedCameraId = videoInputs[0].deviceId;
+      // You could hide the webcamList dropdown now or not add options at all
+      webcamList.style.display = 'none';
+    } else {
+      // Multiple webcams detected, add them to the dropdown and show it
+      videoInputs.forEach((device, index) => {
         const option = document.createElement('option');
         option.value = device.deviceId;
-        option.text = device.label || `Camera ${webcamList.length + 1}`;
+        option.text = device.label || `Camera ${index + 1}`;
         webcamList.appendChild(option);
-      }
-    });
+      });
 
-    if (webcamList.options.length > 0) {
-      selectedCameraId = webcamList.options[0].value;
+      // Select the first camera by default or the previously selected camera
+      selectedCameraId = videoInputs[0].deviceId;
+      // Keep the dropdown visible or have a settings button to show it
     }
   });
 }
+
 
 // Request camera permission and populate the webcam list
 requestCameraPermission()
@@ -145,6 +153,7 @@ requestCameraPermission()
   .catch(error => {
     console.error("Camera permissions not granted:", error);
   });
+
 
 // Change event listener for webcam selection dropdown
 webcamList.addEventListener('change', (event) => {
@@ -161,4 +170,5 @@ function setMirroring() {
 function toggleVideoDisplay() {
   video.style.display = (video.style.display === 'none') ? 'block' : 'none';
 }
+
 

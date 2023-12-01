@@ -111,3 +111,11 @@ footer {
 .detectOnClick img {
   width: 100%;
 }
+
+#settingsIcon {
+  position: absolute; /* Adjust position as necessary */
+  top: 10px; /* Adjust as necessary */
+  right: 10px; /* Adjust as necessary */
+  z-index: 1000; /* High z-index to ensure it's clickable */
+  cursor: pointer; /* Change cursor to indicate it's clickable */
+}

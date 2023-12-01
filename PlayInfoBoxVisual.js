@@ -2,6 +2,8 @@
 
 // PlayInfoBoxVisual.js
 import BoxUI from './BoxUI.js'; // Assuming BoxUI.js exists and is in the same directory
+import levelArray from './LevelArray.js';
+
 
 export default class PlayInfoBoxVisual 
 {
@@ -94,14 +96,13 @@ export default class PlayInfoBoxVisual
     
     
 
-      updateCurrentLevel(event) 
-      {
-        if (this.songselect_box)
-        {  
-          this.currentLevelData = this.songselect_box.levelArray[this.songselect_box.currentSelectedLevelIndex];
+      updateCurrentLevel(event) {
+        if (this.songselect_box) {
+            // Directly use levelArray's getLevel method
+            this.currentLevelData = levelArray.getLevel(this.songselect_box.currentSelectedLevelIndex);
         }
-          this.draw();
-      }
+        this.draw();
+    }
 
 
 

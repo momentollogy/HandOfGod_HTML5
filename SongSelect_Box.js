@@ -1,6 +1,7 @@
 
 // Assuming the BoxUI class has been imported correctly
 import BoxUI from './BoxUI.js';
+import levelArray from './LevelArray.js';
 
 export default class SongSelect_Box 
 {
@@ -63,168 +64,13 @@ export default class SongSelect_Box
         this.TEXT_ALIGN_TOP = this.HEADER_HEIGHT + this.SCORE_MARGIN_TOP; // Margin from the top of the box to start text
         this.TEXT_CENTER_X = this.LEADERBOARD_X + (this.LEADERBOARD_WIDTH / 2);
 
-        // Initialize the level array and selected index here
-        this.levelArray = [
-                        {
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Just Dance'  Lady Gaga", 
-                            fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
-                            jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
-                        },
-                        
-                        {
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Rhythm is a Dancer'  SNAP", 
-                            fireBaseLevelLeaderBoard: "RhythmIsADancer_LB",
-                            duration: ":48",
-                            mp3Path:"Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancer.wav",
-                            jsonPath:"Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancer.json"
-                        },
-                        {
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Havana'  Camila Cabello", 
-                            fireBaseLevelLeaderBoard: "Havana_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/Havana/Havana.mp3",
-                            jsonPath:"Level_Mp3AndJson/Havana/Havana.json"
-                        },
-                        {
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Back On 74'  Jungle", 
-                            fireBaseLevelLeaderBoard: "BackOn74_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/BackOn74/BackOn74.mp3",
-                            jsonPath:"Level_Mp3AndJson/BackOn74/BackOn74.json"
-                        },
-                        {
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Lovely Day'  Bill Winters", 
-                            fireBaseLevelLeaderBoard: "LovelyDay_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/LovelyDay/LovelyDay.mp3",
-                            jsonPath:"Level_Mp3AndJson/LovelyDay/LovelyDay.json"
-                        },
-                        {
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'BlankSpace'  Taylor Swift", 
-                            fireBaseLevelLeaderBoard: "BlankSpace_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/BlankSpace/BlankSpace.mp3",
-                            jsonPath:"Level_Mp3AndJson/BlankSpace/BlankSpace.json"
-                        },
-                        {
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Rush'  Troye Sivan", 
-                            fireBaseLevelLeaderBoard: "Rush_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/Rush/Rush.mp3",
-                            jsonPath:"Level_Mp3AndJson/Rush/Rush.json"
-                        },
-                        {
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Rush (hard)'  Troye Sivan", 
-                            fireBaseLevelLeaderBoard: "RushHard_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/Rush/Rush.mp3",
-                            jsonPath:"Level_Mp3AndJson/Rush/RushHard.json"
-                        },
-                        
-                        {   
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Pneuma'  Tool", 
-                            fireBaseLevelLeaderBoard: "Pneuma_easy_LeaderBoard", 
-                            duration: ":56",
-                            mp3Path:"Level_Mp3AndJson/Tool/tool_short.mp3", 
-                            jsonPath:"Level_Mp3AndJson/Tool/toolv3.json"
-                        },
-                        {   
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Dance The Night'  Dua Lipa", 
-                            fireBaseLevelLeaderBoard: "DanceTheNight_LeaderBoard", 
-                            duration: "1:05",
-                            mp3Path:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.wav", 
-                            jsonPath:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.json"
-                        },
-                        {   
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'WonderBoy'  Tenacious D", 
-                            fireBaseLevelLeaderBoard: "WonderBoy_LeaderBoard", 
-                            duration: ":57",
-                            mp3Path:"Level_Mp3AndJson/WonderBoy/WonderBoy.mp3", 
-                            jsonPath:"Level_Mp3AndJson/WonderBoy/WonderBoy.json"
-                        },
-                        {   
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Chandelier'  Sia", 
-                            fireBaseLevelLeaderBoard: "Chandelier_LB", 
-                            duration: "1:09",
-                            mp3Path:"Level_Mp3AndJson/Chandelier/Chandelier.wav", 
-                            jsonPath:"Level_Mp3AndJson/Chandelier/Chandelier.json"
-                        },
-                        {   
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Elastic Heart'  Sia", 
-                            fireBaseLevelLeaderBoard: "ElasticHeart_LB", 
-                            duration: "1:24",
-                            mp3Path:"Level_Mp3AndJson/ElasticHeart/ElasticHeart.wav", 
-                            jsonPath:"Level_Mp3AndJson/ElasticHeart/ElasticHeart.json"
-                        },
-                        {   
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Apache'  Sugar Hill Gang", 
-                            fireBaseLevelLeaderBoard: "Apache_LB", 
-                            duration: "1:24",
-                            mp3Path:"Level_Mp3AndJson/Apache/Apache.wav", 
-                            jsonPath:"Level_Mp3AndJson/Apache/Apache.json"
-                        },
-                        {   
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Houdini'  Dua Lipa", 
-                            fireBaseLevelLeaderBoard: "Houdini_LB", 
-                            duration: ":56",
-                            mp3Path:"Level_Mp3AndJson/Houdini/Houdini.mp3", 
-                            jsonPath:"Level_Mp3AndJson/Houdini/Houdini.json"
-                        },
-                        {   
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "'Magical Mystery Tour'  Beatles", 
-                            fireBaseLevelLeaderBoard: "MagicalMysteryTour_LB", 
-                            duration: ":56",
-                            mp3Path:"Level_Mp3AndJson/MagicalMysteryTour/MagicalMysteryTour.mp3", 
-                            jsonPath:"Level_Mp3AndJson/MagicalMysteryTour/MagicalMysteryTour.json"
-                        },
-                
-                        {   
-                            fileName: "Level_BasicTouch", 
-                            levelDisplayName: "3_Note_Test", 
-                            fireBaseLevelLeaderBoard: "Level_3NoteTest_LB", 
-                            duration: ":07",
-                            mp3Path:"Level_Mp3AndJson/LevelRecorder/7secTest.mp3", 
-                            jsonPath:"Level_Mp3AndJson/LevelRecorder/7secTest.json"
-                        },
-                        {   
-                            fileName: "Level_05_Recorder", 
-                            levelDisplayName: "RECORDER", 
-                            fireBaseLevelLeaderBoard: "Houdini_LB", 
-                            duration: "",
-                            mp3Path:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.mp3", 
-                            jsonPath:"Level_Mp3AndJson/LevelRecorder/JustDance7secTest.json"
-                        }
-                     
-                       
-                       
-                        
-
-
-        ];
-        
-        this.totalLevels = this.levelArray.length; // Total number of levels available
+       
+     
+        this.totalLevels = levelArray.getLength(); // Total number of levels available
 
         this.currentSelectedLevelIndex = this.getCurrentLevelIndex();
         this.getCurrentLevelIndex();
-        this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[0]);
+        this.playInfoBoxVisual.updateCurrentLevel(levelArray.getLevel(0));
 
 
         // Call the initial drawing function
@@ -250,8 +96,8 @@ export default class SongSelect_Box
         const scrollbarHeight = this.LEADERBOARD_HEIGHT - 290;
         const scrollbarYOffset = 180;
         const scrollbarY = this.LEADERBOARD_Y + scrollbarYOffset;
-        const thumbHeight = (this.itemsToShow / this.levelArray.length) * scrollbarHeight;
-        const thumbY = scrollbarY + (this.scrollPosition / (this.levelArray.length - this.itemsToShow)) * (scrollbarHeight - thumbHeight);
+        const thumbHeight = (this.itemsToShow / levelArray.getLength()) * scrollbarHeight;
+        const thumbY = scrollbarY + (this.scrollPosition / (levelArray.getLength() - this.itemsToShow)) * (scrollbarHeight - thumbHeight);
     
         // Draw the scrollbar track
         this.ctx.fillStyle = '#333';
@@ -279,8 +125,7 @@ export default class SongSelect_Box
         console.log('Potential new scrollPosition:', potentialNewPosition);
     
         // Constrain within bounds without floor rounding
-       // this.scrollPosition = Math.max(0, Math.min(potentialNewPosition, this.levelArray.length - this.itemsToShow));
-        this.scrollPosition = Math.round(Math.max(0, Math.min(potentialNewPosition, this.levelArray.length - this.itemsToShow)));
+        this.scrollPosition = Math.round(Math.max(0, Math.min(potentialNewPosition, levelArray.getLength() - this.itemsToShow)));
 
         console.log('Updated scrollPosition:', this.scrollPosition);
     
@@ -312,14 +157,14 @@ export default class SongSelect_Box
             if (this.currentSelectedLevelIndex < this.scrollPosition) {
                 this.scrollPosition = this.currentSelectedLevelIndex;
             }
-        } else if (event.key === 'ArrowDown' && this.currentSelectedLevelIndex < this.levelArray.length - 1) {
+        } else if (event.key === 'ArrowDown' && this.currentSelectedLevelIndex < levelArray.getLength() - 1) {
             this.currentSelectedLevelIndex += 1;
             if (this.currentSelectedLevelIndex > maxVisibleIndex) {
                 this.scrollPosition = this.currentSelectedLevelIndex - this.itemsToShow + 1;
             }
         }
         
-        this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[this.currentSelectedLevelIndex]);
+        this.playInfoBoxVisual.updateCurrentLevel(levelArray.getLevel(this.currentSelectedLevelIndex));
         this.dispatchSongSelectedEvent();
         this.draw();
     }
@@ -338,16 +183,15 @@ export default class SongSelect_Box
         const itemHeight = this.SCORE_LINE_HEIGHT; // Height of each item
     
         for (let i = 0; i < this.itemsToShow; i++) {
-            let index = i + this.scrollPosition; // Index in the levelArray, adjusted for scroll position
+            let index = i + this.scrollPosition; 
     
 
                // Debugging logs
         console.log("Clicked item index:", index);
-        console.log("Total levels:", this.levelArray.length);
 
 
-              if (index < this.levelArray.length) {
-            let level = this.levelArray[index];
+            if (index < levelArray.getLength()) {
+            let level = levelArray.getLevel(index);
             if (!level) {
                 console.error("Level is undefined at index:", index);
                 continue; // Skip this iteration if level is undefined
@@ -365,7 +209,7 @@ export default class SongSelect_Box
                 // Check if the click coordinates are within the bounds of the song item
                 if (clickX >= levelLeftX && clickX <= levelRightX && clickY >= levelTopY && clickY <= levelBottomY) {
                     this.setCurrentLevelIndex(index);
-                    this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[index]); // Update the current level based on the clicked song
+                    this.playInfoBoxVisual.updateCurrentLevel(levelArray.getLevel(index)); // Update the current level based on the clicked song
                     this.draw(); // Redraw the component to reflect changes
                     this.dispatchSongSelectedEvent(); // Dispatch an event for the song selection
                     break; // Exit the loop as the click has been handled
@@ -400,7 +244,7 @@ export default class SongSelect_Box
     
             // Calculate the proportional movement of the scrollbar
             // Adjust these calculations as per your specific UI dimensions and behavior
-            const scrollRange = this.levelArray.length - this.itemsToShow;
+            const scrollRange = levelArray.getLength() - this.itemsToShow;
             const thumbHeight = this.calculateThumbHeight();
             const scrollbarRange = this.LEADERBOARD_HEIGHT - thumbHeight;
             const scrollMovement = (deltaY / scrollbarRange) * scrollRange;
@@ -426,11 +270,11 @@ export default class SongSelect_Box
         const scrollbarYOffset = 180; // As defined in drawScrollbar
         const scrollbarY = this.LEADERBOARD_Y + scrollbarYOffset;
         const thumbHeight = this.calculateThumbHeight();
-        return scrollbarY + (this.scrollPosition / (this.levelArray.length - this.itemsToShow)) * (this.LEADERBOARD_HEIGHT - 290 - thumbHeight);
+        return scrollbarY + (this.scrollPosition / (levelArray.getLength() - this.itemsToShow)) * (this.LEADERBOARD_HEIGHT - 290 - thumbHeight);
     }
 
     calculateThumbHeight() {
-        return (this.itemsToShow / this.levelArray.length) * (this.LEADERBOARD_HEIGHT - 290);
+        return (this.itemsToShow / levelArray.getLength()) * (this.LEADERBOARD_HEIGHT - 290);
     }
 
 
@@ -455,7 +299,7 @@ export default class SongSelect_Box
     
     getCurrentSongData()
     {
-        return this.levelArray[currentSelectedLevelIndex];
+        return levelArray.getLevel(currentSelectedLevelIndex);
     }
  
 
@@ -464,7 +308,7 @@ export default class SongSelect_Box
     // This method is added to your class
     dispatchSongSelectedEvent() 
     {
-        const selectedLevel = this.levelArray[this.currentSelectedLevelIndex];
+        const selectedLevel = levelArray.getLevel(this.currentSelectedLevelIndex);
         const event = new CustomEvent('songSelected', { detail: selectedLevel });
         window.dispatchEvent(event);
     }
@@ -489,8 +333,8 @@ export default class SongSelect_Box
     
         // Calculate the subset of levels to display
         const startIndex = this.scrollPosition;
-        const endIndex = Math.min(startIndex + this.itemsToShow, this.levelArray.length);
-        const visibleLevels = this.levelArray.slice(startIndex, endIndex);
+        const endIndex = Math.min(startIndex + this.itemsToShow, levelArray.getLength());
+        const visibleLevels = levelArray.getLevels(startIndex, endIndex);
     
         // Draw the level names, centered
         this.ctx.font = `${this.SCORE_FONT_SIZE}px Arial`; // Set the font for the level names
@@ -503,7 +347,7 @@ export default class SongSelect_Box
         });
     
 
-        this.levelArray.slice(this.scrollPosition, this.scrollPosition + this.itemsToShow).forEach((level, index) => {
+        levelArray.getLevels(this.scrollPosition, this.scrollPosition + this.itemsToShow).forEach((level, index) => {
             const textY = this.LEADERBOARD_Y + this.TEXT_ALIGN_TOP + (index * this.SCORE_LINE_HEIGHT);
             this.ctx.fillStyle = (this.currentSelectedLevelIndex === index + this.scrollPosition) ? 'red' : '#FFF';
             this.ctx.fillText(level.levelDisplayName, this.TEXT_CENTER_X, textY);
@@ -543,7 +387,9 @@ export default class SongSelect_Box
     
             // Optionally, reset internal states or variables
             this.currentSelectedLevelIndex = 0;
-            this.levelArray = [];
+           // this.levelArray = [];
+            levelArray.reset();
+
         }
     
     
