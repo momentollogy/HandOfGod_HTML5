@@ -23,7 +23,11 @@ export default class MediaPipeTracker
                 delegate: "GPU"
             },
             runningMode: "VIDEO",
-            numHands: 2
+            numHands: 2,
+            staticImageMode: false, // Set static image mode to false
+            modelComplexity: 0, // Lower the model complexity
+            minDetectionConfidence: 0.4, // Adjust this value as needed
+            minTrackingConfidence: 0.4 // Adjust this value as needed
         });
     }
 
@@ -31,13 +35,6 @@ export default class MediaPipeTracker
         this.video = _vid;
     }
 
-    /*
-    createLandmarks(){
-        this.createHandLandmarker().then(() => {
-            //console.log("Hand Landmark model loaded!");
-        });
-    }
-*/
 
     createLandmarks() {
         return this.createHandLandmarker(); // Now returns a Promise
