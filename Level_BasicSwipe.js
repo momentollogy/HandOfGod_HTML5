@@ -504,13 +504,18 @@ onKeyUp(event) {
        const testEntryPoint = { x: 100, y: 100 };
 
     
-     //  if (this.showSwipeArrow) {
-      //  this.drawSwipeVisualization(null, this.swipeEntryPoint, this.swipeAngle);
-   // }
+  
 
-    if (this.lastSwipeEntryPoint && this.lastSwipeAngle !== null) {
-        this.drawSwipeVisualization(null, this.lastSwipeEntryPoint, this.lastSwipeAngle);
+       // if (this.lastSwipeEntryPoint && this.lastSwipeAngle !== null) {
+       //     this.drawSwipeVisualization(null, this.lastSwipeEntryPoint, this.lastSwipeAngle);
+      //  }
+
+      for (let sweetSpotCircle of this.SweetSpotCircleArray) {
+        if (sweetSpotCircle.isSwipeActive) {
+            this.drawSwipeVisualization(null, sweetSpotCircle.lastSwipeEntryPoint, sweetSpotCircle.lastSwipeAngle);
+        }
     }
+
 
 
     }
@@ -864,7 +869,6 @@ onKeyUp(event) {
 
 
 
-
     checkLineCircleTouch() {
         for (var sweetSpotCircle of this.SweetSpotCircleArray) {
             let leftTouches = false;
@@ -904,15 +908,16 @@ onKeyUp(event) {
                     swipeArray[1].x, swipeArray[1].y
                 );
     
-                // Update the last swipe details
-                this.lastSwipeEntryPoint = swipeArray[0];
-                this.lastSwipeAngle = swipeAngle;
+                // Store swipe details in the circle
+                sweetSpotCircle.lastSwipeEntryPoint = swipeArray[0];
+                sweetSpotCircle.lastSwipeAngle = swipeAngle;
+                sweetSpotCircle.isSwipeActive = true; // Flag to indicate an active swipe
     
                 console.log(`Swipe Direction: ${leftTouches ? "Left" : "Right"}, Angle: ${swipeAngle}`);
             } else if (!leftTouches && !rightTouches && sweetSpotCircle.swipeLogged) {
                 sweetSpotCircle.puffy = false;
                 sweetSpotCircle.swipeLogged = false;
-                // Do not reset the showSwipeArrow flag here
+                // No need to reset the swipe visibility flag here
             }
         }
     }
