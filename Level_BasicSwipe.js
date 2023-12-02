@@ -766,6 +766,8 @@ onKeyUp(event) {
     /////////// this.rightSwipeArray = [];//////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    /*
+    //if no media pipe was detected during this frame than don't push or shift array. the goal being to only update arrays if media pipe reads values on that frame.
     checkFingerPositionsAndUpdateFingerArrays()
     {
         this.leftSwipeArray.push(this.mediaPipe.getPointOfIndex("Left",8));
@@ -774,98 +776,24 @@ onKeyUp(event) {
         if(this.leftSwipeArray.length > 2){ this.leftSwipeArray.shift() };
         if(this.rightSwipeArray.length > 2){ this.rightSwipeArray.shift() };
     }
+*/
 
-
-
-
-    drawSwipeForEachFingerFromFingerArrayData()
+    checkFingerPositionsAndUpdateFingerArrays()
     {
-        //console.log(this.leftSwipeArray);
-        if(this.leftSwipeArray[0] &&  this.leftSwipeArray[1]){
-            this.ctx.save();
-            this.ctx.strokeStyle = "rgb(0,255,200)";
-            this.ctx.lineWidth = 5;
-            this.ctx.beginPath();
-            this.ctx.moveTo(this.leftSwipeArray[0].x , this.leftSwipeArray[0].y);
-            this.ctx.lineTo(this.leftSwipeArray[1].x , this.leftSwipeArray[1].y);
-            //console.log(this.leftSwipeArray[0])
-            this.ctx.stroke();
-            this.ctx.restore();
+        let leftPoint = this.mediaPipe.getPointOfIndex("Left", 8);
+        let rightPoint = this.mediaPipe.getPointOfIndex("Right", 8);
+
+        // Update arrays only if valid data is present
+        if (leftPoint && leftPoint.x !== undefined && leftPoint.y !== undefined) {
+            this.leftSwipeArray.push(leftPoint);
+            if(this.leftSwipeArray.length > 2) { this.leftSwipeArray.shift(); }
         }
 
-        if(this.rightSwipeArray[0] &&  this.rightSwipeArray[1]){
-            this.ctx.save();
-            this.ctx.strokeStyle = "rgb(255,29,206)";
-            this.ctx.lineWidth = 5;
-            this.ctx.beginPath();
-            this.ctx.moveTo(this.rightSwipeArray[0].x , this.rightSwipeArray[0].y);
-            this.ctx.lineTo(this.rightSwipeArray[1].x , this.rightSwipeArray[1].y);
-            //console.log(this.rightSwipeArray[0])
-            this.ctx.stroke();
-            this.ctx.restore();
+        if (rightPoint && rightPoint.x !== undefined && rightPoint.y !== undefined) {
+            this.rightSwipeArray.push(rightPoint);
+            if(this.rightSwipeArray.length > 2) { this.rightSwipeArray.shift(); }
         }
     }
-
-
-
- 
-    drawSwipeVisualization(testEntryPoint, entryPoint, swipeAngle) 
-    {
-        if (!this.ctx) {
-            console.error('Canvas context (ctx) not found');
-            return;
-        }
-    
-        // Draw test arrow at a fixed position but with a dynamic angle
-        if (testEntryPoint && swipeAngle !== undefined) {
-            this.drawArrow(testEntryPoint, swipeAngle, 'blue'); // Test arrow in blue
-        }
-    
-        // Draw dynamic arrow based on swipe data
-        if (entryPoint && swipeAngle !== undefined) {
-            this.drawArrow(entryPoint, swipeAngle, 'white'); // Actual dynamic arrow in white
-        }
-    }
-    
-
-    drawArrow(startPoint, angle, color) 
-    {
-        const arrowLength = 100; // Length of the arrow
-        const dotRadius = 5; // Radius of the red dot
-        const arrowheadLength = 20; // Length of the arrowhead
-    
-        // Calculate the end point of the arrow based on the angle
-        const endPoint = {
-            x: startPoint.x + arrowLength * Math.cos(angle * Math.PI / 180),
-            y: startPoint.y + arrowLength * Math.sin(angle * Math.PI / 180)
-        };
-    
-        // Draw the red dot
-        this.ctx.beginPath();
-        this.ctx.arc(startPoint.x, startPoint.y, dotRadius, 0, 2 * Math.PI);
-        this.ctx.fillStyle = 'red';
-        this.ctx.fill();
-    
-        // Draw the arrow line
-        this.ctx.beginPath();
-        this.ctx.moveTo(startPoint.x, startPoint.y);
-        this.ctx.lineTo(endPoint.x, endPoint.y);
-        this.ctx.strokeStyle = color;
-        this.ctx.lineWidth = 3; // Adjust the line width as needed
-        this.ctx.stroke();
-    
-        // Draw the arrowhead
-        this.ctx.beginPath();
-        this.ctx.moveTo(endPoint.x, endPoint.y);
-        this.ctx.lineTo(endPoint.x - arrowheadLength * Math.cos((angle - 45) * Math.PI / 180), 
-                       endPoint.y - arrowheadLength * Math.sin((angle - 45) * Math.PI / 180));
-        this.ctx.lineTo(endPoint.x - arrowheadLength * Math.cos((angle + 45) * Math.PI / 180), 
-                       endPoint.y - arrowheadLength * Math.sin((angle + 45) * Math.PI / 180));
-        this.ctx.lineTo(endPoint.x, endPoint.y);
-        this.ctx.fillStyle = color;
-        this.ctx.fill();
-    }
-    
 
 
 
@@ -1016,6 +944,101 @@ onKeyUp(event) {
 
         return angleDegrees;
     }
+
+
+
+
+
+    drawSwipeForEachFingerFromFingerArrayData()
+    {
+        //console.log(this.leftSwipeArray);
+        if(this.leftSwipeArray[0] &&  this.leftSwipeArray[1]){
+            this.ctx.save();
+            this.ctx.strokeStyle = "rgb(0,255,200)";
+            this.ctx.lineWidth = 5;
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.leftSwipeArray[0].x , this.leftSwipeArray[0].y);
+            this.ctx.lineTo(this.leftSwipeArray[1].x , this.leftSwipeArray[1].y);
+            //console.log(this.leftSwipeArray[0])
+            this.ctx.stroke();
+            this.ctx.restore();
+        }
+
+        if(this.rightSwipeArray[0] &&  this.rightSwipeArray[1]){
+            this.ctx.save();
+            this.ctx.strokeStyle = "rgb(255,29,206)";
+            this.ctx.lineWidth = 5;
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.rightSwipeArray[0].x , this.rightSwipeArray[0].y);
+            this.ctx.lineTo(this.rightSwipeArray[1].x , this.rightSwipeArray[1].y);
+            //console.log(this.rightSwipeArray[0])
+            this.ctx.stroke();
+            this.ctx.restore();
+        }
+    }
+
+
+
+ 
+    drawSwipeVisualization(testEntryPoint, entryPoint, swipeAngle) 
+    {
+        if (!this.ctx) {
+            console.error('Canvas context (ctx) not found');
+            return;
+        }
+    
+        // Draw test arrow at a fixed position but with a dynamic angle
+        if (testEntryPoint && swipeAngle !== undefined) {
+            this.drawArrow(testEntryPoint, swipeAngle, 'blue'); // Test arrow in blue
+        }
+    
+        // Draw dynamic arrow based on swipe data
+        if (entryPoint && swipeAngle !== undefined) {
+            this.drawArrow(entryPoint, swipeAngle, 'white'); // Actual dynamic arrow in white
+        }
+    }
+    
+
+    drawArrow(startPoint, angle, color) 
+    {
+        const arrowLength = 100; // Length of the arrow
+        const dotRadius = 5; // Radius of the red dot
+        const arrowheadLength = 20; // Length of the arrowhead
+    
+        // Calculate the end point of the arrow based on the angle
+        const endPoint = {
+            x: startPoint.x + arrowLength * Math.cos(angle * Math.PI / 180),
+            y: startPoint.y + arrowLength * Math.sin(angle * Math.PI / 180)
+        };
+    
+        // Draw the red dot
+        this.ctx.beginPath();
+        this.ctx.arc(startPoint.x, startPoint.y, dotRadius, 0, 2 * Math.PI);
+        this.ctx.fillStyle = 'red';
+        this.ctx.fill();
+    
+        // Draw the arrow line
+        this.ctx.beginPath();
+        this.ctx.moveTo(startPoint.x, startPoint.y);
+        this.ctx.lineTo(endPoint.x, endPoint.y);
+        this.ctx.strokeStyle = color;
+        this.ctx.lineWidth = 3; // Adjust the line width as needed
+        this.ctx.stroke();
+    
+        // Draw the arrowhead
+        this.ctx.beginPath();
+        this.ctx.moveTo(endPoint.x, endPoint.y);
+        this.ctx.lineTo(endPoint.x - arrowheadLength * Math.cos((angle - 45) * Math.PI / 180), 
+                       endPoint.y - arrowheadLength * Math.sin((angle - 45) * Math.PI / 180));
+        this.ctx.lineTo(endPoint.x - arrowheadLength * Math.cos((angle + 45) * Math.PI / 180), 
+                       endPoint.y - arrowheadLength * Math.sin((angle + 45) * Math.PI / 180));
+        this.ctx.lineTo(endPoint.x, endPoint.y);
+        this.ctx.fillStyle = color;
+        this.ctx.fill();
+    }
+    
+
+
 
     
 
