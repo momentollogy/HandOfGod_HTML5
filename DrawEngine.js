@@ -69,38 +69,7 @@ export default class DrawEngine {
         }
     }
 
-    /*
-    toggleLoop()
-    {
-        this.looping = ! this.looping;
-        if(this.looping){this.loop();}
-    }
-
-    toggleTracking()
-    {
-        this.displayTracking = !this.displayTracking
-    }
-
-    toggleVideo()
-    {
-        if( this.video.style.display == "none")
-            this.video.style.display = "block";
-        else
-        this.video.style.display = "none";
-    }
-
     
-    setInfoText(...args){
-        this.ctx.fillStyle = "rgba(0,0,255,.15)";
-        this.ctx.fillRect(10,10,350,this.canvas.height-20);
-        this.ctx.globalAlpha = 1.0;
-        this.ctx.font = "36px Arial";
-        this.ctx.fillStyle = "rgba(0,255,0,1)";
-        for (let i=0 ; i<args.length ; i++){
-            this.ctx.fillText(args[i], 185 , 40 + (i*36));
-        }
-    }
-*/
     loop(timestamp) 
     {
         this.deltaTime = timestamp - this.lastTimestamp;
