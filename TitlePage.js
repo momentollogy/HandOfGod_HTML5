@@ -11,18 +11,17 @@ export default class Level_TitlePage
         this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
 
-    
-            const buttonRadius = 10;
-            this.buttonWidth = 150;
-            this.buttonHeight = 50;
-
-            this.startButtonVisible = true; // Add this line
-
+        // Button dimensions and properties
+        const buttonWidth = 150;
+        const buttonHeight = 50;
+        const buttonRadius = 10;
 
         // Initialize 'Start' button with temporary positions
         this.startButton = new BlueButton(
-            0, 0, // Temporary positions
-            this.buttonWidth, this.buttonHeight,
+            0, // Temporary X position, will be set in updateButtonPositions
+            0, // Temporary Y position, will be set in updateButtonPositions
+            buttonWidth,
+            buttonHeight,
             buttonRadius,
             "#003a46", // Base color
             "#0000CD", // Hover color
@@ -39,25 +38,15 @@ export default class Level_TitlePage
         this.loadBackgroundImage();
     }
 
-
     updateButtonPositions() {
-        // Define the position of the button as a percentage of the canvas size
-        // These should be values between 0 and 100
-        const buttonXPercentage = 50; // Center of the canvas width-wise
-        const buttonYPercentage = 50; // Center of the canvas height-wise
-    
-        // Calculate the actual pixel position based on the canvas size
-        const leftButtonX = (this.canvas.width * buttonXPercentage / 100) - (this.buttonWidth / 2);
-        const buttonY = (this.canvas.height * buttonYPercentage / 100) - (this.buttonHeight / 2);
-    
-        // Set the button's position
+        const scaleFactor = 1;
+        const leftButtonX = this.canvas.width / 2 * scaleFactor;
+        const buttonY = this.canvas.height / 2  * scaleFactor;
+
+        // Update startButton position
         this.startButton.x = leftButtonX;
         this.startButton.y = buttonY;
     }
-    
-    
-    
-    
 
     startButtonAction() {
         // Existing code for start button action
@@ -91,9 +80,9 @@ export default class Level_TitlePage
     level_loop() 
     {   
         this.ctx.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
-        if (this.startButtonVisible) {
-            this.startButton.draw();
-        }
+        this.startButton.draw();
+      //  this.usernameButton.draw();
+
 
         // mediapipe stuff
         let results = this.mediaPipe.results;
@@ -101,10 +90,6 @@ export default class Level_TitlePage
         
     }
 
-
-    showStartButton() {
-        this.startButtonVisible = true;
-    }
 
     dispose() {
       
