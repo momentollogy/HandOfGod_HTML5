@@ -104,16 +104,6 @@ export default class SweetSpotCircle {
     }
 
 
-    /* //old audio for now
-    updateAndDrawBeatCircles()
-    {
-        for( let i = 0 ; i < this.beatCircles_Array.length ; i++)
-        {
-            this.beatCircles_Array[i].update(this.audio.currentTime, this.velocity, this.beatCirclePathDirectionAngle);
-            this.beatCircles_Array[i].draw();
-        }
-    }
-    */
 
     updateAndDrawBeatCircles() {
         let audioCurrentTime = this.level.getCurrentAudioTime(); // Get current time from Level_BasicTouch
@@ -124,30 +114,45 @@ export default class SweetSpotCircle {
         }
     }
     
+
+    /*//weird forcing pause to see beat circles dont like it
+    updateAndDrawBeatCircles() {
+        let audioCurrentTime = this.level.getCurrentAudioTime(); // Get current time from Level_BasicTouch
+    
+        for (let i = 0; i < this.beatCircles_Array.length; i++) {
+            if (this.level.audioManager.isPlaying) {
+                // Update position only if the audio is playing
+                this.beatCircles_Array[i].update(audioCurrentTime, this.velocity, this.beatCirclePathDirectionAngle);
+            }
+            // Always draw the circles
+            this.beatCircles_Array[i].draw();
+        }
+    }
+    */
+
     
 
-
-updateAndDraw() {
-    // Your existing logic
-    if (this.radius > this.baseRadius) {
-        this.radius -= 3;
-    }
-
-    if (!this.recordMode && this.beatCircles_Array.length > 0) {
-        this.updateForPlay();
-        
-        // Only draw beat ranges if the flag is true
-        if (this.showBeatRanges) {
-            this.drawBeatRanges();
+    updateAndDraw() {
+        // Your existing logic
+        if (this.radius > this.baseRadius) {
+            this.radius -= 3;
         }
-    } else {
-        this.updateForRecording();
-    }
 
-    // Your existing drawing and updating methods
-    this.draw();
-    this.updateAndDrawBeatCircles();
-}
+        if (!this.recordMode && this.beatCircles_Array.length > 0) {
+            this.updateForPlay();
+            
+            // Only draw beat ranges if the flag is true
+            if (this.showBeatRanges) {
+                this.drawBeatRanges();
+            }
+        } else {
+            this.updateForRecording();
+        }
+
+        // Your existing drawing and updating methods
+        this.draw();
+        this.updateAndDrawBeatCircles();
+    }
 
 
 

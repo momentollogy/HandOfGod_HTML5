@@ -16,25 +16,15 @@ export default class KeyboardManager {
 
 
          //for levelbasic touch
-            case '5':
-                this.level.togglePlayPause();
-                break;
-              
-            case '6':
-                this.level.resetLevel();
-                break;
-
+        
 
               //for basic sound test
-                case 'p':
-                 this.audioManager.togglePlayPause();
-                 break;
+             case 'p':
+              this.audioManager.togglePlayPause();
+              break;
              case 'r':
-                 this.audioManager.restartAudio();
-                 break;
-
-
-                
+                 this.level.resetLevel();// this.audioManager.restartAudio();
+                 break;    
             case 'b':
                 this.level.toggleBeatRanges();
                 break;

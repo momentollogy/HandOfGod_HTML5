@@ -7,6 +7,8 @@ export default class AudioManager
         this.soundSource = null;
         this.audioBuffer = null;
         this.onAudioEnd = null; // Callback for when audio ends
+        this.isResettingForGame = false; // Flag to indicate intentional reset
+
     }
 
 
@@ -20,22 +22,31 @@ export default class AudioManager
 
 
 
-    togglePlayPause() 
-    {
+    togglePlayPause() {
         if (this.isPlaying) {
-            this.audioContext.suspend();
-            this.isPlaying = false;
+            // Suspend the audio context to pause
+            this.audioContext.suspend().then(() => {
+                this.isPlaying = false;
+            });
         } else {
-            if (!this.soundSource) {
-                this.startAudio();
-            } else {
-                this.audioContext.resume();
-            }
-            this.isPlaying = true;
+            // Resume the audio context to play
+            this.audioContext.resume().then(() => {
+                this.isPlaying = true;
+                if (!this.soundSource) {
+                    // If the sound source isn't there, start the audio
+                    this.startAudio();
+                }
+            });
         }
     }
 
-
+    pauseAudio() {
+        if (this.isPlaying) {
+            this.audioContext.suspend().then(() => {
+                this.isPlaying = false;
+            });
+        }
+    }
 
     startAudio() {
         if (!this.audioBuffer) return;
@@ -50,21 +61,35 @@ export default class AudioManager
         this.isPlaying = true;
     
         this.soundSource.onended = () => {
-            this.isPlaying = false;
-            if (this.onAudioEnd) this.onAudioEnd();
+            if (!this.isResettingForGame) {
+                this.isPlaying = false;
+                if (this.onAudioEnd) this.onAudioEnd();
+            }
         };
     }
     
 
 
 
-    restartAudio() {
+    restartAudioFromBeginning() {
+        // Store the current playing state
+        const wasPlaying = this.isPlaying;
+
+        // Disconnect the current sound source
         if (this.soundSource) {
-            this.soundSource.stop();
-            this.startAudio();
+            this.soundSource.disconnect();
+        }
+
+        // Restart the audio from the beginning
+        this.startAudio();
+
+        // If the audio was paused, suspend the audio context
+        if (!wasPlaying) {
+            this.audioContext.suspend().then(() => {
+                this.isPlaying = false;
+            });
         }
     }
-
 
 
     setAudioEndCallback(callback) 
@@ -107,6 +132,20 @@ export default class AudioManager
     // Method to get current volume
     getVolume() {
         return this.gainNode ? this.gainNode.gain.value : 1; // Default to max volume if not set
+    }
+
+
+    dispose() {
+        if (this.soundSource) {
+            this.soundSource.disconnect();
+            this.soundSource = null;
+        }
+        if (this.audioContext) {
+            this.audioContext.close(); // Close the audio context
+            this.audioContext = null;
+        }
+        this.audioBuffer = null;
+        this.onAudioEnd = null;
     }
 
 }
