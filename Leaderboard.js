@@ -10,47 +10,7 @@ const leaderboardCache = {
   playerTopScores: {}
 };
 
-/*
-export async function addScore(name, score, levelArrayDataObject) {
-  try {
-    // Add the score to the database.
-    const docRef = await addDoc(collection(db, levelArrayDataObject.fireBaseLevelLeaderBoard), {
-      name: name,
-      score: score,
-      timestamp: new Date()
-    });
 
-    // After adding the score, calculate the rank.
-    const scoresQuery = query(collection(db, levelArrayDataObject.fireBaseLevelLeaderBoard), orderBy("score", "desc"));
-    const scoresSnapshot = await getDocs(scoresQuery);
-    
-    // Initialize rank at 1.
-    let rank = 1;
-    for (const doc of scoresSnapshot.docs) {
-      if (doc.id === docRef.id) {
-        // This is the rank of the newly added score.
-        break;
-      }
-      rank++; // Increment rank until the new score is found.
-    }
-
-    
- // Cache update after adding a new score
- leaderboardCache.topScores[levelArrayDataObject.fireBaseLevelLeaderBoard] = await getCachedTopScores(levelArrayDataObject.fireBaseLevelLeaderBoard, 10);
-
- leaderboardCache.latestScores[levelArrayDataObject.fireBaseLevelLeaderBoard] = await getCachedLatestScore(levelArrayDataObject.fireBaseLevelLeaderBoard);
-
- leaderboardCache.playerTopScores[levelArrayDataObject.fireBaseLevelLeaderBoard] = await getCachedPlayerTopScores(levelArrayDataObject.fireBaseLevelLeaderBoard);
-
-    // Return the document reference ID and the rank.
-    return { id: docRef.id, rank: rank };
-  } catch (e) {
-    console.error("Error adding score: ", e);
-    throw e; // Re-throw the error to handle it in the calling function.
-  }
-
-}
-*/
 
 //RANK NOT DEFINED - fix first
 export async function addScore(name, score, levelArrayDataObject) {
@@ -118,12 +78,10 @@ export async function getTopScores(leaderboardId,limitCount = 10) {
 // CACHE TOP SCORES 
 export async function getCachedTopScores(leaderboardId, limitCount = 10) {
   if (leaderboardCache.topScores[leaderboardId]) {
-    console.log("Cache used for topScores");
 
     return leaderboardCache.topScores[leaderboardId];
   }
 
-  console.log("Firebase called for topScores");
 
   const scores = await getTopScores(leaderboardId, limitCount);
   leaderboardCache.topScores[leaderboardId] = scores;
@@ -181,12 +139,10 @@ export async function getLatestScore(leaderboardId) {
 // CACHE LATESTSCORES 
 export async function getCachedLatestScore(leaderboardId) {
   if (leaderboardCache.latestScores[leaderboardId]) {
-    console.log("Cache used for latestScores");
 
     return leaderboardCache.latestScores[leaderboardId];
   }
 
-  console.log("Firebase called for latestScores");
 
   const latestScore = await getLatestScore(leaderboardId);
   leaderboardCache.latestScores[leaderboardId] = latestScore;

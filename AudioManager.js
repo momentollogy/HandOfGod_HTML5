@@ -37,21 +37,24 @@ export default class AudioManager
 
 
 
-    startAudio() 
-    {
+    startAudio() {
         if (!this.audioBuffer) return;
-
+    
+        // When the audio starts, capture the current time of the audio context
+        this.startTime = this.audioContext.currentTime;
+    
         this.soundSource = this.audioContext.createBufferSource();
         this.soundSource.buffer = this.audioBuffer;
         this.soundSource.connect(this.audioContext.destination);
-        this.soundSource.start(0);
+        this.soundSource.start(0); // Start at the beginning of the buffer
         this.isPlaying = true;
-
+    
         this.soundSource.onended = () => {
             this.isPlaying = false;
             if (this.onAudioEnd) this.onAudioEnd();
         };
     }
+    
 
 
 
@@ -90,7 +93,7 @@ export default class AudioManager
     }
 
 
-    
+
     // Method to set volume
     setVolume(volumeLevel) {
         // Ensure volume is between 0.0 and 1.0
