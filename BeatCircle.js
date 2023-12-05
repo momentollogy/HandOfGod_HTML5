@@ -1,9 +1,7 @@
-import AudioManager from './AudioManager.js'; // Update the
 
 export default class BeatCircle 
 {
-    constructor(audioManager, _circleData, ss_pos) {
-        this.audioManager = audioManager;
+    constructor(_circleData, ss_pos) {
         this.canvas = document.getElementById("output_canvas");;
         this.ctx = this.canvas.getContext("2d");
         this.beatTime = _circleData.time;
