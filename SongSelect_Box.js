@@ -74,6 +74,14 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/LovelyDay/LovelyDay.json"
                         },
                         {
+                            fileName: "Level_BasicSoundTest", 
+                            levelDisplayName: "'SOUND TEST", 
+                            fireBaseLevelLeaderBoard: "LovelyDay_LB",
+                            duration: "1:07",
+                            mp3Path:"Level_Mp3AndJson/LovelyDay/LovelyDay.mp3",
+                            jsonPath:"Level_Mp3AndJson/LovelyDay/LovelyDay.json"
+                        },
+                        {
                             fileName: "Level_BasicTouch", 
                             levelDisplayName: "'Just Dance'  Lady Gaga", 
                             fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",

@@ -7,9 +7,11 @@ import { addScore } from './Leaderboard.js';
 import BlueButton from './BlueButton.js';
 import BoxUI from './BoxUI.js'; // Ensure BoxUI.js is in the same directory
 import { OverlayText, MissesOverlay } from './OverlayText.js';
-
+import BeatCircle from './BeatCircle.js';
 import { UIUtilities } from './UIUtilities.js';
 import { GameStats } from './GameStats.js'; 
+import AudioManager from './AudioManager.js';
+
 
 
 
@@ -17,15 +19,27 @@ export default class Level_BasicTouch
 {
     constructor(_levelArrayDataObject, audio) 
     {
+
         // Initialize MediaPipe and drawing utilities
         this.mediaPipe = MediaPipeTracker.getInstance();
         this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
         this.drawEngine = DrawEngine.getInstance();
+
+        this.audioManager = new AudioManager();
+
     
-        // Audio setup
+        // OLD Audio setup
         this.audio = new Audio();
         this.audio.volume = 0.3; // Set initial volume
+
+        this.hitSound0 = new Audio('sound2/hit_one.mp3');
+        this.hitSound1 = new Audio('sound2/hit_two.mp3');
+
+
+
+    
+
     
         // JSON management for level data
         this.jsonManager = new JsonManager(); 
@@ -51,7 +65,6 @@ export default class Level_BasicTouch
 
             this.handleBeatTimeDataReady = (event) => {
                 this.totalNotes = this.jsonManager.leftCircleData.length + this.jsonManager.rightCircleData.length;
-                console.log("Total notes calculated:", this.totalNotes);
             };
 
             // Set up the event listener
@@ -127,15 +140,14 @@ export default class Level_BasicTouch
          this.boxVisible = false;
     }
     
-
-
+   
 
     // Sweet spot circles setup
     setupSweetSpotCircles() 
     {
         // Initialize two sweet spot circles with specific attributes
-        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audio, 'rgb(0, 255, 0)', { x: this.canvas.width /2 -135, y: this.canvas.height/2+100 });
-        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audio, 'rgb(0, 255, 200)', { x: this.canvas.width /2 +135, y: this.canvas.height/2+100 });
+        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this.audioManager, 'rgb(0, 255, 0)', { x: this.canvas.width /2 -135, y: this.canvas.height/2+100 });
+        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this.audioManager, 'rgb(0, 255, 200)', { x: this.canvas.width /2 +135, y: this.canvas.height/2+100 });
         // Setting additional properties
         this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -90;
         this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -90;
@@ -172,7 +184,6 @@ export default class Level_BasicTouch
     
         // 'Level Select' button
         this.levelSelectButton = new BlueButton(leftButtonX, buttonY, buttonWidth, buttonHeight, buttonRadius, "#00008B", "#0000CD", "Level Select", "rgba(0, 0, 0, 0.5)", { levelName: "Level_StageSelect", leaderBoardState: "latestScores"}, actionData => {
-            console.log("Level select button clicked. Current buffer:", this.stats.buffer);
             document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
         });
     
@@ -263,7 +274,7 @@ export default class Level_BasicTouch
         });
 
 
-                // Event listener for decreasing the maxBufferLimit with the '1' key
+                // ADJUST MISSES/// Event listener for decreasing the maxBufferLimit with the '1' key
         document.addEventListener('keydown', (event) => {
             if (event.key === '1') {
                 this.stats.maxBufferLimit = Math.max(1, this.stats.maxBufferLimit - 1); // Decrease limit but keep it at least 1
@@ -276,6 +287,13 @@ export default class Level_BasicTouch
                 this.stats.maxBufferLimit += 1; // Increase limit
             }
         });
+
+                // Event listener for setting the maxBufferLimit to 999 with the '3' key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === '3') {
+                this.stats.maxBufferLimit = 999; // Set limit to 999
+            }
+});
 
 
         //this.spacePressed = false;
@@ -332,7 +350,7 @@ export default class Level_BasicTouch
             sweetspotcircle.reset();
         }
     
-        this.draw(); // Assuming you have a method to redraw the game state
+        //this.draw(); // Assuming you have a method to redraw the game state
     }
 
 
@@ -344,7 +362,7 @@ export default class Level_BasicTouch
         {await this.audio.play();} 
          catch (err) 
         {console.error("Error starting audio playback:", err);}
-    }
+ }
 
 
 //////////////////
@@ -475,7 +493,6 @@ onKeyUp(event) {
         this.levelSelectButton.draw();
 
         //Draw Score from GameStat.js
-       // UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.buffer);
         UIUtilities.drawScore(this.ctx, this.stats.score, this.stats.combo, this.stats.buffer, this.stats.maxBufferLimit);
 
 
@@ -489,10 +506,13 @@ onKeyUp(event) {
 
         this.drawShortcutsBox();
 
+            //sounds when beat hits.
+        this.updateForPlay();
+
 
 
         //Draw volume slider
-        this.volumeSlider.drawVolumeSlider();
+       // this.volumeSlider.drawVolumeSlider();
 
 
     }
@@ -526,7 +546,6 @@ onKeyUp(event) {
         for (let sweetspotcircle of this.SweetSpotCircleArray) {
             // Check if 'A' or 'S' key is pressed
             if (this.A_Pressed || this.S_Pressed) {
-                console.log("Key pressed in Check method");
                 sweetspotcircle.puffy = true;
                 let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
                 if (percentAccuracyIfTouched) {
@@ -544,7 +563,6 @@ onKeyUp(event) {
         let sweetspotcircle = this.SweetSpotCircleArray[0];
         if (this.A_pressed)
         {
-            console.log("A pressed in Check method");
             sweetspotcircle.puffy = true;  
             let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
             if(percentAccuracyIfTouched){
@@ -559,7 +577,6 @@ onKeyUp(event) {
         sweetspotcircle = this.SweetSpotCircleArray[1];
         if (this.S_pressed)
         {
-            console.log("S pressed in Check method");
             sweetspotcircle.puffy = true;  
             let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
             if(percentAccuracyIfTouched){
@@ -586,6 +603,17 @@ onKeyUp(event) {
     {
         let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
         this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
+
+        /*
+        // Player hears HIT sounds When they successfully touch circle in beat range. Sounds aweful when live.
+        if (this.SweetSpotCircleArray.indexOf(sweetspotcircle) === 0) {
+           // this.hitSound0.play();
+            this.playSound(this.hitSound0Buffer);
+        } else if (this.SweetSpotCircleArray.indexOf(sweetspotcircle) === 1) {
+            this.playSound(this.hitSound1Buffer);
+            this.hitSound1.play();
+        }
+        */
     
         // Increase the combo number and update the score
         this.stats.increaseCombo(); 
@@ -597,11 +625,34 @@ onKeyUp(event) {
     }
     
 
+    updateForPlay() {
+        this.SweetSpotCircleArray.forEach((circle, index) => {
+            // Update each circle
+            circle.updateForPlay();
+
+            // Log current state for debugging
+            console.log(`Circle index ${index}: isOnBeat: ${circle.isCurrentTimeOnBeat()}, beatPassed: ${circle.beatPassed}, Current time: ${circle.audio.currentTime * 1000}, Target beat time: ${circle.beatCircles_Array[circle.beatIndex].beatTime}`);
+
+            // Check if the circle is on the beat and the beat has just passed
+            if (circle.isCurrentTimeOnBeat() && circle.beatPassed) {
+                if (index === 0) {
+                    this.playSound(this.hitSound1Buffer);
+                } else if (index === 1) {
+                    this.playSound(this.hitSound0Buffer);
+                }
+            }
+
+            // No need to manually reset beatPassed here as it's handled within SweetSpotCircle
+        });
+    }
+
+
+    
+
     ////////////// NEW Beat Missed. Total Beats Tallied ////////////////////
     beatMissed(sweetspotcircle) 
     {
         this.stats.addMiss();
-        console.log("Miss Added from beatMissed. Buffer remaining: ", this.stats.buffer);
        
         //TRIGGER MISS ANIMATION
         const centerX = this.canvas.width / 2;
@@ -614,7 +665,6 @@ onKeyUp(event) {
     
         // Check if the buffer is depleted
         if (this.stats.buffer === 0) {
-            console.log("Buffer depleted. You lose.");
     
             if (!this.audio.paused)
             {
@@ -637,10 +687,10 @@ onKeyUp(event) {
       
 
     audioEnded() {
-        console.log('Level Complete');
-        console.log('Score is:', this.stats.score);
-        console.log('Player Name:', window.playerName);
-        console.log('Level Array Data Object:', this.levelArrayDataObject);
+      //  console.log('Level Complete');
+       // console.log('Score is:', this.stats.score);
+       // console.log('Player Name:', window.playerName);
+       // console.log('Level Array Data Object:', this.levelArrayDataObject);
         
         // Define the levelResultsData object with the available data
         const levelResultsData = {
@@ -656,7 +706,6 @@ onKeyUp(event) {
     
         // Add the score and get the rank
         addScore(window.playerName, this.stats.score, this.levelArrayDataObject).then(({ id, rank }) => {
-           // console.log("Received rank in audioEnded: ", rank);
 
 
             // Now that we have the rank, update levelResultsData with it

@@ -2,9 +2,9 @@ import BeatCircle from './BeatCircle.js';
 import DrawEngine from './DrawEngine.js';
 
 export default class SweetSpotCircle {
-    constructor(_audio, color='rgb(0,0,255)', position = {x:1000,y:200}, radius = 80, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
+    constructor(audioManager, color='rgb(0,0,255)', position = {x:1000,y:200}, radius = 80, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
      {
-        this.audio = _audio;
+        this.audioManager = audioManager;
         this.canvas = document.getElementById("output_canvas");
         this.ctx = this.canvas.getContext("2d");
         this.drawEngine=DrawEngine.getInstance();
@@ -56,10 +56,9 @@ export default class SweetSpotCircle {
         circleData.sort((a, b) => a.time - b.time);
 
         this.beatCircles_Array = [];
-        for (let i=0 ; i< circleData.length ; i++)
-        {
-            this.beatCircles_Array.push(new BeatCircle(circleData[i],  this.position) )
-        }        
+        for (let i = 0; i < circleData.length; i++) {
+            this.beatCircles_Array.push(new BeatCircle(circleData[i], this.position));
+        }    
     }
 
     setRecordMode(recordMode){
@@ -96,14 +95,12 @@ export default class SweetSpotCircle {
     }
 
     recordMoment(vector){
-        this.recordedMomentsArr.push( {time:Math.round(this.audio.currentTime*1000), dir:vector }); 
+        this.recordedMomentsArr.push( {time:Math.round(this.audioManager.getCurrentTime*1000), dir:vector }); 
     }
 
-    updateAndDrawBeatCircles()
-    {
-        for( let i = 0 ; i < this.beatCircles_Array.length ; i++)
-        {
-            this.beatCircles_Array[i].update(this.audio.currentTime, this.velocity, this.beatCirclePathDirectionAngle);
+    updateAndDrawBeatCircles() {
+        for (let i = 0; i < this.beatCircles_Array.length; i++) {
+            this.beatCircles_Array[i].update(this.velocity, this.beatCirclePathDirectionAngle);
             this.beatCircles_Array[i].draw();
         }
     }
@@ -179,7 +176,8 @@ updateAndDraw() {
         
     }
 
-    updateForPlay(){        
+    updateForPlay()
+    {        
         // pulse on the beats
         if(this.isCurrentTimeOnBeat() && !this.beatPassed){
             if(this.pulseOnBeats){this.pulse();}
@@ -188,6 +186,8 @@ updateAndDraw() {
 
         // advance to the next beatRange
         if(this.isCurrentTimeOnBeatRangeEnd()){
+            console.log("SSC Current time is on beat for circle:", this);
+
             if(this.beatIndex < this.beatCircles_Array.length -1 ){
                 this.beatIndex++;
                 this.beatPassed = false;
@@ -210,12 +210,15 @@ updateAndDraw() {
         }
     }
 
+
+
+
     // this is where touches from the level are received during play mode
     touch(){
         let percentAccuracy = null;
         if(this.touchable){
             if(!this.touched){
-                let touchTimeDiff = Math.abs(this.beatCircles_Array[this.beatIndex].beatTime - this.audio.currentTime*1000 )
+                let touchTimeDiff = Math.abs(this.beatCircles_Array[this.beatIndex].beatTime - this.audioManager.getCurrentTime*1000 )
                 percentAccuracy = (100 - Math.round(touchTimeDiff/this.beatBufferTime*100));
             }
             this.touched=true;
@@ -251,16 +254,19 @@ updateAndDraw() {
         this.ctx.restore();
     }
 
-    isCurrentTimeOnBeat(){
-        return (this.audio.currentTime * 1000) >= this.beatCircles_Array[this.beatIndex].beatTime;
+    isCurrentTimeOnBeat() {
+        if (this.beatCircles_Array.length > 0 && this.beatCircles_Array[this.beatIndex]) {
+            return (this.audioManager.getCurrentTime() * 1000) >= this.beatCircles_Array[this.beatIndex].beatTime;
+        }
+        return false;
     }
     
     isCurrentTimeOnBeatRangeStart(){
-        return this.audio.currentTime*1000 >= this.findBeatRangeStartForCurrentBeatRange();
+        return this.audioManager.getCurrentTime*1000 >= this.findBeatRangeStartForCurrentBeatRange();
     }
 
     isCurrentTimeOnBeatRangeEnd(){
-        return this.audio.currentTime*1000 >= this.findBeatRangeEndForCurrentBeatRange();
+        return this.audioManager.getCurrentTime*1000 >= this.findBeatRangeEndForCurrentBeatRange();
     }
 
     findBeatRangeEndForCurrentBeatRange(){
@@ -291,32 +297,11 @@ updateAndDraw() {
     }
 
 
-    /*
-    drawBeatRanges(){
-        let radians = (this.beatCirclePathDirectionAngle * Math.PI) / 180;
-        let lineStart = (this.velocity/1000) * (this.findBeatRangeStartForCurrentBeatRange() - this.audio.currentTime * 1000);
-        let lineEnd   = (this.velocity/1000) * (this.findBeatRangeEndForCurrentBeatRange()   - this.audio.currentTime * 1000);
-
-        const lineStartpointX = this.position.x + lineStart * Math.cos(radians);
-        const lineStartpointY = this.position.y + lineStart * Math.sin(radians);
-        const lineEndpointX = this.position.x + lineEnd * Math.cos(radians);
-        const lineEndpointY = this.position.y + lineEnd * Math.sin(radians);
-
-        this.ctx.save();
-        this.ctx.beginPath();
-        this.ctx.moveTo(lineStartpointX, lineStartpointY);
-        this.ctx.lineTo(lineEndpointX, lineEndpointY);
-        this.ctx.strokeStyle = 'RGBA(0,0,255,.33)'; // Set the line color
-        this.ctx.lineWidth = 70; // Set the line width
-        this.ctx.stroke();
-        this.ctx.restore();
-    }
-*/
-
+    
 drawBeatRanges() {
     let radians = (this.beatCirclePathDirectionAngle * Math.PI) / 180;
-    let lineStart = (this.velocity/1000) * (this.findBeatRangeStartForCurrentBeatRange() - this.audio.currentTime * 1000);
-    let lineEnd   = (this.velocity/1000) * (this.findBeatRangeEndForCurrentBeatRange()   - this.audio.currentTime * 1000);
+    let lineStart = (this.velocity/1000) * (this.findBeatRangeStartForCurrentBeatRange() - this.audioManager.getCurrentTime * 1000);
+    let lineEnd   = (this.velocity/1000) * (this.findBeatRangeEndForCurrentBeatRange()   - this.audioManager.getCurrentTime * 1000);
 
     const lineStartpointX = this.position.x + lineStart * Math.cos(radians);
     const lineStartpointY = this.position.y + lineStart * Math.sin(radians);

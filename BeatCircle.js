@@ -1,7 +1,9 @@
+import AudioManager from './AudioManager.js'; // Update the
 
 export default class BeatCircle 
 {
-    constructor(_circleData, ss_pos) {
+    constructor(audioManager, _circleData, ss_pos) {
+        this.audioManager = audioManager;
         this.canvas = document.getElementById("output_canvas");;
         this.ctx = this.canvas.getContext("2d");
         this.beatTime = _circleData.time;
@@ -19,8 +21,33 @@ export default class BeatCircle
         this.angle = -90;
         this.distanceToSweetSpot = 0;
         this.fadeOut = true
+        this.audioManager = AudioManager;
+
     }
 
+    update(velocity, _angle) {
+        this.angle = _angle;
+
+       // let audioCurrentTime = AudioManager.getCurrentTime(); // Use AudioManager's method
+        let audioCurrentTime = this.audioManager.getCurrentTime();
+        
+
+
+        this.distanceToSweetSpot = (velocity / 1000) * (this.beatTime - audioCurrentTime * 1000);
+        let radian = (this.angle * Math.PI) / 180;
+
+        this.y = this.sweetSpotPos.y + this.distanceToSweetSpot * Math.sin(radian);
+        this.x = this.sweetSpotPos.x + this.distanceToSweetSpot * Math.cos(radian);
+
+        if (this.fadeOut) {
+            this.checkForRemoval();
+        } else {
+            this.alpha = 1;
+            this.color = this.preBeatColor;
+        }
+    }
+
+    /*OLD audio API method
         // time * velocity = distance
     update(audioCurrentTime, velocity, _angle){
         this.angle = _angle;
@@ -37,6 +64,7 @@ export default class BeatCircle
             this.alpha = 1;this.color = this.preBeatColor;
         }
     }
+    */
 
     draw(){
         this.ctx.save();

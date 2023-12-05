@@ -7,7 +7,6 @@ export class GameStats
         // Initialize other properties
         this.score = 0;
         this.combo = 0;
-        console.log("GameStats initialized. Buffer limit:", this.maxBufferLimit, "Current buffer:", this.buffer);
 
         this.comboMultiplier = 1;
     }
@@ -27,7 +26,6 @@ export class GameStats
         if (this.buffer > 0) {
             this.buffer--;
         }
-        console.log("addMiss called. Current buffer:", this.buffer);
 
     }
 
@@ -66,7 +64,6 @@ export class GameStats
 
     dispose() 
     {
-        console.log("disposing GameStats...")
         this.reset();
     }
 
