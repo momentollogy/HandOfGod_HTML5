@@ -50,7 +50,7 @@ export default class SweetSpotCircle {
         {
             returnArray.push({time:this.beatCircles_Array[i].beatTime,  dir:this.beatCircles_Array[i].direction});
         } 
-        console.log(returnArray);
+      //  console.log(returnArray);
         return returnArray;
     }
 
@@ -268,9 +268,9 @@ updateAndDraw() {
         this.ctx.restore();
     }
     isCurrentTimeOnBeat(){
-        console.log('isCurrentTimeOnBeat called');
+      //  console.log('isCurrentTimeOnBeat called');
         let currentTime = this.level.getCurrentAudioTime() * 1000;
-        console.log('Current Time:', currentTime);
+      //  console.log('Current Time:', currentTime);
         return currentTime >= this.beatCircles_Array[this.beatIndex].beatTime;
     }
     

@@ -16,11 +16,11 @@ export default class KeyboardManager {
 
 
          //for levelbasic touch
-            case 'p':
+            case '5':
                 this.level.togglePlayPause();
                 break;
               
-            case 'r':
+            case '6':
                 this.level.resetLevel();
                 break;
 

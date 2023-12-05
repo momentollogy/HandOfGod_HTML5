@@ -2,7 +2,7 @@
 export default class BeatCircle 
 {
     constructor(level,circleData, ss_pos) {
-        console.log('BeatCircle constructor called', level);
+      //  console.log('BeatCircle constructor called', level);
         this.level = level;
         this.canvas = document.getElementById("output_canvas");;
         this.ctx = this.canvas.getContext("2d");
@@ -30,7 +30,7 @@ export default class BeatCircle
 
 //new api update.
 update(audioCurrentTime, velocity, _angle) {
-    console.log('BeatCircle update called');
+   // console.log('BeatCircle update called');
 
     this.angle = _angle;
 
@@ -122,7 +122,7 @@ update(audioCurrentTime, velocity, _angle) {
 
     dispose() 
     {
-        console.log("Disposing BeatCircle...")
+      //  console.log("Disposing BeatCircle...")
         // Clear any ongoing animations or timeouts if present
         // ...
 

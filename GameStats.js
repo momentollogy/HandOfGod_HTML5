@@ -1,6 +1,6 @@
 export class GameStats
 {
-    constructor(bufferLimit = 5) { // Set the maximum buffer limit aka how many misses player can have here 
+    constructor(bufferLimit = 999) { // Set the maximum buffer limit aka how many misses player can have here 
         this.maxBufferLimit = bufferLimit;
         this.buffer = this.maxBufferLimit; 
 

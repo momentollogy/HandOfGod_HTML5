@@ -26,6 +26,11 @@ export default class Level_BasicTouch
         this.ctx = this.canvas.getContext("2d");
         this.drawEngine = DrawEngine.getInstance();
 
+            // JSON management for level data
+            this.jsonManager = new JsonManager(); 
+            this.mp3Path = _levelArrayDataObject.mp3Path;
+            this.jsonPath = _levelArrayDataObject.jsonPath;
+    
 
     
         // OLD Audio setup
@@ -39,40 +44,31 @@ export default class Level_BasicTouch
 
 
 
-
-
-
-
-
-
-
-
-        // Initialize the AudioManager
-        this.audioManager = new AudioManager();
-
-        // Load the sound using AudioManager and handle it accordingly
-        this.audioManager.loadSound(_levelArrayDataObject.mp3Path)
-            .then(() => {
-                // Optionally start playing audio here or wait for user interaction
-                this.audioManager.startAudio();
-            })
-            .catch(error => console.error("Error in audio playback:", error));
-
-
-
-
-
-
-
-
-
     
-        // JSON management for level data
-        this.jsonManager = new JsonManager(); 
-        this.mp3Path = _levelArrayDataObject.mp3Path;
-        this.jsonPath = _levelArrayDataObject.jsonPath;
 
-        this.keyboardManager = new KeyboardManager(this);
+
+              // Initialize AudioManager
+              this.audioManager = new AudioManager();
+              this.audioManager.loadSound(_levelArrayDataObject.mp3Path)
+                  .then(() => {
+                      // Optionally start playing audio here or wait for user interaction
+                      this.audioManager.startAudio();
+                  })
+                  .catch(error => console.error("Error in audio playback:", error));
+          
+      
+      
+              //keeping track of audio ended. 
+              this.audioManager.setAudioEndCallback(this.audioEnded.bind(this));
+
+
+
+
+
+        //this.keyboardManager = new KeyboardManager(this);
+        this.keyboardManager = new KeyboardManager(this, this.audioManager);
+
+      
 
         // Keyboard event listeners for adjusting SweetSpotCircles
         this.movementStep = 20; // Adjust this value for normal movement speed
@@ -82,7 +78,7 @@ export default class Level_BasicTouch
         this.handleBeatTimeDataReady = (event) => 
         {
         this.totalNotes = this.jsonManager.leftCircleData.length + this.jsonManager.rightCircleData.length;
-        console.log("Total notes calculated:", this.totalNotes);
+       // console.log("Total notes calculated:", this.totalNotes);
         };
 
         // Set up the event listener
@@ -169,28 +165,40 @@ export default class Level_BasicTouch
          this.boxVisible = false;
 
 
-         console.log('AudioManager instantiated', this.audioManager);
+        // console.log('AudioManager instantiated', this.audioManager);
 
     }
     
 
 
-//NEW AUDIO API TRY
+//////////NEW AUDIO API TRY///////
     getCurrentAudioTime() {
-        console.log('getCurrentAudioTime called');
 
         // Check if new audio system is being used
         if (this.audioManager) {
-            console.log('Using new audio system');
+         //   console.log('Using new audio system');
 
             return this.audioManager.getCurrentTime();
 
         }
-        console.log('Using old audio system');
+      //  console.log('Using old audio system');
 
         // Fallback to the old system if new one isn't ready
         return this.audio.currentTime;
     }
+
+    togglePlayPause() {
+        console.log('togglePlayPause called - new system');
+
+        this.audioManager.togglePlayPause();
+    }
+
+    resetLevel() {
+        console.log('restartAudio called - new system');
+
+        this.audioManager.restartAudio();
+    }
+
 
 
 
@@ -228,7 +236,7 @@ export default class Level_BasicTouch
     
         // 'Level Select' button
         this.levelSelectButton = new BlueButton(leftButtonX, buttonY, buttonWidth, buttonHeight, buttonRadius, "#00008B", "#0000CD", "Level Select", "rgba(0, 0, 0, 0.5)", { levelName: "Level_StageSelect", leaderBoardState: "latestScores"}, actionData => {
-            console.log("Level select button clicked. Current buffer:", this.stats.buffer);
+         //   console.log("Level select button clicked. Current buffer:", this.stats.buffer);
             document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
         });
     
@@ -239,19 +247,29 @@ export default class Level_BasicTouch
     }
 
 
-    //Methods for KEYBOARD SHORTCUTS. see KeyboardManager.js
+    //Methods for Level based KEYBOARD SHORTCUTS with old this.audio. see KeyboardManager.js
     toggleBoxVisibility() {
         // Toggle the visibility of the box
         this.boxVisible = !this.boxVisible;
     }
 
+
+    
     togglePlayPause() {
+        console.log('togglePlayPause called - old system');
+
         if (this.audio.paused) {
+            console.log('Unpause Playing audio - old system');
+
             this.audio.play();
         } else {
+            console.log('Pausing audio - old system');
+
             this.audio.pause();
         }
     }
+    
+
 
     adjustBeatBufferTime(amount) {
         this.SweetSpotCircleArray.forEach(circle => {
@@ -335,6 +353,8 @@ export default class Level_BasicTouch
 
     resetLevel() 
     {
+        console.log('resetLevel called - old system');
+
         // Reset audio
         this.audio.pause();
         this.audio.currentTime = 0;
@@ -374,7 +394,7 @@ export default class Level_BasicTouch
     {
 
         if (!this.ctx) {
-            console.log("Canvas context is null, stopping level loop.");
+           // console.log("Canvas context is null, stopping level loop.");
             return;
         }
 
@@ -448,7 +468,7 @@ export default class Level_BasicTouch
         for (let sweetspotcircle of this.SweetSpotCircleArray) {
             // Check if 'A' or 'S' key is pressed
             if (this.A_Pressed || this.S_Pressed) {
-                console.log("Key pressed in Check method");
+             //   console.log("Key pressed in Check method");
                 sweetspotcircle.puffy = true;
                 let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
                 if (percentAccuracyIfTouched) {
@@ -466,7 +486,7 @@ export default class Level_BasicTouch
         let sweetspotcircle = this.SweetSpotCircleArray[0];
         if (this.A_pressed)
         {
-            console.log("A pressed in Check method");
+           // console.log("A pressed in Check method");
             sweetspotcircle.puffy = true;  
             let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
             if(percentAccuracyIfTouched){
@@ -481,7 +501,7 @@ export default class Level_BasicTouch
         sweetspotcircle = this.SweetSpotCircleArray[1];
         if (this.S_pressed)
         {
-            console.log("S pressed in Check method");
+           // console.log("S pressed in Check method");
             sweetspotcircle.puffy = true;  
             let percentAccuracyIfTouched = sweetspotcircle.touch(); // this method returns null if touch is invalid
             if(percentAccuracyIfTouched){
@@ -524,7 +544,7 @@ export default class Level_BasicTouch
     beatMissed(sweetspotcircle) 
     {
         this.stats.addMiss();
-        console.log("Miss Added from beatMissed. Buffer remaining: ", this.stats.buffer);
+       // console.log("Miss Added from beatMissed. Buffer remaining: ", this.stats.buffer);
        
         //TRIGGER MISS ANIMATION
         const centerX = this.canvas.width / 2;
@@ -537,7 +557,7 @@ export default class Level_BasicTouch
     
         // Check if the buffer is depleted
         if (this.stats.buffer === 0) {
-            console.log("Buffer depleted. You lose.");
+         //   console.log("Buffer depleted. You lose.");
     
             if (!this.audio.paused)
             {
@@ -560,10 +580,10 @@ export default class Level_BasicTouch
       
 
     audioEnded() {
-        console.log('Level Complete');
-        console.log('Score is:', this.stats.score);
-        console.log('Player Name:', window.playerName);
-        console.log('Level Array Data Object:', this.levelArrayDataObject);
+       // console.log('Level Complete');
+      //  console.log('Score is:', this.stats.score);
+       // console.log('Player Name:', window.playerName);
+      //  console.log('Level Array Data Object:', this.levelArrayDataObject);
         
         // Define the levelResultsData object with the available data
         const levelResultsData = {

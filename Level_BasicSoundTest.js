@@ -13,7 +13,6 @@ export default class Level_BasicSoundTest
         this.ctx = this.canvas.getContext("2d");
         this.jsonManager = new JsonManager();
         this.jsonPath = _levelArrayDataObject.jsonPath;
-       // this.keyboardManager = new KeyboardManager(this);
         this.keyboardManager = new KeyboardManager(this, this.audioManager);
 
 
