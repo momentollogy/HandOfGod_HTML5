@@ -1,6 +1,7 @@
 export default class KeyboardManager {
-    constructor(level) {
+    constructor(level,audioManager) {
         this.level = level;
+        this.audioManager = audioManager;
         this.bindEvents();
     }
 
@@ -12,12 +13,28 @@ export default class KeyboardManager {
     handleKeyDown(event) {
         const { key, code } = event;
         switch(key.toLowerCase()) {
+
+
+         //for levelbasic touch
             case 'p':
                 this.level.togglePlayPause();
                 break;
+              
             case 'r':
                 this.level.resetLevel();
                 break;
+
+
+              //for basic sound test
+                case 'p':
+                 this.audioManager.togglePlayPause();
+                 break;
+             case 'r':
+                 this.audioManager.restartAudio();
+                 break;
+
+
+                
             case 'b':
                 this.level.toggleBeatRanges();
                 break;
@@ -80,6 +97,8 @@ export default class KeyboardManager {
                 break;
         }
     }
+
+
 
     dispose() {
         document.removeEventListener('keydown', this.handleKeyDown.bind(this));
