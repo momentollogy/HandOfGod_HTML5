@@ -215,7 +215,7 @@ export default class LeaderBoard_Box
             case 'latestScores':
                 return "Latest Scores";
             case 'PlayerTopScores':
-                return "Player Top Scores";
+                return "Player Scores";
             default:
                 return "";
         }

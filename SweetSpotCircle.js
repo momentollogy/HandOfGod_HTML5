@@ -214,6 +214,7 @@ export default class SweetSpotCircle {
     
         // do this at the start of a range
         if(this.isCurrentTimeOnBeatRangeStart()){
+            console.log("Current time on beat range start:", this.level.getCurrentAudioTime());
             this.touchable = true;
         }
     }
@@ -279,32 +280,45 @@ export default class SweetSpotCircle {
         return currentTime >= this.findBeatRangeEndForCurrentBeatRange();
     }
     
-    findBeatRangeEndForCurrentBeatRange(){
+    findBeatRangeEndForCurrentBeatRange() {
+        // Add a check to ensure the beatIndex is within bounds
+        if (this.beatIndex >= this.beatCircles_Array.length) {
+            return 0; // Return 0 or some other default value if beatIndex is out of range
+        }
+    
         let beatTime = this.beatCircles_Array[this.beatIndex].beatTime;
-        let beatRangeEnd = beatTime + this.beatBufferTime
-        
-        if(this.beatIndex < this.beatCircles_Array.length -1 ){ // if there are more beatIndexes ahead
-            let nextStart = this.beatCircles_Array[ this.beatIndex +1 ].beatTime - this.beatBufferTime;
-            if(nextStart < beatRangeEnd){
+        let beatRangeEnd = beatTime + this.beatBufferTime;
+    
+        if (this.beatIndex < this.beatCircles_Array.length - 1) { // if there are more beatIndexes ahead
+            let nextStart = this.beatCircles_Array[this.beatIndex + 1].beatTime - this.beatBufferTime;
+            if (nextStart < beatRangeEnd) {
                 beatRangeEnd = (nextStart + beatRangeEnd) / 2; // average them together to find the new value for beatRangeEnd
             }
         }
-        return beatRangeEnd
+        return beatRangeEnd;
     }
+    
 
-    findBeatRangeStartForCurrentBeatRange(){
+    findBeatRangeStartForCurrentBeatRange() {
+        // Check if the beatIndex is within the bounds of the array
+        if (this.beatIndex >= this.beatCircles_Array.length || this.beatIndex < 0) {
+            return 0; // Return 0 or an appropriate default value if out of bounds
+        }
+    
         let beatTime = this.beatCircles_Array[this.beatIndex].beatTime;
         let beatRangeStart = beatTime - this.beatBufferTime;
-        //let adjustment = 0;
-        if(this.beatIndex>0){
-            // check the previous beat to see if it's end needs averagaing with this start
-            let previousEnd = this.beatCircles_Array[ this.beatIndex -1 ].beatTime + this.beatBufferTime;
-            if(previousEnd > beatRangeStart){ 
-                beatRangeStart = (previousEnd + beatRangeStart) / 2; // average the positions to find the new beatRangeStart
+    
+        if (this.beatIndex > 0) {
+            // Check the previous beat to see if it's end needs averaging with this start
+            let previousEnd = this.beatCircles_Array[this.beatIndex - 1].beatTime + this.beatBufferTime;
+            if (previousEnd > beatRangeStart) { 
+                beatRangeStart = (previousEnd + beatRangeStart) / 2; // Average the positions to find the new beatRangeStart
             }
         }
-        return beatRangeStart
+    
+        return beatRangeStart;
     }
+    
 
 
 

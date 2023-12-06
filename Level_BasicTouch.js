@@ -425,7 +425,7 @@ export default class Level_BasicTouch
         this.drawShortcutsBox();
 
         //sounds when beat hits.
-      // this.updateForPlay();
+         this.updateForPlay();
 
 
 
@@ -563,7 +563,7 @@ export default class Level_BasicTouch
         }
     }
 
-/*
+/* working but doubling up
     playSound(soundBuffer) {
         if (!soundBuffer) return;
     
@@ -578,12 +578,36 @@ export default class Level_BasicTouch
             circle.updateForPlay();
     
             if (circle.isCurrentTimeOnBeat() && circle.beatPassed) {
+                if (index === 0) {
+                    this.playSound(this.audioManager.hitSound0Buffer);
+                } else if (index === 1) {
+                    this.playSound(this.audioManager.hitSound1Buffer);
+                }
+            }
+        });
+    }
+*/
+
+    playSound(soundBuffer) {
+        if (!soundBuffer) return;
+
+        const soundSource = this.audioManager.audioContext.createBufferSource();
+        soundSource.buffer = soundBuffer;
+        soundSource.connect(this.audioManager.audioContext.destination);
+        soundSource.start(0);
+    }
+
+    updateForPlay() {
+        this.SweetSpotCircleArray.forEach((circle, index) => {
+            circle.updateForPlay();
+
+            if (circle.isCurrentTimeOnBeat() && circle.beatPassed) {
                 const currentBeatTime = circle.beatCircles_Array[circle.beatIndex].beatTime;
-    
+
                 // Play sound only if the current beat time is different from the last played beat time
                 if (this.lastPlayedBeatTime !== currentBeatTime) {
                     this.lastPlayedBeatTime = currentBeatTime; // Update the last played beat time
-    
+
                     if (index === 0) {
                         this.playSound(this.audioManager.hitSound0Buffer);
                     } else if (index === 1) {
@@ -593,7 +617,9 @@ export default class Level_BasicTouch
             }
         });
     }
-*/
+
+
+
     audioEnded() {
        // console.log('Level Complete');
       //  console.log('Score is:', this.stats.score);

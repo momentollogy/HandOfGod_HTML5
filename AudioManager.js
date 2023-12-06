@@ -28,7 +28,8 @@ export default class AudioManager
     
 
     // Load hit sounds similarly to how you load the main sound
-    async loadHitSound0(url) {
+    async loadHitSound0(url) 
+    {
         console.log('Loading hit sound 0');
 
         const response = await fetch(url);
@@ -38,7 +39,9 @@ export default class AudioManager
 
     }
 
-    async loadHitSound1(url) {
+
+    async loadHitSound1(url) 
+    {
         console.log('Loading hit sound 1');
 
         const response = await fetch(url);
@@ -49,36 +52,22 @@ export default class AudioManager
     }
 
 
-
-
-
-    togglePlayPause() {
-        if (this.isPlaying) {
-            // Suspend the audio context to pause
-            this.audioContext.suspend().then(() => {
-                this.isPlaying = false;
-            });
-        } else {
-            // Resume the audio context to play
-            this.audioContext.resume().then(() => {
-                this.isPlaying = true;
-                if (!this.soundSource) {
-                    // If the sound source isn't there, start the audio
-                    this.startAudio();
-                }
-            });
-        }
+    // Volume for hits
+    setVolumeForHitSound0(volume) 
+    {
+        this.hitSound0Gain.gain.value = Math.max(0, Math.min(volume, 1)); // Clamp between 0 and 1
     }
 
-    pauseAudio() {
-        if (this.isPlaying) {
-            this.audioContext.suspend().then(() => {
-                this.isPlaying = false;
-            });
-        }
+    setVolumeForHitSound1(volume) 
+    {
+        this.hitSound1Gain.gain.value = Math.max(0, Math.min(volume, 1)); // Clamp between 0 and 1
     }
 
-    startAudio() {
+
+
+   
+    startAudio() 
+    {
         if (!this.audioBuffer) return;
     
         // When the audio starts, capture the current time of the audio context
@@ -97,8 +86,64 @@ export default class AudioManager
             }
         };
     }
+
+
     
 
+    // Method to set audio source and play immediately
+     setAudioSourceAndPlay(url) 
+    {
+        this.loadSound(url)
+            .then(() => this.startAudio())
+            .catch(error => console.error("Error setting audio source:", error));
+    }
+
+
+     
+    getCurrentTime() 
+    {
+    if (!this.isPlaying) {
+        return 0;
+    }
+    return this.audioContext.currentTime - this.startTime;
+    }
+
+
+    setAudioEndCallback(callback) 
+    {
+        this.onAudioEnd = callback;
+    }
+
+    //////////////////
+    //methods below for keybaord short cuts: "pause/upause" "restart"//
+    /////////////////
+    togglePlayPause() 
+    {
+        if (!this.audioContext) return; // Add this check
+    
+        if (this.isPlaying) {
+            this.audioContext.suspend().then(() => {
+                this.isPlaying = false;
+            });
+        } else {
+            this.audioContext.resume().then(() => {
+                if (!this.soundSource) {
+                    this.startAudio();
+                }
+                this.isPlaying = true;
+            });
+        }
+    }
+    
+  
+
+    pauseAudio() {
+        if (this.isPlaying) {
+            this.audioContext.suspend().then(() => {
+                this.isPlaying = false;
+            });
+        }
+    }
 
 
     restartAudioFromBeginning() {
@@ -121,31 +166,6 @@ export default class AudioManager
         }
     }
 
-
-    setAudioEndCallback(callback) 
-    {
-        this.onAudioEnd = callback;
-    }
-
-
-
-    // Add this method
-    getCurrentTime() 
-    {
-    if (!this.isPlaying) {
-        return 0;
-    }
-    return this.audioContext.currentTime - this.startTime;
-    }
-
-    
-
-    // Method to set audio source and play immediately
-     setAudioSourceAndPlay(url) {
-        this.loadSound(url)
-            .then(() => this.startAudio())
-            .catch(error => console.error("Error setting audio source:", error));
-    }
 
 
 
