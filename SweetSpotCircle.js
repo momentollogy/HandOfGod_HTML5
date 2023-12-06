@@ -5,7 +5,6 @@ export default class SweetSpotCircle {
     
     constructor(level, color='rgb(0,0,255)', position = {x:1000,y:200}, radius = 80, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
      {
-        console.log('SweetSpotCircle constructor called', level);
 
         this.level = level; 
        // this.audio = _audio;
@@ -186,11 +185,9 @@ export default class SweetSpotCircle {
     }
 
     updateForPlay(){        
-        // Log current beat index and array length
     
         // pulse on the beats
         if(this.isCurrentTimeOnBeat() && !this.beatPassed){
-            console.log("Pulsing on beat:", this.level.getCurrentAudioTime(), "Beat time:", this.beatCircles_Array[this.beatIndex].beatTime);
             if(this.pulseOnBeats){this.pulse();}
             this.beatPassed = true;
         }
@@ -208,13 +205,11 @@ export default class SweetSpotCircle {
                 this.touchable = false;
             } else {
                 this.pulse(); // Log when no more beats are on the circle
-                console.log("No more beats on this circle! Color:", this.color);
             }
         }
     
         // do this at the start of a range
         if(this.isCurrentTimeOnBeatRangeStart()){
-            console.log("Current time on beat range start:", this.level.getCurrentAudioTime());
             this.touchable = true;
         }
     }
@@ -261,13 +256,19 @@ export default class SweetSpotCircle {
         this.ctx.restore();
     }
     
-    isCurrentTimeOnBeat(){
+
+
+    
+    isCurrentTimeOnBeat() {
         if (this.beatIndex >= this.beatCircles_Array.length) {
             return false;
         }
-        let currentTime = this.level.getCurrentAudioTime() * 1000;
+        let currentTime = this.level.getCurrentAudioTime() * 1000; // Current time in milliseconds
+    
+        // Use the original logic without the audio offset
         return currentTime >= this.beatCircles_Array[this.beatIndex].beatTime;
     }
+    
     
     
     isCurrentTimeOnBeatRangeStart(){

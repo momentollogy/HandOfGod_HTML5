@@ -2,7 +2,6 @@
 export default class BeatCircle 
 {
     constructor(level,circleData, ss_pos) {
-      //  console.log('BeatCircle constructor called', level);
         this.level = level;
         this.canvas = document.getElementById("output_canvas");;
         this.ctx = this.canvas.getContext("2d");

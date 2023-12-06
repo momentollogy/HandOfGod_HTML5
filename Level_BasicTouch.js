@@ -46,7 +46,6 @@ export default class Level_BasicTouch
         this.audioManager.loadHitSound0('sound2/hit_one.mp3');
         this.audioManager.loadHitSound1('sound2/hit_two.mp3');
 
-
         //keeping track of audio ended. 
         this.audioManager.setAudioEndCallback(this.audioEnded.bind(this));
 
@@ -57,7 +56,8 @@ export default class Level_BasicTouch
         //this.keyboardManager = new KeyboardManager(this);
         this.keyboardManager = new KeyboardManager(this, this.audioManager);
 
-      
+        this.audioOffset = 75; // Initial offset value
+
 
         // Keyboard event listeners for adjusting SweetSpotCircles
         this.movementStep = 20; // Adjust this value for normal movement speed
@@ -82,10 +82,7 @@ export default class Level_BasicTouch
     
         // OLD UI component for volume control
        // this.volumeSlider = UIUtilities.createVolumeSlider(this.audio, this.canvas);
-    
-        // OLD Event binding for audio end
-       // this.boundAudioEnded = this.audioEnded.bind(this);
-       // this.audio.addEventListener('ended', this.boundAudioEnded);
+  
     
         // Initialize game statistics
         this.stats = new GameStats(); 
@@ -133,31 +130,24 @@ export default class Level_BasicTouch
 
 
 
-
-        // OLD Audio source setup and event listener for loading
-      //  this.audio.src = _levelArrayDataObject.mp3Path;
-       // this.audio.addEventListener('loadeddata', () => this.startAudio());
-
-
-
-
-
-
-
-
-
-
-        //END OF CONSTRUCTOR//
-
          // Initialize the box UI and visibility flag
          this.boxUI = new BoxUI(this.ctx, this.canvas.width - 300, 20, 280, 300, 10); // Adjusted dimensions for larger size
          this.boxVisible = false;
 
+                 ////////END OF CONSTRUCTOR//////
 
-        // console.log('AudioManager instantiated', this.audioManager);
 
     }
     
+
+
+
+
+    // Call this method to adjust the offset in real-time
+        adjustBeatOffset(newOffset) 
+        {
+            this.runtimeBeatOffset = newOffset;
+        }
 
 
 //////////NEW AUDIO API TRY///////
@@ -249,22 +239,6 @@ export default class Level_BasicTouch
     }
 
 
-    /*
-    togglePlayPause() {
-        console.log('togglePlayPause called - old system');
-
-        if (this.audio.paused) {
-            console.log('Unpause Playing audio - old system');
-
-            this.audio.play();
-        } else {
-            console.log('Pausing audio - old system');
-
-            this.audio.pause();
-        }
-    }
-    */
-
 
     adjustBeatBufferTime(amount) {
         this.SweetSpotCircleArray.forEach(circle => {
@@ -285,6 +259,19 @@ export default class Level_BasicTouch
     setMaxBufferLimit(limit) {
         this.stats.maxBufferLimit = limit;
     }
+
+
+        //FOR CALIBRATING DELAYED AUDIO Method to adjust the audio BEAT offset
+        adjustAudioOffset(amount) {
+            this.audioOffset += amount;
+            console.log("Adjusted audio offset:", this.audioOffset);
+
+        }
+    
+        // Method to get the current audio BEAT offset
+        getAudioOffset() {
+            return this.audioOffset;
+        }
 
     moveCircles(direction, step) {
         switch(direction) {
@@ -332,6 +319,7 @@ export default class Level_BasicTouch
             "+/- = Speed",
             "Arrows = Move Target Circles",
             "1/2 = Dec/Inc Misses Allowed (" + this.stats.maxBufferLimit + ")",
+            "Beat Offset: " + this.getAudioOffset() + " ms",
             "K = hide/key."
             
         ];
@@ -350,7 +338,6 @@ export default class Level_BasicTouch
     {
        
         // Use AudioManager to restart the audio from the beginning
-       // this.audioManager.restartAudio();
         this.audioManager.restartAudioFromBeginning();
 
 
@@ -366,18 +353,6 @@ export default class Level_BasicTouch
        // this.draw(); // Assuming you have a method to redraw the game state
     }
 
-
-
-  /* //Code to fix weird DOM issue with audio. 
-   async startAudio() 
-   {
-       if (!this.audio.paused) {console.log("Audio is already playing.");return;}
-       try 
-       {await this.audio.play();} 
-        catch (err) 
-       {console.error("Error starting audio playback:", err);}
-   }
-*/
 
 
     /////////////////////
@@ -425,7 +400,7 @@ export default class Level_BasicTouch
         this.drawShortcutsBox();
 
         //sounds when beat hits.
-         this.updateForPlay();
+         //this.updateForPlay();
 
 
 
@@ -563,30 +538,6 @@ export default class Level_BasicTouch
         }
     }
 
-/* working but doubling up
-    playSound(soundBuffer) {
-        if (!soundBuffer) return;
-    
-        const soundSource = this.audioManager.audioContext.createBufferSource();
-        soundSource.buffer = soundBuffer;
-        soundSource.connect(this.audioManager.audioContext.destination);
-        soundSource.start(0);
-    }
-    
-    updateForPlay() {
-        this.SweetSpotCircleArray.forEach((circle, index) => {
-            circle.updateForPlay();
-    
-            if (circle.isCurrentTimeOnBeat() && circle.beatPassed) {
-                if (index === 0) {
-                    this.playSound(this.audioManager.hitSound0Buffer);
-                } else if (index === 1) {
-                    this.playSound(this.audioManager.hitSound1Buffer);
-                }
-            }
-        });
-    }
-*/
 
     playSound(soundBuffer) {
         if (!soundBuffer) return;
@@ -597,6 +548,9 @@ export default class Level_BasicTouch
         soundSource.start(0);
     }
 
+
+/*
+   //og working just late
     updateForPlay() {
         this.SweetSpotCircleArray.forEach((circle, index) => {
             circle.updateForPlay();
@@ -618,16 +572,55 @@ export default class Level_BasicTouch
         });
     }
 
+*/
+updateForPlay() {
+    this.SweetSpotCircleArray.forEach((circle, index) => {
+        circle.updateForPlay();
+
+        if (circle.beatCircles_Array && circle.beatIndex < circle.beatCircles_Array.length && circle.beatCircles_Array[circle.beatIndex]) {
+            const currentBeatTime = circle.beatCircles_Array[circle.beatIndex].beatTime;
+            const currentTime = this.audioManager.audioContext.currentTime * 1000;
+            const audioOffset = this.getAudioOffset(); // Get the offset in milliseconds
+
+            // Schedule sound playback at the adjusted time
+            if (currentTime < currentBeatTime - audioOffset && !circle.scheduledSound) {
+                const scheduleTime = (currentBeatTime - audioOffset) / 1000; // Convert to seconds for scheduling
+                circle.scheduledSound = true; // Mark that the sound is scheduled
+
+                if (index === 0) {
+                    this.scheduleSound(this.audioManager.hitSound0Buffer, scheduleTime);
+                } else if (index === 1) {
+                    this.scheduleSound(this.audioManager.hitSound1Buffer, scheduleTime);
+                }
+            }
+
+            // Reset scheduledSound flag after the beat time has passed
+            if (currentTime > currentBeatTime) {
+                circle.scheduledSound = false;
+            }
+        }
+    });
+}
+
+scheduleSound(soundBuffer, time) {
+    if (!soundBuffer) return;
+
+    const soundSource = this.audioManager.audioContext.createBufferSource();
+    soundSource.buffer = soundBuffer;
+    soundSource.connect(this.audioManager.audioContext.destination);
+    soundSource.start(time); // Schedule the sound at the specified time
+}
+
+
 
 
     audioEnded() {
        // console.log('Level Complete');
-      //  console.log('Score is:', this.stats.score);
-       // console.log('Player Name:', window.playerName);
-      //  console.log('Level Array Data Object:', this.levelArrayDataObject);
+  
         
         // Define the levelResultsData object with the available data
-        const levelResultsData = {
+        const levelResultsData = 
+        {
             levelName: 'Level_ResultsStage', // The name of the results level/stage
             state: 'levelComplete',
             score: this.stats.score,
@@ -635,13 +628,10 @@ export default class Level_BasicTouch
             levelData: this.levelArrayDataObject,
             totalNotes: this.totalNotes
 
-            // Do not dispatch the event here yet, because we don't have the rank
         };
     
         // Add the score and get the rank
         addScore(window.playerName, this.stats.score, this.levelArrayDataObject).then(({ id, rank }) => {
-           // console.log("Received rank in audioEnded: ", rank);
-
 
             // Now that we have the rank, update levelResultsData with it
             levelResultsData.rank = rank;
