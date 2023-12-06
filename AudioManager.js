@@ -9,16 +9,46 @@ export default class AudioManager
         this.onAudioEnd = null; // Callback for when audio ends
         this.isResettingForGame = false; // Flag to indicate intentional reset
 
+
+                // Additional buffers for hit sounds
+        this.hitSound0Buffer = null;
+        this.hitSound1Buffer = null;
+
     }
 
 
-
+    //loads Level Song per level.
     async loadSound(url) 
     {
         const response = await fetch(url);
         const arrayBuffer = await response.arrayBuffer();
         this.audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
     }
+
+    
+
+    // Load hit sounds similarly to how you load the main sound
+    async loadHitSound0(url) {
+        console.log('Loading hit sound 0');
+
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        this.hitSound0Buffer = await this.audioContext.decodeAudioData(arrayBuffer);
+        console.log('Hit sound 0 loaded');
+
+    }
+
+    async loadHitSound1(url) {
+        console.log('Loading hit sound 1');
+
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        this.hitSound1Buffer = await this.audioContext.decodeAudioData(arrayBuffer);
+        console.log('Hit sound 1 loaded');
+
+    }
+
+
 
 
 

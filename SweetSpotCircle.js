@@ -114,22 +114,6 @@ export default class SweetSpotCircle {
         }
     }
     
-
-    /*//weird forcing pause to see beat circles dont like it
-    updateAndDrawBeatCircles() {
-        let audioCurrentTime = this.level.getCurrentAudioTime(); // Get current time from Level_BasicTouch
-    
-        for (let i = 0; i < this.beatCircles_Array.length; i++) {
-            if (this.level.audioManager.isPlaying) {
-                // Update position only if the audio is playing
-                this.beatCircles_Array[i].update(audioCurrentTime, this.velocity, this.beatCirclePathDirectionAngle);
-            }
-            // Always draw the circles
-            this.beatCircles_Array[i].draw();
-        }
-    }
-    */
-
     
 
     updateAndDraw() {
@@ -202,35 +186,38 @@ export default class SweetSpotCircle {
     }
 
     updateForPlay(){        
+        // Log current beat index and array length
+    
         // pulse on the beats
         if(this.isCurrentTimeOnBeat() && !this.beatPassed){
+            console.log("Pulsing on beat:", this.level.getCurrentAudioTime(), "Beat time:", this.beatCircles_Array[this.beatIndex].beatTime);
             if(this.pulseOnBeats){this.pulse();}
             this.beatPassed = true;
         }
-
+    
         // advance to the next beatRange
         if(this.isCurrentTimeOnBeatRangeEnd()){
-            if(this.beatIndex < this.beatCircles_Array.length -1 ){
+            if(this.beatIndex < this.beatCircles_Array.length - 1 ){
                 this.beatIndex++;
                 this.beatPassed = false;
                 if (!this.touched) {
                     this.beatsMissed++;
                     document.dispatchEvent(new Event("BeatMissed"));
                 }
-                this.touched=false;
+                this.touched = false;
                 this.touchable = false;
-            }else{
-                //////////////////////////////////////////////////////////////////////////
-                this.pulse(); // console.log("No more beats on this circle!", this.color);
-                //////////////////////////////////////////////////////////////////////////
+            } else {
+                this.pulse(); // Log when no more beats are on the circle
+                console.log("No more beats on this circle! Color:", this.color);
             }
         }
-
+    
         // do this at the start of a range
         if(this.isCurrentTimeOnBeatRangeStart()){
-            this.touchable = true
+            this.touchable = true;
         }
     }
+    
 
     // this is where touches from the level are received during play mode
     touch(){
@@ -272,12 +259,15 @@ export default class SweetSpotCircle {
         this.ctx.globalAlpha = 1.0;
         this.ctx.restore();
     }
+    
     isCurrentTimeOnBeat(){
-      //  console.log('isCurrentTimeOnBeat called');
+        if (this.beatIndex >= this.beatCircles_Array.length) {
+            return false;
+        }
         let currentTime = this.level.getCurrentAudioTime() * 1000;
-      //  console.log('Current Time:', currentTime);
         return currentTime >= this.beatCircles_Array[this.beatIndex].beatTime;
     }
+    
     
     isCurrentTimeOnBeatRangeStart(){
         let currentTime = this.level.getCurrentAudioTime() * 1000;

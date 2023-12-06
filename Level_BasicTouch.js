@@ -26,43 +26,32 @@ export default class Level_BasicTouch
         this.ctx = this.canvas.getContext("2d");
         this.drawEngine = DrawEngine.getInstance();
 
-            // JSON management for level data
-            this.jsonManager = new JsonManager(); 
-            this.mp3Path = _levelArrayDataObject.mp3Path;
-            this.jsonPath = _levelArrayDataObject.jsonPath;
+        // JSON management for level data
+        this.jsonManager = new JsonManager(); 
+        this.mp3Path = _levelArrayDataObject.mp3Path;
+        this.jsonPath = _levelArrayDataObject.jsonPath;
+     
+  
+       // Initialize AudioManager
+        this.audioManager = new AudioManager();
+        this.audioManager.loadSound(_levelArrayDataObject.mp3Path)
+            .then(() => {
+                // Optionally start playing audio here or wait for user interaction
+                this.audioManager.startAudio();
+            })
+            .catch(error => console.error("Error in audio playback:", error));
     
 
-    
-        // OLD Audio setup
-       // this.audio = new Audio();
-       // this.audio.volume = 0.3; // Set initial volume
-
-        //this.hitSound0 = new Audio('sound2/hit_one.mp3');
-        //this.hitSound1 = new Audio('sound2/hit_two.mp3');
+       //Load sounds
+        this.audioManager.loadHitSound0('sound2/hit_one.mp3');
+        this.audioManager.loadHitSound1('sound2/hit_two.mp3');
 
 
+        //keeping track of audio ended. 
+        this.audioManager.setAudioEndCallback(this.audioEnded.bind(this));
 
-
-
-    
-
-
-              // Initialize AudioManager
-              this.audioManager = new AudioManager();
-              this.audioManager.loadSound(_levelArrayDataObject.mp3Path)
-                  .then(() => {
-                      // Optionally start playing audio here or wait for user interaction
-                      this.audioManager.startAudio();
-                  })
-                  .catch(error => console.error("Error in audio playback:", error));
-          
-      
-      
-              //keeping track of audio ended. 
-              this.audioManager.setAudioEndCallback(this.audioEnded.bind(this));
-
-
-
+        //For hit sounds to make sure they double hit/echo
+        this.lastPlayedBeatTime = null; // Add this line to track the last played beat time
 
 
         //this.keyboardManager = new KeyboardManager(this);
@@ -436,7 +425,7 @@ export default class Level_BasicTouch
         this.drawShortcutsBox();
 
         //sounds when beat hits.
-        //this.updateForPlay();
+      // this.updateForPlay();
 
 
 
@@ -544,42 +533,7 @@ export default class Level_BasicTouch
 
     }
 
-/*
-    ////////////// NEW Beat Missed. Total Beats Tallied ////////////////////
-    beatMissed(sweetspotcircle) 
-    {
-        this.stats.addMiss();
-       
-        //TRIGGER MISS ANIMATION
-        const centerX = this.canvas.width / 2;
-        const centerY = this.canvas.height / 2;
-    
-        this.missesOverlay.addMiss({ x: centerX, y: centerY });
-        this.resetComboNumber();  // Resets the combo count
-    
-        // Check if the buffer is depleted
-        if (this.stats.buffer === 0) {
-         //   console.log("Buffer depleted. You lose.");
-         this.audioManager.pauseAudio();
 
-         //  if (!this.audio.paused) {
-          //  this.audio.pause();
-        }
-        this.resetVariables();
-    
-            // Dispatch a levelChange event for level failure
-            const levelFailureData = 
-            {
-                levelName: 'Level_ResultsStage', 
-                state: 'levelFailed', // Indicate the level failed
-                playerName: window.playerName,
-                levelData: this.levelArrayDataObject
-            };
-    
-            document.dispatchEvent(new CustomEvent('levelChange', { detail: levelFailureData }));
-        }
-    }
-     */
     
     beatMissed(sweetspotcircle) {
         this.stats.addMiss();
@@ -608,8 +562,38 @@ export default class Level_BasicTouch
             document.dispatchEvent(new CustomEvent('levelChange', { detail: levelFailureData }));
         }
     }
-    
 
+/*
+    playSound(soundBuffer) {
+        if (!soundBuffer) return;
+    
+        const soundSource = this.audioManager.audioContext.createBufferSource();
+        soundSource.buffer = soundBuffer;
+        soundSource.connect(this.audioManager.audioContext.destination);
+        soundSource.start(0);
+    }
+    
+    updateForPlay() {
+        this.SweetSpotCircleArray.forEach((circle, index) => {
+            circle.updateForPlay();
+    
+            if (circle.isCurrentTimeOnBeat() && circle.beatPassed) {
+                const currentBeatTime = circle.beatCircles_Array[circle.beatIndex].beatTime;
+    
+                // Play sound only if the current beat time is different from the last played beat time
+                if (this.lastPlayedBeatTime !== currentBeatTime) {
+                    this.lastPlayedBeatTime = currentBeatTime; // Update the last played beat time
+    
+                    if (index === 0) {
+                        this.playSound(this.audioManager.hitSound0Buffer);
+                    } else if (index === 1) {
+                        this.playSound(this.audioManager.hitSound1Buffer);
+                    }
+                }
+            }
+        });
+    }
+*/
     audioEnded() {
        // console.log('Level Complete');
       //  console.log('Score is:', this.stats.score);
