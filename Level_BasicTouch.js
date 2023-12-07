@@ -46,6 +46,10 @@ export default class Level_BasicTouch
         this.audioManager.loadHitSound0('sound2/hit_one.mp3');
         this.audioManager.loadHitSound1('sound2/hit_two.mp3');
 
+        // Set the volume for the hit sounds
+        this.audioManager.setVolumeForHitSound0(.3); // Set to 50% volume
+        this.audioManager.setVolumeForHitSound1(.3); // Set to 50% volume
+
         //keeping track of audio ended. 
         this.audioManager.setAudioEndCallback(this.audioEnded.bind(this));
 
@@ -56,7 +60,7 @@ export default class Level_BasicTouch
         //this.keyboardManager = new KeyboardManager(this);
         this.keyboardManager = new KeyboardManager(this, this.audioManager);
 
-        this.audioOffset = -1236; // Initial offset value
+        this.audioOffset = -70; // Initial offset value
 
 
         // Keyboard event listeners for adjusting SweetSpotCircles
@@ -400,7 +404,7 @@ export default class Level_BasicTouch
         this.drawShortcutsBox();
 
         //sounds when beat hits.
-        // this.updateForPlay();
+         this.updateForPlay();
 
 
 
@@ -538,7 +542,8 @@ export default class Level_BasicTouch
         }
     }
 
-
+/*
+OLD WOKING 3 methods
     playSound(soundBuffer) {
         if (!soundBuffer) return;
 
@@ -549,34 +554,39 @@ export default class Level_BasicTouch
     }
 
 
-updateForPlay() {
-    this.SweetSpotCircleArray.forEach((circle, index) => {
-        circle.updateForPlay();
-
-        if (circle.beatCircles_Array && circle.beatIndex < circle.beatCircles_Array.length && circle.beatCircles_Array[circle.beatIndex]) {
-            const currentBeatTime = circle.beatCircles_Array[circle.beatIndex].beatTime;
-            const currentTime = this.audioManager.audioContext.currentTime * 1000;
-            const audioOffset = this.getAudioOffset(); // Get the offset in milliseconds
-
-            // Schedule sound playback at the adjusted time
-            if (currentTime < currentBeatTime - audioOffset && !circle.scheduledSound) {
-                const scheduleTime = (currentBeatTime - audioOffset) / 1000; // Convert to seconds for scheduling
-                circle.scheduledSound = true; // Mark that the sound is scheduled
-
-                if (index === 0) {
-                    this.scheduleSound(this.audioManager.hitSound0Buffer, scheduleTime);
-                } else if (index === 1) {
-                    this.scheduleSound(this.audioManager.hitSound1Buffer, scheduleTime);
+    updateForPlay() {
+        const currentTime = this.audioManager.audioContext.currentTime * 1000;
+        const audioOffset = this.getAudioOffset();
+    
+        this.SweetSpotCircleArray.forEach((circle, index) => {
+            circle.updateForPlay();
+    
+            if (circle.beatCircles_Array && circle.beatIndex < circle.beatCircles_Array.length) {
+                const currentBeatTime = circle.beatCircles_Array[circle.beatIndex].beatTime;
+                const scheduleTime = (currentBeatTime - audioOffset) / 1000;
+    
+                // Log the real and offset beat times
+                console.log("Real Beat:", currentBeatTime, "Offset Beat:", scheduleTime * 1000);
+    
+                if (!circle.scheduledSound && currentTime < currentBeatTime - audioOffset) {
+                    circle.scheduledSound = true;
+    
+                    if (index === 0) {
+                        this.scheduleSound(this.audioManager.hitSound1Buffer, scheduleTime);
+                    } else if (index === 1) {
+                        this.scheduleSound(this.audioManager.hitSound0Buffer, scheduleTime);
+                    }
+                }
+    
+                if (currentTime > currentBeatTime) {
+                    circle.scheduledSound = false;
                 }
             }
+        });
+    }
 
-            // Reset scheduledSound flag after the beat time has passed
-            if (currentTime > currentBeatTime) {
-                circle.scheduledSound = false;
-            }
-        }
-    });
-}
+
+
 
 scheduleSound(soundBuffer, time) {
     if (!soundBuffer) return;
@@ -587,30 +597,56 @@ scheduleSound(soundBuffer, time) {
     soundSource.start(time); // Schedule the sound at the specified time
 }
 
-/*
-   //og working just late
-    updateForPlay() {
-        this.SweetSpotCircleArray.forEach((circle, index) => {
-            circle.updateForPlay();
+*/
 
-            if (circle.isCurrentTimeOnBeat() && circle.beatPassed) {
-                const currentBeatTime = circle.beatCircles_Array[circle.beatIndex].beatTime;
+playSound(soundBuffer, gainNode) {
+    if (!soundBuffer) return;
 
-                // Play sound only if the current beat time is different from the last played beat time
-                if (this.lastPlayedBeatTime !== currentBeatTime) {
-                    this.lastPlayedBeatTime = currentBeatTime; // Update the last played beat time
+    const soundSource = this.audioManager.audioContext.createBufferSource();
+    soundSource.buffer = soundBuffer;
+    soundSource.connect(gainNode);  // Connect to the gain node for volume control
+    gainNode.connect(this.audioManager.audioContext.destination); // Connect the gain node to the destination
+    soundSource.start(0);
+}
 
-                    if (index === 0) {
-                        this.playSound(this.audioManager.hitSound0Buffer);
-                    } else if (index === 1) {
-                        this.playSound(this.audioManager.hitSound1Buffer);
-                    }
+scheduleSound(soundBuffer, time, gainNode) {
+    if (!soundBuffer) return;
+
+    const soundSource = this.audioManager.audioContext.createBufferSource();
+    soundSource.buffer = soundBuffer;
+    soundSource.connect(gainNode);  // Connect to the gain node for volume control
+    gainNode.connect(this.audioManager.audioContext.destination); // Connect the gain node to the destination
+    soundSource.start(time); // Schedule the sound at the specified time
+}
+
+updateForPlay() {
+    const currentTime = this.audioManager.audioContext.currentTime * 1000;
+    const audioOffset = this.getAudioOffset();
+
+    this.SweetSpotCircleArray.forEach((circle, index) => {
+        circle.updateForPlay();
+
+        if (circle.beatCircles_Array && circle.beatIndex < circle.beatCircles_Array.length) {
+            const currentBeatTime = circle.beatCircles_Array[circle.beatIndex].beatTime;
+            const scheduleTime = (currentBeatTime - audioOffset) / 1000;
+
+            if (!circle.scheduledSound && currentTime < currentBeatTime - audioOffset) {
+                circle.scheduledSound = true;
+
+                if (index === 0) {
+                    this.scheduleSound(this.audioManager.hitSound1Buffer, scheduleTime, this.audioManager.hitSound1Gain);
+                } else if (index === 1) {
+                    this.scheduleSound(this.audioManager.hitSound0Buffer, scheduleTime, this.audioManager.hitSound0Gain);
                 }
             }
-        });
-    }
 
-*/
+            if (currentTime > currentBeatTime) {
+                circle.scheduledSound = false;
+            }
+        }
+    });
+}
+
 
 
     audioEnded() {

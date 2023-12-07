@@ -3,6 +3,13 @@ export default class AudioManager
     constructor(audioContext) 
     {
         this.audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+
+        // Create and connect gain nodes for hit sounds
+        this.hitSound0Gain = this.audioContext.createGain();
+        this.hitSound0Gain.connect(this.audioContext.destination);
+        this.hitSound1Gain = this.audioContext.createGain();
+        this.hitSound1Gain.connect(this.audioContext.destination);
+
         this.isPlaying = false;
         this.soundSource = null;
         this.audioBuffer = null;

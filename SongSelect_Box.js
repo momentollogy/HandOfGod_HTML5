@@ -103,7 +103,7 @@ export default class SongSelect_Box
                             levelDisplayName: "'Rhythm is a Dancer'  SNAP", 
                             fireBaseLevelLeaderBoard: "RhythmIsADancer_LB",
                             duration: ":48",
-                            mp3Path:"Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancer.wav",
+                            mp3Path:"Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancer.mp3",
                             jsonPath:"Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancer.json"
                         },
                         {
@@ -168,7 +168,7 @@ export default class SongSelect_Box
                             levelDisplayName: "'Dance The Night'  Dua Lipa", 
                             fireBaseLevelLeaderBoard: "DanceTheNight_LeaderBoard", 
                             duration: "1:05",
-                            mp3Path:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.wav", 
+                            mp3Path:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.mp3", 
                             jsonPath:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.json"
                         },
                         {   
@@ -184,7 +184,7 @@ export default class SongSelect_Box
                             levelDisplayName: "'Chandelier'  Sia", 
                             fireBaseLevelLeaderBoard: "Chandelier_LB", 
                             duration: "1:09",
-                            mp3Path:"Level_Mp3AndJson/Chandelier/Chandelier.wav", 
+                            mp3Path:"Level_Mp3AndJson/Chandelier/Chandelier.mp3", 
                             jsonPath:"Level_Mp3AndJson/Chandelier/Chandelier.json"
                         },
                         {   
@@ -200,7 +200,7 @@ export default class SongSelect_Box
                             levelDisplayName: "'Apache'  Sugar Hill Gang", 
                             fireBaseLevelLeaderBoard: "Apache_LB", 
                             duration: "1:24",
-                            mp3Path:"Level_Mp3AndJson/Apache/Apache.wav", 
+                            mp3Path:"Level_Mp3AndJson/Apache/Apache.mp3", 
                             jsonPath:"Level_Mp3AndJson/Apache/Apache.json"
                         },
                         {   
