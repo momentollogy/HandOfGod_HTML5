@@ -56,7 +56,7 @@ export default class Level_BasicTouch
         //this.keyboardManager = new KeyboardManager(this);
         this.keyboardManager = new KeyboardManager(this, this.audioManager);
 
-        this.audioOffset = 75; // Initial offset value
+        this.audioOffset = -1236; // Initial offset value
 
 
         // Keyboard event listeners for adjusting SweetSpotCircles
@@ -400,7 +400,7 @@ export default class Level_BasicTouch
         this.drawShortcutsBox();
 
         //sounds when beat hits.
-         //this.updateForPlay();
+        // this.updateForPlay();
 
 
 
@@ -549,30 +549,6 @@ export default class Level_BasicTouch
     }
 
 
-/*
-   //og working just late
-    updateForPlay() {
-        this.SweetSpotCircleArray.forEach((circle, index) => {
-            circle.updateForPlay();
-
-            if (circle.isCurrentTimeOnBeat() && circle.beatPassed) {
-                const currentBeatTime = circle.beatCircles_Array[circle.beatIndex].beatTime;
-
-                // Play sound only if the current beat time is different from the last played beat time
-                if (this.lastPlayedBeatTime !== currentBeatTime) {
-                    this.lastPlayedBeatTime = currentBeatTime; // Update the last played beat time
-
-                    if (index === 0) {
-                        this.playSound(this.audioManager.hitSound0Buffer);
-                    } else if (index === 1) {
-                        this.playSound(this.audioManager.hitSound1Buffer);
-                    }
-                }
-            }
-        });
-    }
-
-*/
 updateForPlay() {
     this.SweetSpotCircleArray.forEach((circle, index) => {
         circle.updateForPlay();
@@ -611,7 +587,30 @@ scheduleSound(soundBuffer, time) {
     soundSource.start(time); // Schedule the sound at the specified time
 }
 
+/*
+   //og working just late
+    updateForPlay() {
+        this.SweetSpotCircleArray.forEach((circle, index) => {
+            circle.updateForPlay();
 
+            if (circle.isCurrentTimeOnBeat() && circle.beatPassed) {
+                const currentBeatTime = circle.beatCircles_Array[circle.beatIndex].beatTime;
+
+                // Play sound only if the current beat time is different from the last played beat time
+                if (this.lastPlayedBeatTime !== currentBeatTime) {
+                    this.lastPlayedBeatTime = currentBeatTime; // Update the last played beat time
+
+                    if (index === 0) {
+                        this.playSound(this.audioManager.hitSound0Buffer);
+                    } else if (index === 1) {
+                        this.playSound(this.audioManager.hitSound1Buffer);
+                    }
+                }
+            }
+        });
+    }
+
+*/
 
 
     audioEnded() {
