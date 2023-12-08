@@ -47,8 +47,8 @@ export default class Level_BasicTouch
         this.audioManager.loadHitSound1('sound2/hit_two.mp3');
 
         // Set the volume for the hit sounds
-        this.audioManager.setVolumeForHitSound0(.3); // Set to 50% volume
-        this.audioManager.setVolumeForHitSound1(.3); // Set to 50% volume
+        this.audioManager.setVolumeForHitSound0(.2); // Set to 50% volume
+        this.audioManager.setVolumeForHitSound1(.2); // Set to 50% volume
 
         //keeping track of audio ended. 
         this.audioManager.setAudioEndCallback(this.audioEnded.bind(this));
@@ -143,15 +143,6 @@ export default class Level_BasicTouch
 
     }
     
-
-
-
-
-    // Call this method to adjust the offset in real-time
-        adjustBeatOffset(newOffset) 
-        {
-            this.runtimeBeatOffset = newOffset;
-        }
 
 
 //////////NEW AUDIO API TRY///////
@@ -323,7 +314,6 @@ export default class Level_BasicTouch
             "+/- = Speed",
             "Arrows = Move Target Circles",
             "1/2 = Dec/Inc Misses Allowed (" + this.stats.maxBufferLimit + ")",
-            "Beat Offset: " + this.getAudioOffset() + " ms",
             "K = hide/key."
             
         ];

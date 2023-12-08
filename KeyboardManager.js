@@ -52,16 +52,6 @@ export default class KeyboardManager {
             case '3':
                 this.level.setMaxBufferLimit(999);
                 break;
-            case '4':
-             console.log("Decreasing audio offset");
-
-                 this.level.adjustAudioOffset(-5); // Decrease offset
-                 break;
-             case '5':
-              console.log("Increasing audio offset");
-
-                 this.level.adjustAudioOffset(5); // Increase offset
-                 break;
             default:
                 this.handleMovementKeys(code);
                 break;
