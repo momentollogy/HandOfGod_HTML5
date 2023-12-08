@@ -43,13 +43,26 @@ export default class KeyboardManager {
             case 'k':
                 this.level.toggleBoxVisibility();
                 break;
+
             case '1':
-                this.level.adjustMaxBufferLimit(-1);
+                this.audioManager.decreaseMainVolume();
                 break;
             case '2':
+                this.audioManager.increaseMainVolume();
+                break;
+                case '3':
+            this.audioManager.decreaseHitSoundsVolume();
+            break;
+            case '4':
+                this.audioManager.increaseHitSoundsVolume();
+                break;
+            case '7':
+                this.level.adjustMaxBufferLimit(-1);
+                break;
+            case '8':
                 this.level.adjustMaxBufferLimit(1);
                 break;
-            case '3':
+            case '9':
                 this.level.setMaxBufferLimit(999);
                 break;
             default:

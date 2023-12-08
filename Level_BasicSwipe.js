@@ -38,6 +38,8 @@ export default class Level_BasicSwipe
         this.audioManager = new AudioManager();
         this.audioManager.loadSound(_levelArrayDataObject.mp3Path)
             .then(() => {
+            this.audioManager.setMainMusicVolume(0.4); // Example: Set to 50% volume
+
                 // Optionally start playing audio here or wait for user interaction
                 this.audioManager.startAudio();
             })
@@ -47,6 +49,8 @@ export default class Level_BasicSwipe
        //Load sounds
         this.audioManager.loadHitSound0('sound2/hit_one.mp3');
         this.audioManager.loadHitSound1('sound2/hit_two.mp3');
+
+        
 
         // Set the volume for the hit sounds
         this.audioManager.setVolumeForHitSound0(.1); // Set to 50% volume
@@ -151,8 +155,8 @@ export default class Level_BasicSwipe
 
 
 
-         // Initialize the box UI and visibility flag
-         this.boxUI = new BoxUI(this.ctx, this.canvas.width - 300, 20, 280, 300, 10); // Adjusted dimensions for larger size
+       // BoxUI parameters: BoxUI(context,                     x,   y,  width, height, cornerRadius)
+         this.boxUI = new BoxUI(this.ctx, this.canvas.width - 400, 20,  280,   300,       10); // Adjusted dimensions for larger size
          this.boxVisible = false;
 
                  ////////END OF CONSTRUCTOR//////
@@ -319,6 +323,9 @@ export default class Level_BasicSwipe
     }
 
 
+
+    /*
+    old one working
     //Keyboard Shortcuts Box
     drawShortcutsBox() {
         if (!this.boxVisible) return;
@@ -331,25 +338,121 @@ export default class Level_BasicSwipe
         // Text settings
         this.ctx.fillStyle = 'white'; // White text color
         this.ctx.font = '24px Arial'; // Adjust font size as needed
+        this.ctx.textAlign = 'left'; // Set text alignment to left
+
+    
         const shortcuts = [
-            "P = Pause",
-            "R = Restart",
-            "B = Toggle BeatRanges + Data",
-            "</> = Inc. BeatRange",
-            "+/- = Speed",
-            "Arrows = Move Target Circles",
-            "1/2 = Dec/Inc Misses Allowed (" + this.stats.maxBufferLimit + ")",
-            "K = hide/key."
-            
+            "K:        SHOW/HIDE SHORTCUTS",
+            "P:        PAUSE",
+            "R:        RESTART",
+            "B:        SHOW/HIDE Beat Ranges",
+
+            "1/2:      -/+ Song Volume: " + Math.round(this.audioManager.mainMusicGain.gain.value * 100) + "%",
+            "3/4:      -/+ Beat Volume: " + Math.round(this.audioManager.hitSound0Gain.gain.value * 100) + "%",
+            "7/8:      -/+ Misses Allowed (" + this.stats.maxBufferLimit + ")",
+
+            "←/↑:      Move Target Circles",
+            "</>:      -/+ BeatRange Size",
+            "+/-:      -/+ Beat Speed"
+
         ];
         
+        
         // Draw each line of text
-        let textY = this.boxUI.y + 50; // Starting Y position for text
+        let textY = this.boxUI.y + 80; // Starting Y position for text
         for (const line of shortcuts) {
             this.ctx.fillText(line, this.boxUI.x + 20, textY);
             textY += 34; // Increase Y for the next line, adjust spacing as needed
         }
     }
+*/
+
+drawShortcutsBox() {
+    if (!this.boxVisible) return;
+
+      // Define shortcuts text array
+      const shortcuts = [
+        "SHOW/HIDE SHORTCUTS:   K",
+        "PAUSE:                P",
+        "RESTART:              R",
+        "SHOW/HIDE BEAT RANGES:B",
+        "Song Volume -/+ :     1/2 (" + Math.round(this.audioManager.mainMusicGain.gain.value * 100) + "%)",
+        "Beat Volume -/+ :     3/4 (" + Math.round(this.audioManager.hitSound0Gain.gain.value * 100) + "%)",
+        "Misses Allowed -/+ :  7/8 (" + this.stats.maxBufferLimit + ")",
+        "Move Target Circles:  ←/↑",
+        "BeatRange Size -/+ :  </>",
+        "Beat Speed -/+ :      +/-"
+    ];
+
+        // Define colors for text and grid lines
+        const textColor = 'white';
+        const gridColor = 'lightgray'; // Light gray for subtle grid lines
+        const keyColor = 'cyan'; // Use a distinct color for keys to stand out
+
+        // Define text positions and box dimensions
+        const leftColumnX = this.boxUI.x + 20;
+        const rightColumnX = this.boxUI.x + this.boxUI.width - 80; // Adjust this value to fit your layout
+        const startY = this.boxUI.y + 15;//lower text
+        const lineSpacing = 30;// Adjust line spacing to increase the gap between rows of text.
+
+        // Set up the box UI style
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // Semi-transparent black background
+        this.ctx.fillRect(this.boxUI.x, this.boxUI.y, this.boxUI.width, this.boxUI.height); // Draw the background
+        this.ctx.strokeStyle = gridColor;
+        this.ctx.strokeRect(this.boxUI.x, this.boxUI.y, this.boxUI.width +100, this.boxUI.height); // Draw the border
+
+        // Set up text style
+        this.ctx.font = '18px Courier New'; // Using a monospaced font for consistent spacing
+        this.ctx.textAlign = 'left'; // Align text to the left
+        this.ctx.fillStyle = textColor;
+
+     // Calculate the maximum width of the text in the first column
+        let maxTextWidth = 0;
+        shortcuts.forEach((line) => {
+            const parts = line.split(":");
+            const metrics = this.ctx.measureText(parts[0].trim() + ":");
+            maxTextWidth = Math.max(maxTextWidth, metrics.width);
+        });
+    
+        // Define a fixed right column starting point based on the widest text
+        const rightColumnStart = this.boxUI.x + maxTextWidth + 120; // Add some padding
+
+        // Draw the grid lines (if desired, for visual structure)
+        //this.ctx.beginPath();
+    //    for (let i = 0; i < shortcuts.length; i++) {
+     //       let y = startY + i * lineSpacing;
+      //      this.ctx.moveTo(this.boxUI.x, y);
+       //     this.ctx.lineTo(this.boxUI.x + this.boxUI.width, y);
+     //   }
+       // this.ctx.stroke(); // Apply the grid lines
+
+    // Draw the shortcut text and keys
+    for (let i = 0; i < shortcuts.length; i++) {
+        let y = startY + i * lineSpacing;
+        let parts = shortcuts[i].split(":");
+        if (parts.length === 2) {
+            // Draw action description
+            this.ctx.fillStyle = textColor;
+            this.ctx.textAlign = 'left'; // Align action description text to the left
+            this.ctx.fillText(parts[0].trim() + ":", this.boxUI.x + 20, y);
+
+            // Draw key in a different color, aligned to the right
+            this.ctx.fillStyle = keyColor;
+            this.ctx.textAlign = 'right'; // Align key text to the right
+            this.ctx.fillText(parts[1].trim(), rightColumnStart, y);
+        }
+    }
+
+    // Draw the grid lines (if desired, for visual structure)
+   // this.ctx.beginPath();
+  //  this.ctx.strokeStyle = gridColor;
+   // for (let i = 1; i < shortcuts.length; i++) { // Start from 1 to avoid line at the top
+   //     let y = startY + i * lineSpacing - (lineSpacing / 2); // Draw grid line in the middle between rows
+   //     this.ctx.moveTo(this.boxUI.x, y);
+   //     this.ctx.lineTo(this.boxUI.x + this.boxUI.width, y);
+ //   }
+ //   this.ctx.stroke(); // Apply the grid lines
+}
 
 
 
@@ -528,41 +631,7 @@ export default class Level_BasicSwipe
     defineHighScoreLogic() {return (score) => score > 50;}
     
 
-/* 
-old working  before particles
-    ////////////// WHEN TOUCH CIRCLE IN BEAT RANGE/////////////////
-    touchSuccessfulWithPercentage(percentAccuracy, sweetspotcircle) 
-    {
-        let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
-        this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
-    
-        // Increase the combo number and update the score
-        this.stats.increaseCombo(); 
-        this.stats.addScore(percentAccuracy);  // Adjust this if you need to include comboNumber in the calculation
-    
-        // Assuming you always want to remove a miss after a successful touch
-        this.stats.removeMiss();   
 
-    }
-    */
-
-/*
-mid try
-    touchSuccessfulWithPercentage(percentAccuracy, sweetspotcircle) {
-        let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
-        this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
-    
-        this.stats.increaseCombo(); 
-        this.stats.addScore(percentAccuracy);  
-        this.stats.removeMiss();   
-
-       // Emit particles from the circle's rim
-       ///this.particles.emit(this.position, this.radius);
-       this.particles.emit({ x: sweetspotcircle.position.x, y: sweetspotcircle.position.y });
-       
-
-    }
-    */
 
     touchSuccessfulWithPercentage(percentAccuracy, sweetspotcircle) {
         let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
@@ -803,7 +872,9 @@ updateForPlay() {
                 sweetSpotCircle.swipeLogged = false;
             }
     
-            // Determine if there's a left or right touch
+
+            //*Velocity in here. return velcoity and base particles on it. 
+            // Determine if there's a left or right touch n
             if (this.leftSwipeArray[0] && this.leftSwipeArray[1]) {
                 leftTouches = this.circleLineToucheyMath(
                     { x: sweetSpotCircle.position.x, y: sweetSpotCircle.position.y },
