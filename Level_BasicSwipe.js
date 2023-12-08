@@ -11,12 +11,14 @@ import { UIUtilities } from './UIUtilities.js';
 import { GameStats } from './GameStats.js';
 import KeyboardManager from './KeyboardManager.js'; // Adjust the path as necessary
 import AudioManager from './AudioManager.js'; // Import AudioManager at the top
+import  Particles  from './Particles.js';
 
 
 
 
 
-export default class Level_BasicTouch
+
+export default class Level_BasicSwipe
 {
     constructor(_levelArrayDataObject) 
     {
@@ -30,7 +32,7 @@ export default class Level_BasicTouch
         this.jsonManager = new JsonManager(); 
         this.mp3Path = _levelArrayDataObject.mp3Path;
         this.jsonPath = _levelArrayDataObject.jsonPath;
-     
+        this.particles = new Particles(this.ctx);
   
        // Initialize AudioManager
         this.audioManager = new AudioManager();
@@ -66,6 +68,7 @@ export default class Level_BasicTouch
         this.movementStep = 20; // Adjust this value for normal movement speed
         this.fastMovementStep = 45; // Adjust for faster movement speed
 
+       
 
 
         //For Swipes
@@ -420,17 +423,22 @@ export default class Level_BasicTouch
 
 
        this.checkFingerPositionsAndUpdateFingerArrays();
-       this.drawSwipeForEachFingerFromFingerArrayData();
+      // this.drawSwipeForEachFingerFromFingerArrayData();
        this.checkLineCircleTouch();
 
-     // const testEntryPoint = { x: 100, y: 100 };
+            // const testEntryPoint = { x: 100, y: 100 };
+
+            //For swipe angles
+        //   for (let sweetSpotCircle of this.SweetSpotCircleArray) 
+        //   {
+        //    if (sweetSpotCircle.isSwipeActive) {
+        //        this.drawSwipeVisualization(null, sweetSpotCircle.lastSwipeEntryPoint, sweetSpotCircle.lastSwipeAngle);
+        //    }
+        //  }
+
+     this.particles.updateAndDraw();
 
 
-     for (let sweetSpotCircle of this.SweetSpotCircleArray) {
-       if (sweetSpotCircle.isSwipeActive) {
-           this.drawSwipeVisualization(null, sweetSpotCircle.lastSwipeEntryPoint, sweetSpotCircle.lastSwipeAngle);
-       }
-   }
 
 
 
@@ -520,7 +528,8 @@ export default class Level_BasicTouch
     defineHighScoreLogic() {return (score) => score > 50;}
     
 
-
+/* 
+old working  before particles
     ////////////// WHEN TOUCH CIRCLE IN BEAT RANGE/////////////////
     touchSuccessfulWithPercentage(percentAccuracy, sweetspotcircle) 
     {
@@ -535,7 +544,44 @@ export default class Level_BasicTouch
         this.stats.removeMiss();   
 
     }
+    */
 
+/*
+mid try
+    touchSuccessfulWithPercentage(percentAccuracy, sweetspotcircle) {
+        let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
+        this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
+    
+        this.stats.increaseCombo(); 
+        this.stats.addScore(percentAccuracy);  
+        this.stats.removeMiss();   
+
+       // Emit particles from the circle's rim
+       ///this.particles.emit(this.position, this.radius);
+       this.particles.emit({ x: sweetspotcircle.position.x, y: sweetspotcircle.position.y });
+       
+
+    }
+    */
+
+    touchSuccessfulWithPercentage(percentAccuracy, sweetspotcircle) {
+        let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
+        this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
+    
+        this.stats.increaseCombo(); 
+        this.stats.addScore(percentAccuracy);  
+        this.stats.removeMiss();   
+    
+        // Emit particles from the circle's rim
+        // Make sure to pass the swipe angle to the emit method
+        if (sweetspotcircle.lastSwipeAngle !== undefined) {
+            this.particles.emit(startPosition, sweetspotcircle.lastSwipeAngle);
+        } else {
+            // Fallback in case there's no swipe angle defined
+            this.particles.emit(startPosition, 0); // Default angle, e.g., 0 degrees
+        }
+    }
+    
 
     
     beatMissed(sweetspotcircle) {
@@ -566,62 +612,6 @@ export default class Level_BasicTouch
         }
     }
 
-/*
-OLD WOKING 3 methods
-    playSound(soundBuffer) {
-        if (!soundBuffer) return;
-
-        const soundSource = this.audioManager.audioContext.createBufferSource();
-        soundSource.buffer = soundBuffer;
-        soundSource.connect(this.audioManager.audioContext.destination);
-        soundSource.start(0);
-    }
-
-
-    updateForPlay() {
-        const currentTime = this.audioManager.audioContext.currentTime * 1000;
-        const audioOffset = this.getAudioOffset();
-    
-        this.SweetSpotCircleArray.forEach((circle, index) => {
-            circle.updateForPlay();
-    
-            if (circle.beatCircles_Array && circle.beatIndex < circle.beatCircles_Array.length) {
-                const currentBeatTime = circle.beatCircles_Array[circle.beatIndex].beatTime;
-                const scheduleTime = (currentBeatTime - audioOffset) / 1000;
-    
-                // Log the real and offset beat times
-                console.log("Real Beat:", currentBeatTime, "Offset Beat:", scheduleTime * 1000);
-    
-                if (!circle.scheduledSound && currentTime < currentBeatTime - audioOffset) {
-                    circle.scheduledSound = true;
-    
-                    if (index === 0) {
-                        this.scheduleSound(this.audioManager.hitSound1Buffer, scheduleTime);
-                    } else if (index === 1) {
-                        this.scheduleSound(this.audioManager.hitSound0Buffer, scheduleTime);
-                    }
-                }
-    
-                if (currentTime > currentBeatTime) {
-                    circle.scheduledSound = false;
-                }
-            }
-        });
-    }
-
-
-
-
-scheduleSound(soundBuffer, time) {
-    if (!soundBuffer) return;
-
-    const soundSource = this.audioManager.audioContext.createBufferSource();
-    soundSource.buffer = soundBuffer;
-    soundSource.connect(this.audioManager.audioContext.destination);
-    soundSource.start(time); // Schedule the sound at the specified time
-}
-
-*/
 
 playSound(soundBuffer, gainNode) {
     if (!soundBuffer) return;
@@ -674,7 +664,6 @@ updateForPlay() {
 
 
     audioEnded() {
-       // console.log('Level Complete');
   
         
         // Define the levelResultsData object with the available data
@@ -838,10 +827,9 @@ updateForPlay() {
                 sweetSpotCircle.swipeLogged = true;
     
                 let swipeArray = leftTouches ? this.leftSwipeArray : this.rightSwipeArray;
-                let swipeAngle = this.calculateAngle(
-                    swipeArray[0].x, swipeArray[0].y,
-                    swipeArray[1].x, swipeArray[1].y
-                );
+                //let swipeAngle = this.calculateAngle(swipeArray[0].x, swipeArray[0].y,swipeArray[1].x, swipeArray[1].y);
+                let swipeAngle = this.calculateAngle(swipeArray[0].x, swipeArray[0].y, swipeArray[1].x, swipeArray[1].y);
+                sweetSpotCircle.lastSwipeAngle = swipeAngle;
     
                 // Store swipe details in the circle
                 sweetSpotCircle.lastSwipeEntryPoint = swipeArray[0];

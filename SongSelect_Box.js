@@ -82,7 +82,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/LovelyDay/LovelyDay.json"
                         },
                         {
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'GimmeGimme' Abba", 
                             fireBaseLevelLeaderBoard: "GimmeGimme_LB",
                             duration: "1:05",
@@ -90,7 +90,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/GimmeGimme/GimmeGimme.json"
                         },
                         {
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Just Dance'  Lady Gaga", 
                             fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",
                             duration: "1:07",
@@ -99,7 +99,7 @@ export default class SongSelect_Box
                         },
                         
                         {
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Rhythm is a Dancer'  SNAP", 
                             fireBaseLevelLeaderBoard: "RhythmIsADancer_LB",
                             duration: ":48",
@@ -115,7 +115,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/Havana/Havana.json"
                         },
                         {
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Back On 74'  Jungle", 
                             fireBaseLevelLeaderBoard: "BackOn74_LB",
                             duration: "1:07",
@@ -123,7 +123,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/BackOn74/BackOn74.json"
                         },
                         {
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Lovely Day'  Bill Winters", 
                             fireBaseLevelLeaderBoard: "LovelyDay_LB",
                             duration: "1:07",
@@ -131,7 +131,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/LovelyDay/LovelyDay.json"
                         },
                         {
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'BlankSpace'  Taylor Swift", 
                             fireBaseLevelLeaderBoard: "BlankSpace_LB",
                             duration: "1:07",
@@ -139,7 +139,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/BlankSpace/BlankSpace.json"
                         },
                         {
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Rush'  Troye Sivan", 
                             fireBaseLevelLeaderBoard: "Rush_LB",
                             duration: "1:07",
@@ -147,7 +147,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/Rush/Rush.json"
                         },
                         {
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Rush (hard)'  Troye Sivan", 
                             fireBaseLevelLeaderBoard: "RushHard_LB",
                             duration: "1:07",
@@ -156,7 +156,7 @@ export default class SongSelect_Box
                         },
                         
                         {   
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Pneuma'  Tool", 
                             fireBaseLevelLeaderBoard: "Pneuma_easy_LeaderBoard", 
                             duration: ":56",
@@ -164,7 +164,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/Tool/toolv3.json"
                         },
                         {   
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Dance The Night'  Dua Lipa", 
                             fireBaseLevelLeaderBoard: "DanceTheNight_LeaderBoard", 
                             duration: "1:05",
@@ -172,7 +172,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.json"
                         },
                         {   
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'WonderBoy'  Tenacious D", 
                             fireBaseLevelLeaderBoard: "WonderBoy_LeaderBoard", 
                             duration: ":57",
@@ -180,7 +180,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/WonderBoy/WonderBoy.json"
                         },
                         {   
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Chandelier'  Sia", 
                             fireBaseLevelLeaderBoard: "Chandelier_LB", 
                             duration: "1:09",
@@ -188,7 +188,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/Chandelier/Chandelier.json"
                         },
                         {   
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Elastic Heart'  Sia", 
                             fireBaseLevelLeaderBoard: "ElasticHeart_LB", 
                             duration: "1:24",
@@ -196,7 +196,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/ElasticHeart/ElasticHeart.json"
                         },
                         {   
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Apache'  Sugar Hill Gang", 
                             fireBaseLevelLeaderBoard: "Apache_LB", 
                             duration: "1:24",
@@ -204,7 +204,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/Apache/Apache.json"
                         },
                         {   
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Houdini'  Dua Lipa", 
                             fireBaseLevelLeaderBoard: "Houdini_LB", 
                             duration: ":56",
@@ -212,7 +212,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/Houdini/Houdini.json"
                         },
                         {   
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Magical Mystery Tour'  Beatles", 
                             fireBaseLevelLeaderBoard: "MagicalMysteryTour_LB", 
                             duration: ":56",
@@ -221,7 +221,7 @@ export default class SongSelect_Box
                         },
                 
                         {   
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "3_Note_Test", 
                             fireBaseLevelLeaderBoard: "Level_3NoteTest_LB", 
                             duration: ":07",
