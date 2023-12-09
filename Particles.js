@@ -8,7 +8,7 @@ class Particle {
      this.speedY = directionY * (4 + Math.random() * 2);  // Variable speed for organic feel
      this.color = color;
      this.life = 0;
-     this.maxLife = 5;
+     this.maxLife = 80;
      this.damping = 0.95;
      this.noise = Math.random() * 0.5 - 0.25;
  }
@@ -27,9 +27,11 @@ class Particle {
      ctx.beginPath();
      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
      ctx.fill();
+     ctx.shadowBlur = 4;
+     ctx.shadowColor = this.color;
+     // Glow effect
      ctx.shadowBlur = 10;
      ctx.shadowColor = this.color;
-  
  }
 }
 
@@ -96,7 +98,7 @@ emit(startPosition, swipeAngleDegrees, radius = 30) {
 }
 */
 emit(startPosition, swipeAngleDegrees, radius = 70) {  // Radius to match the circle
- let particleCount = 70;
+ let particleCount = 50;
 
  // Convert the swipe angle to a direction vector
  // Adjust the angle for coordinate system differences

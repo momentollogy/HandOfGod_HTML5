@@ -190,6 +190,27 @@ export default class AudioManager
 
 
 
+    restartAudioFromBeginning() {
+        // Store the current playing state
+        const wasPlaying = this.isPlaying;
+
+        // Disconnect the current sound source
+        if (this.soundSource) {
+            this.soundSource.disconnect();
+        }
+
+        // Restart the audio from the beginning
+        this.startAudio();
+
+        // If the audio was paused, suspend the audio context
+        if (!wasPlaying) {
+            this.audioContext.suspend().then(() => {
+                this.isPlaying = false;
+            });
+        }
+    }
+
+/* might be tweaked no good 
 restartAudioFromBeginning() {
     if (!this.audioBuffer || !this.audioContext) return; // Check if audioBuffer and audioContext exist
 
@@ -217,7 +238,7 @@ restartAudioFromBeginning() {
         }
     };
 }
-
+*/
 
 
 

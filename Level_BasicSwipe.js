@@ -38,7 +38,7 @@ export default class Level_BasicSwipe
         this.audioManager = new AudioManager();
         this.audioManager.loadSound(_levelArrayDataObject.mp3Path)
             .then(() => {
-            this.audioManager.setMainMusicVolume(0.4); // Example: Set to 50% volume
+            this.audioManager.setMainMusicVolume(1); // Example: Set to 50% volume
 
                 // Optionally start playing audio here or wait for user interaction
                 this.audioManager.startAudio();

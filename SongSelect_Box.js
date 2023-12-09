@@ -65,22 +65,7 @@ export default class SongSelect_Box
         // Initialize the level array and selected index here
         this.levelArray = [
 
-                        {
-                            fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'Lovely Day SWIPE TEST'", 
-                            fireBaseLevelLeaderBoard: "LovelyDay_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/LovelyDay/LovelyDay.mp3",
-                            jsonPath:"Level_Mp3AndJson/LovelyDay/LovelyDay.json"
-                        },
-                        {
-                            fileName: "Level_BasicSoundTest", 
-                            levelDisplayName: "'SOUND TEST", 
-                            fireBaseLevelLeaderBoard: "LovelyDay_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/LovelyDay/LovelyDay.mp3",
-                            jsonPath:"Level_Mp3AndJson/LovelyDay/LovelyDay.json"
-                        },
+                       
                         {
                             fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'GimmeGimme' Abba", 
@@ -107,7 +92,7 @@ export default class SongSelect_Box
                             jsonPath:"Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancer.json"
                         },
                         {
-                            fileName: "Level_BasicTouch", 
+                            fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Havana'  Camila Cabello", 
                             fireBaseLevelLeaderBoard: "Havana_LB",
                             duration: "1:07",
