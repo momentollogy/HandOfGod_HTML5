@@ -156,7 +156,7 @@ export default class Level_BasicSwipe
 
 
        // BoxUI parameters: BoxUI(context,                     x,   y,  width, height, cornerRadius)
-         this.boxUI = new BoxUI(this.ctx, this.canvas.width - 400, 20,  280,   300,       10); // Adjusted dimensions for larger size
+         this.boxUI = new BoxUI(this.ctx, this.canvas.width - 600, 20,  280,   300,       10); // Adjusted dimensions for larger size
          this.boxVisible = false;
 
                  ////////END OF CONSTRUCTOR//////
@@ -200,11 +200,11 @@ export default class Level_BasicSwipe
  
 
 
-    resetLevel() {
-        console.log('restartAudio called - new system');
+//    resetLevel() {
+ //       console.log('restartAudio called - new system');
 
-        this.audioManager.restartAudio();
-    }
+  //      this.audioManager.restartAudio();
+ //   }
 
  
 
@@ -219,8 +219,8 @@ export default class Level_BasicSwipe
     setupSweetSpotCircles() 
     {
         // Initialize two sweet spot circles with specific attributes
-        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this, 'rgb(0, 255, 0)', { x: this.canvas.width /2 -135, y: this.canvas.height/2+100 });
-        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this, 'rgb(0, 255, 200)', { x: this.canvas.width /2 +135, y: this.canvas.height/2+100 });
+        this.SweetSpotCircleArray[0] = new SweetSpotCircle(this, 'rgb(0, 255, 0)', { x: this.canvas.width /2 -215, y: this.canvas.height/2+80 });
+        this.SweetSpotCircleArray[1] = new SweetSpotCircle(this, 'rgb(0, 255, 200)', { x: this.canvas.width /2 +215, y: this.canvas.height/2+80 });
         // Setting additional properties
         this.SweetSpotCircleArray[0].beatCirclePathDirectionAngle = -90;
         this.SweetSpotCircleArray[1].beatCirclePathDirectionAngle = -90;
@@ -324,51 +324,12 @@ export default class Level_BasicSwipe
 
 
 
-    /*
-    old one working
-    //Keyboard Shortcuts Box
-    drawShortcutsBox() {
-        if (!this.boxVisible) return;
-
-        // Set transparency for the box
-        this.ctx.globalAlpha = 0.7; // Adjust transparency as needed
-        //this.boxUI.draw();
-        this.ctx.globalAlpha = 1.0; // Reset alpha to fully opaque for text
-
-        // Text settings
-        this.ctx.fillStyle = 'white'; // White text color
-        this.ctx.font = '24px Arial'; // Adjust font size as needed
-        this.ctx.textAlign = 'left'; // Set text alignment to left
-
-    
-        const shortcuts = [
-            "K:        SHOW/HIDE SHORTCUTS",
-            "P:        PAUSE",
-            "R:        RESTART",
-            "B:        SHOW/HIDE Beat Ranges",
-
-            "1/2:      -/+ Song Volume: " + Math.round(this.audioManager.mainMusicGain.gain.value * 100) + "%",
-            "3/4:      -/+ Beat Volume: " + Math.round(this.audioManager.hitSound0Gain.gain.value * 100) + "%",
-            "7/8:      -/+ Misses Allowed (" + this.stats.maxBufferLimit + ")",
-
-            "←/↑:      Move Target Circles",
-            "</>:      -/+ BeatRange Size",
-            "+/-:      -/+ Beat Speed"
-
-        ];
-        
-        
-        // Draw each line of text
-        let textY = this.boxUI.y + 80; // Starting Y position for text
-        for (const line of shortcuts) {
-            this.ctx.fillText(line, this.boxUI.x + 20, textY);
-            textY += 34; // Increase Y for the next line, adjust spacing as needed
-        }
-    }
-*/
-
 drawShortcutsBox() {
     if (!this.boxVisible) return;
+
+    // Calculate the offsets based on the current positions and the center of the canvas
+    const xOffset = this.SweetSpotCircleArray[0].position.x - (this.canvas.width / 2);
+    const yOffset = this.SweetSpotCircleArray[0].position.y - (this.canvas.height / 2);
 
       // Define shortcuts text array
       const shortcuts = [
@@ -379,9 +340,9 @@ drawShortcutsBox() {
         "Song Volume -/+ :     1/2 (" + Math.round(this.audioManager.mainMusicGain.gain.value * 100) + "%)",
         "Beat Volume -/+ :     3/4 (" + Math.round(this.audioManager.hitSound0Gain.gain.value * 100) + "%)",
         "Misses Allowed -/+ :  7/8 (" + this.stats.maxBufferLimit + ")",
-        "Move Target Circles:  ←/↑",
+        "Move Target Circles:  ←/↑ (" + (xOffset > 0 ? "+" : "") + xOffset + ", " + (yOffset > 0 ? "+" : "") + yOffset + ")",
         "BeatRange Size -/+ :  </>",
-        "Beat Speed -/+ :      +/-"
+        "Beat Speed -/+ :      +/- (" + this.SweetSpotCircleArray[0].velocity + ")"
     ];
 
         // Define colors for text and grid lines
@@ -399,7 +360,7 @@ drawShortcutsBox() {
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // Semi-transparent black background
         this.ctx.fillRect(this.boxUI.x, this.boxUI.y, this.boxUI.width, this.boxUI.height); // Draw the background
         this.ctx.strokeStyle = gridColor;
-        this.ctx.strokeRect(this.boxUI.x, this.boxUI.y, this.boxUI.width +100, this.boxUI.height); // Draw the border
+        this.ctx.strokeRect(this.boxUI.x, this.boxUI.y, this.boxUI.width +170, this.boxUI.height); // Make box width 140 wider!
 
         // Set up text style
         this.ctx.font = '18px Courier New'; // Using a monospaced font for consistent spacing
@@ -415,7 +376,7 @@ drawShortcutsBox() {
         });
     
         // Define a fixed right column starting point based on the widest text
-        const rightColumnStart = this.boxUI.x + maxTextWidth + 120; // Add some padding
+        const rightColumnStart = this.boxUI.x + maxTextWidth + 200; // Make Box Wider
 
         // Draw the grid lines (if desired, for visual structure)
         //this.ctx.beginPath();
@@ -693,6 +654,7 @@ playSound(soundBuffer, gainNode) {
 }
 
 scheduleSound(soundBuffer, time, gainNode) {
+
     if (!soundBuffer) return;
 
     const soundSource = this.audioManager.audioContext.createBufferSource();
@@ -702,9 +664,13 @@ scheduleSound(soundBuffer, time, gainNode) {
     soundSource.start(time); // Schedule the sound at the specified time
 }
 
+
+
 updateForPlay() {
+
     const currentTime = this.audioManager.audioContext.currentTime * 1000;
     const audioOffset = this.getAudioOffset();
+
 
     this.SweetSpotCircleArray.forEach((circle, index) => {
         circle.updateForPlay();
@@ -714,6 +680,7 @@ updateForPlay() {
             const scheduleTime = (currentBeatTime - audioOffset) / 1000;
 
             if (!circle.scheduledSound && currentTime < currentBeatTime - audioOffset) {
+
                 circle.scheduledSound = true;
 
                 if (index === 0) {
@@ -729,6 +696,9 @@ updateForPlay() {
         }
     });
 }
+
+
+
 
 
 

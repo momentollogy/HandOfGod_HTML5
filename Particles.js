@@ -8,7 +8,7 @@ class Particle {
      this.speedY = directionY * (4 + Math.random() * 2);  // Variable speed for organic feel
      this.color = color;
      this.life = 0;
-     this.maxLife = 80;
+     this.maxLife = 60;
      this.damping = 0.95;
      this.noise = Math.random() * 0.5 - 0.25;
  }

@@ -26,6 +26,7 @@ export default class AudioManager
         this.hitSound1Buffer = null;
 
     }
+    
 
 
     //loads Level Song per level.
@@ -116,6 +117,8 @@ export default class AudioManager
    
     startAudio() 
     {
+        console.log('startAudio called');
+
         if (!this.audioBuffer) return;
     
         // When the audio starts, capture the current time of the audio context
@@ -190,55 +193,42 @@ export default class AudioManager
 
 
 
+//working but wont play hits after restart - but WORKING
     restartAudioFromBeginning() {
+        console.log('Restarting audio from the beginning');
+
         // Store the current playing state
         const wasPlaying = this.isPlaying;
+        console.log('Was audio playing:', wasPlaying);
+
 
         // Disconnect the current sound source
         if (this.soundSource) {
+            console.log('Disconnecting current sound source');
+
             this.soundSource.disconnect();
         }
+        console.log('Starting audio');
 
         // Restart the audio from the beginning
         this.startAudio();
 
         // If the audio was paused, suspend the audio context
         if (!wasPlaying) {
+            console.log('Audio was paused, suspending audio context');
+
             this.audioContext.suspend().then(() => {
                 this.isPlaying = false;
             });
         }
     }
 
-/* might be tweaked no good 
-restartAudioFromBeginning() {
-    if (!this.audioBuffer || !this.audioContext) return; // Check if audioBuffer and audioContext exist
 
-    // If playing, stop and disconnect the current soundSource
-    if (this.isPlaying && this.soundSource) {
-        this.soundSource.stop();
-        this.soundSource.disconnect();
-    }
 
-    // Create a new soundSource
-    this.soundSource = this.audioContext.createBufferSource();
-    this.soundSource.buffer = this.audioBuffer;
-    this.soundSource.connect(this.audioContext.destination);
 
-    // Restart the audio
-    this.soundSource.start(0);
-    this.startTime = this.audioContext.currentTime;
-    this.isPlaying = true;
 
-    // Handle onended callback
-    this.soundSource.onended = () => {
-        if (!this.isResettingForGame) {
-            this.isPlaying = false;
-            if (this.onAudioEnd) this.onAudioEnd();
-        }
-    };
-}
-*/
+
+
 
 
 
