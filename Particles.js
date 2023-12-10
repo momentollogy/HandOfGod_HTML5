@@ -23,6 +23,8 @@ class Particle {
  }
 
  draw(ctx) {
+    ctx.save();
+
      ctx.fillStyle = this.color;
      ctx.beginPath();
      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -32,6 +34,8 @@ class Particle {
      // Glow effect
      ctx.shadowBlur = 10;
      ctx.shadowColor = this.color;
+     
+     ctx.restore();
  }
 }
 
