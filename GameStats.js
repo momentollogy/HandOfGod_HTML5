@@ -36,6 +36,7 @@ export class GameStats
     }
 
     addScore(percentAccuracy) {
+        //console.log(this.score,percentAccuracy,this.comboMultiplier)
         this.score += percentAccuracy * this.comboMultiplier;
     }
 

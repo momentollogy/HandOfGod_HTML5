@@ -595,13 +595,14 @@ drawShortcutsBox() {
 
 
     touchSuccessfulWithPercentage(percentAccuracy, sweetspotcircle) {
+        if(!this.audioManager.isPlaying){return};
         let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
         this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
     
         this.stats.increaseCombo(); 
         this.stats.addScore(percentAccuracy);  
         this.stats.removeMiss();   
-    
+        
         // Emit particles from the circle's rim
         // Make sure to pass the swipe angle to the emit method
         if (sweetspotcircle.lastSwipeAngle !== undefined) {
@@ -877,7 +878,7 @@ updateForPlay() {
                 sweetSpotCircle.lastSwipeAngle = swipeAngle;
                 sweetSpotCircle.isSwipeActive = true; // Flag to indicate an active swipe
     
-                console.log(`Swipe Direction: ${leftTouches ? "Left" : "Right"}, Angle: ${swipeAngle}`);
+                //console.log(`Swipe Direction: ${leftTouches ? "Left" : "Right"}, Angle: ${swipeAngle}`);
             } else if (!leftTouches && !rightTouches && sweetSpotCircle.swipeLogged) {
                 sweetSpotCircle.puffy = false;
                 sweetSpotCircle.swipeLogged = false;

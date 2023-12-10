@@ -222,6 +222,8 @@ export default class SweetSpotCircle {
             if(!this.touched){
                 let touchTimeDiff = Math.abs(this.beatCircles_Array[this.beatIndex].beatTime - this.level.getCurrentAudioTime()*1000 )
                 percentAccuracy = (100 - Math.round(touchTimeDiff/this.beatBufferTime*100));
+
+                console.log(  this.beatCircles_Array[this.beatIndex].beatTime,    this.level.getCurrentAudioTime()*1000,     this.beatBufferTime,    percentAccuracy,     touchTimeDiff );
             }
             this.touched=true;
         }
