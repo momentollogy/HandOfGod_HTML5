@@ -9,12 +9,18 @@ export default class BeatCircle
         this.direction = circleData.dir;
         this.x = ss_pos.x;
         this.sweetSpotPos = ss_pos;
-        this.postBeatColor = "rgb(220,95,0)";
-        this.preBeatColor = "rgb(255,255,0)";
+
+
+        this.postBeatColor = "rgb(0,255,0)";
+        this.preBeatColor = "rgb(0,235,0)";
+
+       // this.postBeatColor = "rgb(220,95,0)";
+       // this.preBeatColor = "rgb(255,255,0)";
+
         this.directionIndicatorColor = "rgb(128,0,255)";
         this.color;// = "Gray";
         this.lineWidth = 3;
-        this.radius = 50;
+        this.radius = 65;
         this.alpha = 1.0;
         this.y = 0;
         this.angle = -90;
@@ -235,7 +241,7 @@ draw() {
         if(this.distanceToSweetSpot <0){
             this.color = this.postBeatColor
 
-            this.alpha = 1+this.distanceToSweetSpot/180;
+            this.alpha = 0+this.distanceToSweetSpot/180;
             if (this.alpha < 0 ){this.alpha = 0;}
         }
         else{

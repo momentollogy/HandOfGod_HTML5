@@ -1,17 +1,60 @@
 // Particles.js
 class Particle {
- constructor(x, y, directionX, directionY, color) {
-     this.x = x;
-     this.y = y;
-     this.size = Math.random() * 3 + 1;  // Larger size range for more variability
-     this.speedX = directionX * (4 + Math.random() * 2);  // Variable speed for organic feel
-     this.speedY = directionY * (4 + Math.random() * 2);  // Variable speed for organic feel
-     this.color = color;
-     this.life = 0;
-     this.maxLife = 60;
-     this.damping = 0.95;
-     this.noise = Math.random() * 0.5 - 0.25;
+    constructor(x, y, directionX, directionY, color, swipeSpeed) {
+        console.log("PARTICLE CLASS Creating particle:", { x, y, directionX, directionY, color, swipeSpeed });
+
+        
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 3 + 1;
+
+
+        
+        // Modulate the speed with the swipe speed
+        let speedModifier = this.calculateSpeedModifier(swipeSpeed);
+        this.speedX = directionX * speedModifier;
+        this.speedY = directionY * speedModifier;
+        this.noise = this.calculateNoise(swipeSpeed); // Dynamic noise based on speed
+
+
+        
+        this.color = color;
+        this.life = 0;
+        this.maxLife = 60;
+        this.damping = 0.95;
+        this.noise = Math.random() * 0.5 - 0.25;
+
+        console.log("Creating particle:", { x, y, directionX, directionY, color, swipeSpeed, speedModifier });
+
  }
+
+ // Additional method to calculate speed modifier
+ calculateSpeedModifier(swipeSpeed) {
+    // Ensure swipeSpeed is within the expected range
+    swipeSpeed = Math.max(200, Math.min(8000, swipeSpeed || 200));
+
+    // Map the swipe speed (200-8000) to a much broader range of speed modifiers
+    // Adjust the range and mapping formula as needed for more noticeable responsiveness
+    const minModifier = 1; // Slowest speed factor
+    const maxModifier = 20; // Fastest speed factor (increased for more responsiveness)
+    const minSwipeSpeed = 200;
+    const maxSwipeSpeed = 8000;
+
+    // Use an exponential mapping for a more pronounced effect
+    let normalizedSpeed = Math.pow((swipeSpeed - minSwipeSpeed) / (maxSwipeSpeed - minSwipeSpeed), 2);
+    return minModifier + (maxModifier - minModifier) * normalizedSpeed;
+}
+
+
+
+calculateNoise(swipeSpeed) {
+    // Normalize the swipe speed for noise calculation
+    const maxSwipeSpeed = 8000;
+    let normalizedSpeed = swipeSpeed / maxSwipeSpeed;
+    
+    // Increase the noise as the speed increases
+    return Math.random() * normalizedSpeed - (normalizedSpeed / 2);
+}
 
  update() {
      this.x += this.speedX + this.noise;
@@ -20,23 +63,33 @@ class Particle {
      this.speedY *= this.damping;
      if (this.size > 0.1) this.size -= 0.05;
      this.life++;
+     //console.log("Updating particle:", { x: this.x, y: this.y, life: this.life });
+
  }
 
- draw(ctx) {
+
+
+draw(ctx) {
+    // Save the current state without shadow
     ctx.save();
 
-     ctx.fillStyle = this.color;
-     ctx.beginPath();
-     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-     ctx.fill();
-     ctx.shadowBlur = 4;
-     ctx.shadowColor = this.color;
-     // Glow effect
-     ctx.shadowBlur = 10;
-     ctx.shadowColor = this.color;
-     
-     ctx.restore();
- }
+    // Set the particle's properties
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    
+    // Set the glow effect
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = this.color;
+
+    // Draw the particle with the glow
+    ctx.fill();
+
+    // Restore the original state (without shadow)
+    ctx.restore();
+}
+
+
 }
 
 export default class Particles {
@@ -49,58 +102,64 @@ export default class Particles {
 
     }
 
+ 
+emit(startPosition, swipeAngleDegrees, swipeSpeed, radius = 70) {
+    
+    console.log("zzzzzzEmitting particles:", { startPosition, swipeAngleDegrees, swipeSpeed, radius });
+    
+    let particleCount = 50;
+    let angleInRadians = (swipeAngleDegrees + 180) % 360 * (Math.PI / 180);
 
-    /*
- emit(startPosition, radius = 50) {  // Adjusted radius
-     let particleCount = 50;
-     let angleIncrement = (Math.PI * 2) / particleCount;
-     for (let i = 0; i < particleCount; i++) {
+    for (let i = 0; i < particleCount; i++) {
+        let angleIncrement = (Math.PI * 2) / particleCount;
+        let startAngle = angleIncrement * i;
 
-         let x = startPosition.x + radius * Math.cos(angleIncrement * i);
-         let y = startPosition.y + radius * Math.sin(angleIncrement * i);
+        let x = startPosition.x + radius * Math.cos(startAngle);
+        let y = startPosition.y + radius * Math.sin(startAngle);
 
-         
-         const angleInDegrees = 120;  // Hard-coded angle in degrees
-         const angleInRadians = angleInDegrees * (Math.PI / 180);  // Convert to radians
-         
-         // Use the angle to set the direction
-         let directionX = Math.cos(angleInRadians);
-         let directionY = Math.sin(angleInRadians);
-         
-         let color = this.colors[Math.floor(Math.random() * this.colors.length)];
-         this.particles.push(new Particle(x, y, directionX, directionY, color));
+        let directionX = Math.cos(angleInRadians);
+        let directionY = Math.sin(angleInRadians);
+
+        let color = this.colors[Math.floor(Math.random() * this.colors.length)];
+
+        // Pass the swipe speed to the Particle constructor
+        this.particles.push(new Particle(x, y, directionX, directionY, color, swipeSpeed));
+    }
+}
+
+
+normalizeSpeed(swipeSpeed) {
+    // Ensure that swipeSpeed has a valid value
+    swipeSpeed = Math.max(200, Math.min(8000, swipeSpeed || 200));
+
+    const minSpeed = 1; // Slowest speed factor
+    const maxSpeed = 5; // Fastest speed factor
+    const minSwipeSpeed = 200;
+    const maxSwipeSpeed = 8000;
+    return minSpeed + (maxSpeed - minSpeed) * ((swipeSpeed - minSwipeSpeed) / (maxSwipeSpeed - minSwipeSpeed));
+}
+
+ updateAndDraw() {
+  //  console.log("Updating and drawing particles, count:", this.particles.length);
+
+     for (let i = 0; i < this.particles.length; i++) {
+         this.particles[i].update();
+         if (this.particles[i].life < this.particles[i].maxLife) {
+             this.particles[i].draw(this.ctx);
+         } else {
+             this.particles.splice(i, 1);
+             i--;
+         }
      }
  }
-*/
- 
+}
+
+
+
+
 
 /*
-twirly effect 
-emit(startPosition, swipeAngleDegrees, radius = 30) {
- let particleCount = 50;
- const centralSwipeAngleRadians = swipeAngleDegrees * (Math.PI / 180); // Central direction based on swipe
-
- // Range for the burst to start from the circle's perimeter
- const burstStartRange = Math.PI * 2; // Full circle
-
- for (let i = 0; i < particleCount; i++) {
-     // Start angle for each particle around the circle's perimeter
-     let startAngle = burstStartRange * (i / particleCount);
-
-     // Adjusted angle for slight veer towards swipe direction
-     let adjustedAngle = startAngle + centralSwipeAngleRadians * 1.7; // 10% influence of swipe direction
-
-     let directionX = Math.cos(adjustedAngle);
-     let directionY = Math.sin(adjustedAngle);
-
-     let x = startPosition.x + radius * Math.cos(startAngle);
-     let y = startPosition.y + radius * Math.sin(startAngle);
-
-     let color = this.colors[Math.floor(Math.random() * this.colors.length)];
-     this.particles.push(new Particle(x, y, directionX, directionY, color));
- }
-}
-*/
+ //working way
 emit(startPosition, swipeAngleDegrees, radius = 70) {  // Radius to match the circle
  let particleCount = 50;
 
@@ -124,19 +183,4 @@ emit(startPosition, swipeAngleDegrees, radius = 70) {  // Radius to match the ci
      this.particles.push(new Particle(x, y, directionX, directionY, color));
  }
 }
-
-
-
-
- updateAndDraw() {
-     for (let i = 0; i < this.particles.length; i++) {
-         this.particles[i].update();
-         if (this.particles[i].life < this.particles[i].maxLife) {
-             this.particles[i].draw(this.ctx);
-         } else {
-             this.particles.splice(i, 1);
-             i--;
-         }
-     }
- }
-}
+*/

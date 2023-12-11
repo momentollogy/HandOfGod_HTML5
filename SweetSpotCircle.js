@@ -41,6 +41,9 @@ export default class SweetSpotCircle {
         this.touchable = false;
         this.recordModeTouched=false;
         this.name="";
+
+       // this.ctx.globalAlpha = .25;
+
     }
     
     getBeatCircleData(){
@@ -236,26 +239,36 @@ export default class SweetSpotCircle {
     }
 
     draw(){
-        // draw thin opaque outter circle
+        // Save the current context state
         this.ctx.save();
+    
+        // For thin opaque outer circle
+        this.ctx.globalAlpha = 0.25;
         this.ctx.beginPath();
-        this.ctx.arc(this.position.x,this.position.y, this.radius, 0, Math.PI * 2, false);
+        this.ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, false);
         this.ctx.strokeStyle = this.color;
-        this.ctx.shadowColor = this.color;;
+        this.ctx.shadowColor = this.color;
         this.ctx.shadowBlur = this.puffy ? 5 : 40;
         this.ctx.lineWidth = this.puffy ? this.thickness*2 : this.thickness;
         this.ctx.stroke();
         this.ctx.closePath();
-
-        // draw thick transparent inner circle
-        this.ctx.globalAlpha = .25;
+    
+        // Restore the context to its original state
+        this.ctx.restore();
+    
+        // Save the context state again before drawing inner circle
+        this.ctx.save();
+    
+        // For thick transparent inner circle
+        this.ctx.globalAlpha = 0.25;
         this.ctx.beginPath();
-        this.ctx.arc(this.position.x,this.position.y, this.baseRadius-10, 0, Math.PI * 2, false);
-        this.ctx.strokeStyle = this.color
+        this.ctx.arc(this.position.x, this.position.y, this.baseRadius-10, 0, Math.PI * 2, false);
+        this.ctx.strokeStyle = this.color;
         this.ctx.lineWidth = 9;
         this.ctx.stroke();
         this.ctx.closePath();
-        this.ctx.globalAlpha = 1.0;
+    
+        // Restore the context to its original state
         this.ctx.restore();
     }
     
@@ -364,22 +377,7 @@ drawBeatRanges() {
 
 
 
-    drawMotionIndicatorLine(){
-        let radians = (this.beatCirclePathDirectionAngle * Math.PI) / 180;
-        const lineLength = Math.max(this.canvas.width, this.canvas.height); // Adjust for longer lines if needed
-        const lineEndpointX = this.position.x + lineLength * Math.cos(radians);
-        const lineEndpointY = this.position.y + lineLength * Math.sin(radians);
-
-        this.ctx.save();
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.position.x, this.position.y);
-        this.ctx.lineTo(lineEndpointX, lineEndpointY);
-        this.ctx.strokeStyle = 'RGBA(0,255,0,.5)'; // Set the line color
-        this.ctx.lineWidth = 1; // Set the line width
-        this.ctx.stroke();
-        this.ctx.restore();
-    }
-    
+   
     isPointInside(hand_position){ return this.is_hand_inside(hand_position) }
 
     is_hand_inside(hand_position) 
