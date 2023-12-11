@@ -3,7 +3,7 @@ import DrawEngine from './DrawEngine.js';
 
 export default class SweetSpotCircle {
     
-    constructor(level, color='rgb(0,0,255)', position = {x:1000,y:200}, radius = 120, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
+    constructor(level, color='rgb(0,0,255)', position = {x:1000,y:200}, radius = 80, thickness = 2, is_growing = false, is_moving = false, growth_rate = 2)
      {
 
         this.level = level; 
@@ -239,7 +239,7 @@ export default class SweetSpotCircle {
     }
 
 
-    /*
+    
     draw(){
         // Save the current context state
         this.ctx.save();
@@ -273,49 +273,8 @@ export default class SweetSpotCircle {
         // Restore the context to its original state
         this.ctx.restore();
     }
-    */
+    
 
-    draw(){
-        // Save the current context state
-        this.ctx.save();
-    
-        // For thin opaque outer oval
-        this.ctx.globalAlpha = 0.05;
-        this.ctx.beginPath();
-        // Creating an oval instead of a circle
-       // this.ctx.ellipse(this.position.x, this.position.y, this.radius * 0.3, this.radius, 0, 0, Math.PI * 2);
-        this.ctx.ellipse(this.position.x, this.position.y, this.radius * 0.4, this.radius * 1.6, 0, 0, Math.PI * 2);
-
-
-        this.ctx.strokeStyle = this.color;
-        this.ctx.shadowColor = this.color;
-        this.ctx.shadowBlur = this.puffy ? 5 : 40;
-        this.ctx.lineWidth = this.puffy ? this.thickness*2 : this.thickness;
-        this.ctx.stroke();
-        this.ctx.closePath();
-    
-        // Restore the context to its original state
-        this.ctx.restore();
-    
-        // Save the context state again before drawing inner oval
-        this.ctx.save();
-    
-        // For thick transparent inner oval
-        this.ctx.globalAlpha = 0.05;
-        this.ctx.beginPath();
-        // Adjust the second radius parameter to make the oval more elongated
-       
-        //this.ctx.ellipse(this.position.x, this.position.y, (this.baseRadius-10) * 0.3, this.baseRadius-10, 0, 0, Math.PI * 2);
-        this.ctx.ellipse(this.position.x, this.position.y, (this.baseRadius - 10) * 0.4, (this.baseRadius - 10) * 1.6, 0, 0, Math.PI * 2);
-
-        this.ctx.strokeStyle = this.color;
-        this.ctx.lineWidth = 9;
-        this.ctx.stroke();
-        this.ctx.closePath();
-    
-        // Restore the context to its original state
-        this.ctx.restore();
-    }
     
 
 
