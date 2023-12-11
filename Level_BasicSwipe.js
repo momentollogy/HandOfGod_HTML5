@@ -160,7 +160,6 @@ export default class Level_BasicSwipe
          this.boxVisible = false;
 
 
-//zzzzzzz
          this.currentSwipeSpeed = 0; // Initialize a class property for swipe speed
 
 
@@ -203,13 +202,6 @@ export default class Level_BasicSwipe
     }
 
  
-
-
-//    resetLevel() {
- //       console.log('restartAudio called - new system');
-
-  //      this.audioManager.restartAudio();
- //   }
 
  
 
@@ -492,17 +484,17 @@ drawShortcutsBox() {
 
 
        this.checkFingerPositionsAndUpdateFingerArrays();
-       this.drawSwipeForEachFingerFromFingerArrayData();
+      // this.drawSwipeForEachFingerFromFingerArrayData();
        this.checkLineCircleTouch();
 
 
             //For swipe angles
-           for (let sweetSpotCircle of this.SweetSpotCircleArray) 
-           {
-            if (sweetSpotCircle.isSwipeActive) {
-                this.drawSwipeVisualization(null, sweetSpotCircle.lastSwipeEntryPoint, sweetSpotCircle.lastSwipeAngle);
-            }
-          }
+         //  for (let sweetSpotCircle of this.SweetSpotCircleArray) 
+          // {
+          //  if (sweetSpotCircle.isSwipeActive) {
+           //     this.drawSwipeVisualization(null, sweetSpotCircle.lastSwipeEntryPoint, sweetSpotCircle.lastSwipeAngle);
+           // }
+         // }
 
      this.particles.updateAndDraw();
 
@@ -640,7 +632,6 @@ drawShortcutsBox() {
 
         this.particles.emit(startPosition, sweetspotcircle.lastSwipeAngle, sweetspotcircle.lastSwipeSpeed);
 
-      //  sweetSpotCircle.lastSwipeSpeed = this.currentSwipeSpeed; // Storing speed
 
 
     }
@@ -909,27 +900,6 @@ updateForPlay() {
     /////////// this.rightSwipeArray = [];//////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    /*old working
-    checkFingerPositionsAndUpdateFingerArrays()
-    {
-        let leftPoint = this.mediaPipe.getPointOfIndex("Left", 8);
-        let rightPoint = this.mediaPipe.getPointOfIndex("Right", 8);
-
-        // Update arrays only if valid data is present
-        if (leftPoint && leftPoint.x !== undefined && leftPoint.y !== undefined) {
-            this.leftSwipeArray.push(leftPoint);
-            if(this.leftSwipeArray.length > 2) { this.leftSwipeArray.shift(); }
-        }
-
-        if (rightPoint && rightPoint.x !== undefined && rightPoint.y !== undefined) {
-            this.rightSwipeArray.push(rightPoint);
-            if(this.rightSwipeArray.length > 2) { this.rightSwipeArray.shift(); }
-        }
-    }
-
-
-*/
-
 
 
 //trying for velocity
@@ -954,136 +924,6 @@ checkFingerPositionsAndUpdateFingerArrays() {
 
 
 
-
-
-
-/* old working
-    checkLineCircleTouch() {
-        for (var sweetSpotCircle of this.SweetSpotCircleArray) {
-            let leftTouches = false;
-            let rightTouches = false;
-    
-            // Ensure swipeLogged is initialized for each sweetSpotCircle
-            if (sweetSpotCircle.swipeLogged === undefined) {
-                sweetSpotCircle.swipeLogged = false;
-            }
-    
-
-            //*Velocity in here. return velcoity and base particles on it. 
-            // Determine if there's a left or right touch n
-            if (this.leftSwipeArray[0] && this.leftSwipeArray[1]) {
-                leftTouches = this.circleLineToucheyMath(
-                    { x: sweetSpotCircle.position.x, y: sweetSpotCircle.position.y },
-                    sweetSpotCircle.baseRadius,
-                    [this.leftSwipeArray[0].x, this.leftSwipeArray[0].y],
-                    [this.leftSwipeArray[1].x, this.leftSwipeArray[1].y]
-                );
-            }
-            if (this.rightSwipeArray[0] && this.rightSwipeArray[1]) {
-                rightTouches = this.circleLineToucheyMath(
-                    { x: sweetSpotCircle.position.x, y: sweetSpotCircle.position.y },
-                    sweetSpotCircle.baseRadius,
-                    [this.rightSwipeArray[0].x, this.rightSwipeArray[0].y],
-                    [this.rightSwipeArray[1].x, this.rightSwipeArray[1].y]
-                );
-            }
-    
-            // Log the swipe and manage arrow drawing only if a new touch is detected and not already logged
-            if ((leftTouches || rightTouches) && !sweetSpotCircle.swipeLogged) {
-                sweetSpotCircle.puffy = true;
-                sweetSpotCircle.swipeLogged = true;
-    
-                let swipeArray = leftTouches ? this.leftSwipeArray : this.rightSwipeArray;
-                //let swipeAngle = this.calculateAngle(swipeArray[0].x, swipeArray[0].y,swipeArray[1].x, swipeArray[1].y);
-                let swipeAngle = this.calculateAngle(swipeArray[0].x, swipeArray[0].y, swipeArray[1].x, swipeArray[1].y);
-                sweetSpotCircle.lastSwipeAngle = swipeAngle;
-    
-                // Store swipe details in the circle
-                sweetSpotCircle.lastSwipeEntryPoint = swipeArray[0];
-                sweetSpotCircle.lastSwipeAngle = swipeAngle;
-                sweetSpotCircle.isSwipeActive = true; // Flag to indicate an active swipe
-    
-                //console.log(`Swipe Direction: ${leftTouches ? "Left" : "Right"}, Angle: ${swipeAngle}`);
-            } else if (!leftTouches && !rightTouches && sweetSpotCircle.swipeLogged) {
-                sweetSpotCircle.puffy = false;
-                sweetSpotCircle.swipeLogged = false;
-                // No need to reset the swipe visibility flag here
-            }
-        }
-    }
-    */
-
-/*working speed!
-    checkLineCircleTouch() {
-        for (var sweetSpotCircle of this.SweetSpotCircleArray) {
-            let leftTouches = false;
-            let rightTouches = false;
-
-          //  let speed = 0; // Initialize speed
-
-    
-            // Ensure swipeLogged is initialized for each sweetSpotCircle
-            if (sweetSpotCircle.swipeLogged === undefined) {
-                sweetSpotCircle.swipeLogged = false;
-            }
-    
-            // Check for left and right touch
-            if (this.leftSwipeArray[0] && this.leftSwipeArray[1]) {
-                leftTouches = this.circleLineToucheyMath(
-                    { x: sweetSpotCircle.position.x, y: sweetSpotCircle.position.y },
-                    sweetSpotCircle.baseRadius,
-                    [this.leftSwipeArray[0].x, this.leftSwipeArray[0].y],
-                    [this.leftSwipeArray[1].x, this.leftSwipeArray[1].y]
-                );
-            }
-            if (this.rightSwipeArray[0] && this.rightSwipeArray[1]) {
-                rightTouches = this.circleLineToucheyMath(
-                    { x: sweetSpotCircle.position.x, y: sweetSpotCircle.position.y },
-                    sweetSpotCircle.baseRadius,
-                    [this.rightSwipeArray[0].x, this.rightSwipeArray[0].y],
-                    [this.rightSwipeArray[1].x, this.rightSwipeArray[1].y]
-                );
-            }
-    
-            // Log the swipe, manage arrow drawing, and calculate velocity
-            if ((leftTouches || rightTouches) && !sweetSpotCircle.swipeLogged) {
-                sweetSpotCircle.puffy = true;
-                sweetSpotCircle.swipeLogged = true;
-
-              //  speed = Math.max(200, Math.min(8000, speed)); // Clamp speed between 200 and 8000
-
-    
-                let swipeArray = leftTouches ? this.leftSwipeArray : this.rightSwipeArray;
-                let swipeAngle = this.calculateAngle(swipeArray[0].x, swipeArray[0].y, swipeArray[1].x, swipeArray[1].y);
-                
-                // Calculate distance for speed
-                let distance = Math.sqrt(
-                    Math.pow(swipeArray[1].x - swipeArray[0].x, 2) +
-                    Math.pow(swipeArray[1].y - swipeArray[0].y, 2)
-                );
-    
-                // Calculate time difference in seconds
-                let timeDiff = (swipeArray[1].time - swipeArray[0].time) / 1000; // Convert milliseconds to seconds
-    
-                // Calculate speed (distance per second)
-                let speed = timeDiff > 0 ? distance / timeDiff : 0;
-    
-                // Store and log swipe details
-                sweetSpotCircle.lastSwipeEntryPoint = swipeArray[0];
-                sweetSpotCircle.lastSwipeAngle = swipeAngle;
-                sweetSpotCircle.lastSwipeSpeed = speed; // Storing speed
-                sweetSpotCircle.isSwipeActive = true; // Flag to indicate an active swipe
-    
-                console.log(`Swipe Direction: ${leftTouches ? "Left" : "Right"}, Angle: ${swipeAngle}, Speed: ${speed} units/second`);
-            } else if (!leftTouches && !rightTouches && sweetSpotCircle.swipeLogged) {
-                sweetSpotCircle.puffy = false;
-                sweetSpotCircle.swipeLogged = false;
-                sweetSpotCircle.isSwipeActive = false; // Optionally reset the swipe activity flag
-            }
-        }
-    }
-    
-*/
 
 checkLineCircleTouch() {
     for (var sweetSpotCircle of this.SweetSpotCircleArray) 
@@ -1338,16 +1178,6 @@ checkLineCircleTouch() {
         this.ctx.fill();
     }
     
-
-
-
-
-
-
-
-
-
-
 
 }
 

@@ -16,9 +16,10 @@ class Particle {
         this.speedY = directionY * speedModifier;
         this.noise = this.calculateNoise(swipeSpeed); // Dynamic noise based on speed
 
-
+        this.color = this.adjustColorForSpeed(color, swipeSpeed);
+        this.originalColor = this.color; // Store original color for fade-out effect
         
-        this.color = color;
+       // this.color = color;
         this.life = 0;
         this.maxLife = 60;
         this.damping = 0.95;
@@ -36,7 +37,7 @@ class Particle {
     // Map the swipe speed (200-8000) to a much broader range of speed modifiers
     // Adjust the range and mapping formula as needed for more noticeable responsiveness
     const minModifier = 1; // Slowest speed factor
-    const maxModifier = 20; // Fastest speed factor (increased for more responsiveness)
+    const maxModifier = 30; // Fastest speed factor (increased for more responsiveness)
     const minSwipeSpeed = 200;
     const maxSwipeSpeed = 8000;
 
@@ -47,6 +48,25 @@ class Particle {
 
 
 
+adjustColorForSpeed(color, swipeSpeed) {
+    if (Math.random() < 0.1) { // 10% chance to be a sparkle
+        return 'rgba(255, 255, 255, 0.8)'; // White color for sparkle
+    } else {
+        // Slight yellowish tint for faster swipes
+        let intensity = Math.min(swipeSpeed / 8000, 0.2); // Max intensity capped at 0.2
+        return this.addYellowTint(color, intensity);
+    }
+}
+
+addYellowTint(color, intensity) {
+    // Extract RGB values from the original color
+    let [r, g, b] = color.match(/\d+/g).map(Number);
+    // Add yellow tint based on intensity
+    r += 255 * intensity;
+    g += 255 * intensity;
+    return `rgb(${Math.min(r, 255)}, ${Math.min(g, 255)}, ${b})`;
+}
+
 calculateNoise(swipeSpeed) {
     // Normalize the swipe speed for noise calculation
     const maxSwipeSpeed = 8000;
@@ -56,17 +76,35 @@ calculateNoise(swipeSpeed) {
     return Math.random() * normalizedSpeed - (normalizedSpeed / 2);
 }
 
- update() {
-     this.x += this.speedX + this.noise;
-     this.y += this.speedY + this.noise; 
-     this.speedX *= this.damping;
-     this.speedY *= this.damping;
-     if (this.size > 0.1) this.size -= 0.05;
-     this.life++;
-     //console.log("Updating particle:", { x: this.x, y: this.y, life: this.life });
+update() {
+    this.x += this.speedX + this.noise;
+    this.y += this.speedY + this.noise;
+    this.speedX *= this.damping;
+    this.speedY *= this.damping;
 
- }
+    if (this.size > 0.1) {
+        this.size -= 0.05;
+    }
 
+    this.life++;
+
+    // Fade-out color change
+    if (this.life > this.maxLife / 2) {
+        this.color = this.fadeOutColor(this.originalColor, this.life, this.maxLife);
+    }
+}
+
+fadeOutColor(color, life, maxLife) {
+    let fadeFactor = 1 - (life - maxLife / 2) / (maxLife / 2);
+    let [r, g, b] = color.match(/\d+/g).map(Number);
+
+    // Gradually reduce the brightness
+    r *= fadeFactor;
+    g *= fadeFactor;
+    b *= fadeFactor;
+
+    return `rgb(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(b)})`;
+}
 
 
 draw(ctx) {

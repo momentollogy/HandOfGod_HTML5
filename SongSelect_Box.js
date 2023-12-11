@@ -68,7 +68,15 @@ export default class SongSelect_Box
                        
                         {
                             fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'GimmeGimme (Easy)' Abba", 
+                            levelDisplayName: "'GimmeGimme (Easy)' ABBA", 
+                            fireBaseLevelLeaderBoard: "GimmeGimmeBeg_LB",
+                            duration: "1:05",
+                            mp3Path:"Level_Mp3AndJson/GimmeGimme/GimmeGimme.mp3",
+                            jsonPath:"Level_Mp3AndJson/GimmeGimme/GimmeGimmeBeg.json"
+                        },
+                        {
+                            fileName: "Level_BasicSwipe", 
+                            levelDisplayName: "'GimmeGimme (Medium)' ABBA", 
                             fireBaseLevelLeaderBoard: "GimmeGimme_LB",
                             duration: "1:05",
                             mp3Path:"Level_Mp3AndJson/GimmeGimme/GimmeGimme.mp3",
@@ -76,7 +84,7 @@ export default class SongSelect_Box
                         },
                         {
                             fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'GimmeGimme (Hard)' Abba", 
+                            levelDisplayName: "'GimmeGimme (Hard)' ABBA", 
                             fireBaseLevelLeaderBoard: "GimmeGimme_LB",
                             duration: "1:05",
                             mp3Path:"Level_Mp3AndJson/GimmeGimme/GimmeGimme.mp3",
