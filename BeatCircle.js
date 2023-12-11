@@ -27,35 +27,40 @@ export default class BeatCircle
         this.distanceToSweetSpot = 0;
         this.fadeOut = true
 
+
+
         this.direction = circleData.dir;
 
     }
 
 
-
-
-
-
-//new api update.
-update(audioCurrentTime, velocity, _angle) {
-   // console.log('BeatCircle update called');
-
-    this.angle = _angle;
-
-    // Calculate the distance to the sweet spot
-    this.distanceToSweetSpot = (velocity / 1000) * (this.beatTime - audioCurrentTime * 1000);
-    let radian = (this.angle * Math.PI) / 180;
-
-    this.y = this.sweetSpotPos.y + this.distanceToSweetSpot * Math.sin(radian);
-    this.x = this.sweetSpotPos.x + this.distanceToSweetSpot * Math.cos(radian);
-
-    if (this.fadeOut) {
-        this.checkForRemoval();
-    } else {
-        this.alpha = 1;
-        this.color = this.preBeatColor;
+    // Method to set the hit state
+    setHitState(isHit) {
+        this.isHit = isHit;
     }
-}
+
+
+
+    //new api update.
+    update(audioCurrentTime, velocity, _angle) {
+    // console.log('BeatCircle update called');
+
+        this.angle = _angle;
+
+        // Calculate the distance to the sweet spot
+        this.distanceToSweetSpot = (velocity / 1000) * (this.beatTime - audioCurrentTime * 1000);
+        let radian = (this.angle * Math.PI) / 180;
+
+        this.y = this.sweetSpotPos.y + this.distanceToSweetSpot * Math.sin(radian);
+        this.x = this.sweetSpotPos.x + this.distanceToSweetSpot * Math.cos(radian);
+
+        if (this.fadeOut) {
+            this.checkForRemoval();
+        } else {
+            this.alpha = 1;
+            this.color = this.preBeatColor;
+        }
+    }
 
 
     
@@ -138,9 +143,7 @@ draw() {
 
     dispose() 
     {
-      //  console.log("Disposing BeatCircle...")
-        // Clear any ongoing animations or timeouts if present
-        // ...
+      
 
         // Nullify the canvas and context references
         this.canvas = null;

@@ -65,7 +65,7 @@ export default class SongSelect_Box
         // Initialize the level array and selected index here
         this.levelArray = [
 
-                       
+                       /*
                         {
                             fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'GimmeGimme (Easy)' ABBA", 
@@ -73,15 +73,7 @@ export default class SongSelect_Box
                             duration: "1:05",
                             mp3Path:"Level_Mp3AndJson/GimmeGimme/GimmeGimme.mp3",
                             jsonPath:"Level_Mp3AndJson/GimmeGimme/GimmeGimmeBeg.json"
-                        },
-                        {
-                            fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'GimmeGimme (Medium)' ABBA", 
-                            fireBaseLevelLeaderBoard: "GimmeGimme_LB",
-                            duration: "1:05",
-                            mp3Path:"Level_Mp3AndJson/GimmeGimme/GimmeGimme.mp3",
-                            jsonPath:"Level_Mp3AndJson/GimmeGimme/GimmeGimme.json"
-                        },
+                        },                      
                         {
                             fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'GimmeGimme (Hard)' ABBA", 
@@ -89,6 +81,20 @@ export default class SongSelect_Box
                             duration: "1:05",
                             mp3Path:"Level_Mp3AndJson/GimmeGimme/GimmeGimme.mp3",
                             jsonPath:"Level_Mp3AndJson/GimmeGimme/GimmeGimmeHARD.json"
+                        },
+                         */
+                        {
+                            fileName: "Level_BasicSwipe",
+                            levelDisplayName: "'GimmeGimme' ABBA",
+                            fireBaseLevelLeaderBoard: "GimmeGimme_LB",
+                            duration: "1:05",
+                            mp3Path: "Level_Mp3AndJson/GimmeGimme/GimmeGimme.mp3",
+                            jsonPaths: {
+                            Easy: "Level_Mp3AndJson/GimmeGimme/GimmeGimmeEasy.json",
+                            Medium: "Level_Mp3AndJson/GimmeGimme/GimmeGimmeMedium.json",
+                            Hard: "Level_Mp3AndJson/GimmeGimme/GimmeGimmeHard.json",
+                            Expert: "Level_Mp3AndJson/GimmeGimme/GimmeGimmeExpert.json"
+                            }
                         },
                         {
                             fileName: "Level_BasicSwipe", 
