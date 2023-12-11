@@ -629,7 +629,7 @@ drawShortcutsBox() {
         this.stats.increaseCombo(); 
         this.stats.addScore(percentAccuracy);  
         this.stats.removeMiss();   
-
+        //hide beat circle
         this.particles.emit(startPosition, sweetspotcircle.lastSwipeAngle, sweetspotcircle.lastSwipeSpeed);
 
 

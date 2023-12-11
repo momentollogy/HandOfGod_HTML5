@@ -65,24 +65,7 @@ export default class SongSelect_Box
         // Initialize the level array and selected index here
         this.levelArray = [
 
-                       /*
-                        {
-                            fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'GimmeGimme (Easy)' ABBA", 
-                            fireBaseLevelLeaderBoard: "GimmeGimmeBeg_LB",
-                            duration: "1:05",
-                            mp3Path:"Level_Mp3AndJson/GimmeGimme/GimmeGimme.mp3",
-                            jsonPath:"Level_Mp3AndJson/GimmeGimme/GimmeGimmeBeg.json"
-                        },                      
-                        {
-                            fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'GimmeGimme (Hard)' ABBA", 
-                            fireBaseLevelLeaderBoard: "GimmeGimme_LB",
-                            duration: "1:05",
-                            mp3Path:"Level_Mp3AndJson/GimmeGimme/GimmeGimme.mp3",
-                            jsonPath:"Level_Mp3AndJson/GimmeGimme/GimmeGimmeHARD.json"
-                        },
-                         */
+                       
                         {
                             fileName: "Level_BasicSwipe",
                             levelDisplayName: "'GimmeGimme' ABBA",

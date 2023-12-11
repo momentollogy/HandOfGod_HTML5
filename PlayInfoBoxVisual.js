@@ -1,75 +1,89 @@
+
+
 // PlayInfoBoxVisual.js
 import BoxUI from './BoxUI.js'; // Assuming BoxUI.js exists and is in the same directory
 import BlueButton from './BlueButton.js';
 
-
 export default class PlayInfoBoxVisual 
 {
 
-  constructor() {
-    this.currentLevelData = null;
-    this.boundUpdateCurrentLevel = this.updateCurrentLevel.bind(this);
-    window.addEventListener('levelSelected', this.boundUpdateCurrentLevel);
-  
-    // Default selected difficulty
-    this.selectedDifficulty = 'Easy';
-  
-    // Canvas setup
-    this.canvas = document.getElementById("output_canvas");
-    this.ctx = this.canvas.getContext("2d");
-  
-    // Box properties
-    this.RESIZE_FACTOR = 0.65; // Smaller size for the play info box
-    this.POSITION_OFFSET_X = 680;
-    this.POSITION_OFFSET_Y = -200;
-    this.BOX_WIDTH = 800 * this.RESIZE_FACTOR;
-    this.BOX_HEIGHT = 500 * this.RESIZE_FACTOR;
-    this.BOX_X = ((1920 - this.BOX_WIDTH) / 2) + this.POSITION_OFFSET_X;
-    this.BOX_Y = ((1080 - this.BOX_HEIGHT) / 2) + this.POSITION_OFFSET_Y;
-    this.BOX_RADIUS = 50; // Smaller radius for the play info box
-  
-    // Create BoxUI instance for the play info box
-    this.playInfoBox = new BoxUI(
-      this.ctx,
-      this.BOX_X,
-      this.BOX_Y,
-      this.BOX_WIDTH,
-      this.BOX_HEIGHT,
-      this.BOX_RADIUS
-    );
-  
+ 
+  constructor() 
+  {
+      this.currentLevelData = null;
+      this.boundUpdateCurrentLevel = this.updateCurrentLevel.bind(this);
+      window.addEventListener('levelSelected', this.boundUpdateCurrentLevel);
+      this.songselect_box;
+
+        // Default selected difficulty
+        this.selectedDifficulty = 'Easy';
+      
+
+      // Canvas setup
+      this.canvas = document.getElementById("output_canvas");
+      this.ctx = this.canvas.getContext("2d");
+    
+      // Box properties
+      this.RESIZE_FACTOR = 0.65; // Smaller size for the play info box
+      this.POSITION_OFFSET_X = 680;
+      this.POSITION_OFFSET_Y = -200;
+      this.BOX_WIDTH = 800 * this.RESIZE_FACTOR;
+      this.BOX_HEIGHT = 450 * this.RESIZE_FACTOR;
+      this.BOX_X = ((1920 - this.BOX_WIDTH) / 2) + this.POSITION_OFFSET_X;
+      this.BOX_Y = ((1080 - this.BOX_HEIGHT) / 2) + this.POSITION_OFFSET_Y;
+      this.BOX_RADIUS = 50; // Smaller radius for the play info box
+    
+      // Header and level info styling variables
+      this.HEADER_HEIGHT = 50; // Smaller header for the play info box
+      this.HEADER_FONT_SIZE = 37;
+      this.LEVEL_INFO_FONT_SIZE = 20;
+    
+      // Create BoxUI instance for the play info box
+      this.playInfoBox = new BoxUI(
+        this.ctx,
+        this.BOX_X,
+        this.BOX_Y,
+        this.BOX_WIDTH,
+        this.BOX_HEIGHT,
+        this.BOX_RADIUS
+      );
+    
     // Initialize difficulty buttons
     this.initializeDifficultyButtons();
+
+      // Bind event handler methods
+      this.boundOnMouseMove = this.onMouseMove.bind(this);
+      this.boundOnMouseDown = this.onMouseDown.bind(this);
+      this.boundOnMouseUp = this.onMouseUp.bind(this);
+      this.boundOnPlayButtonClick = this.onPlayButtonClick.bind(this);
+      this.boundOnKeyUp = this.onKeyUp.bind(this);
+      window.addEventListener('keyup', this.boundOnKeyUp);
+
+      // Add mouse event listeners for the button interactions
+      this.canvas.addEventListener('mousemove', this.boundOnMouseMove);
+      this.canvas.addEventListener('mousedown', this.boundOnMouseDown);
+      this.canvas.addEventListener('mouseup', this.boundOnMouseUp);
+      this.canvas.addEventListener('click', this.boundOnPlayButtonClick);
+    
+      
+      // PLAY Button properties
+      this.BUTTON_WIDTH = 200;
+      this.BUTTON_HEIGHT = 50;
+      this.BUTTON_RADIUS = 10;
+      this.BUTTON_COLOR = "#00008B"; // Deep blue color
+      this.BUTTON_HOVER_COLOR = "#0000CD"; // Slightly lighter blue for hover effect
+      this.BUTTON_SHADOW_COLOR = "rgba(0, 0, 0, 0.5)";
+      this.BUTTON_X = this.BOX_X + (this.BOX_WIDTH - this.BUTTON_WIDTH) / 2; // Centered inside the box
+      this.BUTTON_Y = this.BOX_Y + this.BOX_HEIGHT - this.BUTTON_HEIGHT - 30; // Positioned at the bottom with some margin
+      this.BUTTON_TEXT = "Play";
+    
   
-    // Bind event handler methods
-    this.boundOnMouseMove = this.onMouseMove.bind(this);
-    this.boundOnMouseDown = this.onMouseDown.bind(this);
-    this.boundOnMouseUp = this.onMouseUp.bind(this);
-    this.boundOnPlayButtonClick = this.onPlayButtonClick.bind(this);
-    this.boundOnKeyUp = this.onKeyUp.bind(this);
-    window.addEventListener('keyup', this.boundOnKeyUp);
-  
-    // Add mouse event listeners for the button interactions
-    this.canvas.addEventListener('mousemove', this.boundOnMouseMove);
-    this.canvas.addEventListener('mousedown', this.boundOnMouseDown);
-    this.canvas.addEventListener('mouseup', this.boundOnMouseUp);
-    this.canvas.addEventListener('click', this.boundOnPlayButtonClick);
-  
-    // Button properties for the Play button
-    this.BUTTON_WIDTH = 200;
-    this.BUTTON_HEIGHT = 50;
-    this.BUTTON_RADIUS = 10;
-    this.BUTTON_COLOR = "#00008B"; // Deep blue color
-    this.BUTTON_HOVER_COLOR = "#0000CD"; // Slightly lighter blue for hover effect
-    this.BUTTON_SHADOW_COLOR = "rgba(0, 0, 0, 0.5)";
-    this.BUTTON_X = this.BOX_X + (this.BOX_WIDTH - this.BUTTON_WIDTH) / 2; // Centered inside the box
-    this.BUTTON_Y = this.BOX_Y + this.BOX_HEIGHT - this.BUTTON_HEIGHT - 10; // more minus moves up Positioned at the bottom with some margin
-    this.BUTTON_TEXT = "Play";
-  
-    // Draw the box and buttons
-    this.draw(); 
+
+      //END OF CONSTRUCTOR
   }
   
+
+
   initializeDifficultyButtons() 
   {
     // Button layout parameters
@@ -79,7 +93,7 @@ export default class PlayInfoBoxVisual
     const numberOfButtons = 4;
     const totalButtonsWidth = numberOfButtons * buttonWidth + (numberOfButtons - 1) * buttonSpacing;
     const startX = this.BOX_X + (this.BOX_WIDTH - totalButtonsWidth) / 2; // Center buttons within the box
-    const startY = this.BOX_Y + this.BOX_HEIGHT - buttonHeight - 60; // Adjust Y position as needed
+    const startY = this.BOX_Y + this.BOX_HEIGHT - buttonHeight - 160; // Adjust Y position as needed
     
     // Create difficulty buttons
     this.difficultyButtons = [];
@@ -107,7 +121,27 @@ export default class PlayInfoBoxVisual
     });
 
   }
+
+
+  handleDifficultySelection(difficulty) 
+  {
+    // Update selected difficulty
+    this.selectedDifficulty = difficulty;
   
+    // Update the JSON path based on the selected difficulty
+    if (this.currentLevelData && this.currentLevelData.jsonPaths) {
+      this.currentLevelData.jsonPath = this.currentLevelData.jsonPaths[difficulty];
+    }
+  
+    // Update the visual state of the buttons
+    this.difficultyButtons.forEach(button => {
+      button.isPressed = (button.actionData.difficulty === difficulty);
+      button.draw(); // Redraw each button to reflect the new state
+    });
+  }
+
+
+
 
   onKeyUp(event) {
     if (event.key === 'Enter' || event.key === 'Return') {
@@ -116,13 +150,7 @@ export default class PlayInfoBoxVisual
   }
 
 
-      initializeButtonPosition() 
-      {
-      this.BUTTON_X = this.BOX_X + (this.BOX_WIDTH - this.BUTTON_WIDTH) / 2; // Centered inside the box
-      this.BUTTON_Y = this.BOX_Y + this.BOX_HEIGHT - this.BUTTON_HEIGHT - 55; // Positioned at the bottom with some margin
-      }
-    
-    
+
 
       updateCurrentLevel(event) 
       {
@@ -161,59 +189,8 @@ export default class PlayInfoBoxVisual
      }
 
 
-     draw() {
-      // Check if currentLevelData is not available and return to stop the drawing
-      if (!this.currentLevelData) {
-        console.error("No current level data available to draw.");
-        return; // Stop drawing if no data is present
-      }
-    
-      // Clear the part of the canvas where the play info box will be drawn
-      // You can adjust the clearRect parameters to match the area that needs to be cleared
-      this.ctx.clearRect(this.BOX_X, this.BOX_Y, this.BOX_WIDTH, this.BOX_HEIGHT + 100); // The +100 is an example
-    
-      // Start fresh drawing context
-      this.ctx.save();
-    
-      // Draw the box background first
-      this.playInfoBox.draw();
-    
-      // Set text properties for the level display name and duration
-      this.ctx.fillStyle = "white";
-      this.ctx.font = `${this.HEADER_FONT_SIZE}px Arial`;
-      this.ctx.textAlign = "center";
-    
-      // Draw the level display name header
-      this.ctx.fillText(
-        this.currentLevelData.levelDisplayName,
-        this.BOX_X + (this.BOX_WIDTH / 2),
-        this.BOX_Y + this.HEADER_HEIGHT
-      );
-    
-      // Draw the level duration
-      this.ctx.font = `${this.LEVEL_INFO_FONT_SIZE}px Arial`;
-      this.ctx.fillText(
-        `Duration: ${this.currentLevelData.duration}`,
-        this.BOX_X + (this.BOX_WIDTH / 2),
-        this.BOX_Y + this.HEADER_HEIGHT + 30
-      );
-    
-      // Draw difficulty buttons
-      this.difficultyButtons.forEach(button => button.draw());
-    
-      // Draw the 'Play' button last so it's on top
-      this.drawButton();
-    
-      // Restore the context to avoid interfering with other canvas drawings
-      this.ctx.restore();
-    }
-    
-
-/*
-Buttons all drawn but no text
       draw() 
       {
-        this.initializeButtonPosition();
 
           // Check if currentLevelData is not available and return to stop the drawing
         if (!this.currentLevelData) {
@@ -243,17 +220,15 @@ Buttons all drawn but no text
           this.BOX_Y + this.HEADER_HEIGHT + 30
         );
 
+            // Draw difficulty buttons, make sure they are set up with a contrasting color.
         this.difficultyButtons.forEach(button => button.draw());
 
-
         this.drawButton();
-
         
         this.ctx.restore();
-
     }
 
- */
+ 
 
    
 
@@ -366,28 +341,9 @@ Buttons all drawn but no text
           console.log('Dispatching levelChange with details:', detailData);
           document.dispatchEvent(new CustomEvent('levelChange', { detail: detailData }));
       }
-
-  
   }
   
-
-
-    handleDifficultySelection(difficulty) 
-    {
-      // Update selected difficulty
-      this.selectedDifficulty = difficulty;
     
-      // Update the JSON path based on the selected difficulty
-      if (this.currentLevelData && this.currentLevelData.jsonPaths) {
-        this.currentLevelData.jsonPath = this.currentLevelData.jsonPaths[difficulty];
-      }
-    
-      // Update the visual state of the buttons
-      this.difficultyButtons.forEach(button => {
-        button.isPressed = (button.actionData.difficulty === difficulty);
-        button.draw(); // Redraw each button to reflect the new state
-      });
-    }
 
 
     
@@ -417,9 +373,12 @@ Buttons all drawn but no text
       this.playInfoBox = null;
       this.currentLevelData = null;
       this.boundUpdateCurrentLevel = null;
-
-      this.difficultyButtons.forEach(button => button.dispose());
-
+      // ... any other objects that need to be nullified ...
     }
 
 }
+
+
+
+
+
