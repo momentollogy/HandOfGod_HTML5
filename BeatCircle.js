@@ -1,4 +1,4 @@
-/*
+
 export default class BeatCircle 
 {
     constructor(level,circleData, ss_pos) {
@@ -160,6 +160,6 @@ draw() {
     }
 }
 
-*/
+
 
 

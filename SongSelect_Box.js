@@ -85,7 +85,14 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",
                             duration: "1:07",
                             mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
-                            jsonPath:"Level_Mp3AndJson/JustDance/JustDanceLevel.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/JustDance/JustDanceEasy.json",
+                                Medium: "Level_Mp3AndJson/JustDance/JustDanceMedium.json",
+                                Hard: "Level_Mp3AndJson/JustDance/JustDanceHard.json",
+                                Expert: "Level_Mp3AndJson/JustDance/JustDanceExpert.json"
+                                }
+                            
+                            
                         },
                         
                         {
@@ -94,7 +101,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "RhythmIsADancer_LB",
                             duration: ":48",
                             mp3Path:"Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancer.mp3",
-                            jsonPath:"Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancer.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancerEasy.json",
+                                Medium: "Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancerMedium.json",
+                                Hard: "Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancerHard.json",
+                                Expert: "Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancerExpert.json"
+                                }
                         },
                         {
                             fileName: "Level_BasicSwipe", 
@@ -102,7 +114,13 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "Havana_LB",
                             duration: "1:07",
                             mp3Path:"Level_Mp3AndJson/Havana/Havana.mp3",
-                            jsonPath:"Level_Mp3AndJson/Havana/Havana.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/Havana/HavanaEasy.json",
+                                Medium: "Level_Mp3AndJson/Havana/HavanaMedium.json",
+                                Hard: "Level_Mp3AndJson/Havana/HavanaHard.json",
+                                Expert: "Level_Mp3AndJson/Havana/HavanaExpert.json"
+                                }
+                            
                         },
                         {
                             fileName: "Level_BasicSwipe", 
@@ -110,7 +128,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "BackOn74_LB",
                             duration: "1:07",
                             mp3Path:"Level_Mp3AndJson/BackOn74/BackOn74.mp3",
-                            jsonPath:"Level_Mp3AndJson/BackOn74/BackOn74.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/BackOn74/BackOn74Easy.json",
+                                Medium: "Level_Mp3AndJson/BackOn74/BackOn74Medium.json",
+                                Hard: "Level_Mp3AndJson/BackOn74/BackOn74Hard.json",
+                                Expert: "Level_Mp3AndJson/BackOn74/BackOn74Expert.json"
+                                }
                         },
                         {
                             fileName: "Level_BasicSwipe", 
@@ -118,7 +141,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "LovelyDay_LB",
                             duration: "1:07",
                             mp3Path:"Level_Mp3AndJson/LovelyDay/LovelyDay.mp3",
-                            jsonPath:"Level_Mp3AndJson/LovelyDay/LovelyDay.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/LovelyDay/LovelyDayEasy.json",
+                                Medium: "Level_Mp3AndJson/LovelyDay/LovelyDayMedium.json",
+                                Hard: "Level_Mp3AndJson/LovelyDay/LovelyDay.json",
+                                Expert: "Level_Mp3AndJson/LovelyDay/LovelyDayExpert.json"
+                                }
                         },
                         {
                             fileName: "Level_BasicSwipe", 
@@ -126,7 +154,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "BlankSpace_LB",
                             duration: "1:07",
                             mp3Path:"Level_Mp3AndJson/BlankSpace/BlankSpace.mp3",
-                            jsonPath:"Level_Mp3AndJson/BlankSpace/BlankSpace.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson//BlankSpace/BlankSpaceEasy.json",
+                                Medium: "Level_Mp3AndJson/BlankSpace/BlankSpaceMedium.json",
+                                Hard: "Level_Mp3AndJson/BlankSpace/BlankSpaceHard.json",
+                                Expert: "Level_Mp3AndJson//BlankSpace/BlankSpaceExpert.json"
+                                }
                         },
                         {
                             fileName: "Level_BasicSwipe", 
@@ -134,24 +167,25 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "Rush_LB",
                             duration: "1:07",
                             mp3Path:"Level_Mp3AndJson/Rush/Rush.mp3",
-                            jsonPath:"Level_Mp3AndJson/Rush/Rush.json"
-                        },
-                        {
-                            fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'Rush (hard)'  Troye Sivan", 
-                            fireBaseLevelLeaderBoard: "RushHard_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/Rush/Rush.mp3",
-                            jsonPath:"Level_Mp3AndJson/Rush/RushHard.json"
-                        },
-                        
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/Rush/RushEasy.json",
+                                Medium: "Level_Mp3AndJson/Rush/RushMedium.json",
+                                Hard: "Level_Mp3AndJson/Rush/RushHard.json",
+                                Expert: "Level_Mp3AndJson/Rush/RushExpert.json"
+                                }
+                        },            
                         {   
                             fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Pneuma'  Tool", 
                             fireBaseLevelLeaderBoard: "Pneuma_easy_LeaderBoard", 
                             duration: ":56",
                             mp3Path:"Level_Mp3AndJson/Tool/tool_short.mp3", 
-                            jsonPath:"Level_Mp3AndJson/Tool/toolv3.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/Tool/ToolEasy.json",
+                                Medium: "Level_Mp3AndJson/Tool/ToolEasyMedium.json",
+                                Hard: "Level_Mp3AndJson/Tool/ToolEasyHard.json",
+                                Expert: "Level_Mp3AndJson/Tool/ToolEasyExpert.json"
+                                }
                         },
                         {   
                             fileName: "Level_BasicSwipe", 
@@ -159,7 +193,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "DanceTheNight_LeaderBoard", 
                             duration: "1:05",
                             mp3Path:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.mp3", 
-                            jsonPath:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/DanceTheNight/DanceTheNightEasy.json",
+                                Medium: "Level_Mp3AndJson/DanceTheNight/DanceTheNightMedium.json",
+                                Hard: "Level_Mp3AndJson/DanceTheNight/DanceTheNightHard.json",
+                                Expert: "Level_Mp3AndJson/DanceTheNight/DanceTheNightExpert.json"
+                                }
                         },
                         {   
                             fileName: "Level_BasicSwipe", 
@@ -167,7 +206,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "WonderBoy_LeaderBoard", 
                             duration: ":57",
                             mp3Path:"Level_Mp3AndJson/WonderBoy/WonderBoy.mp3", 
-                            jsonPath:"Level_Mp3AndJson/WonderBoy/WonderBoy.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/WonderBoy/WonderBoyEasy.json",
+                                Medium: "Level_Mp3AndJson/WonderBoy/WonderBoyMedium.json",
+                                Hard: "Level_Mp3AndJson/WonderBoy/WonderBoyHard.json",
+                                Expert: "Level_Mp3AndJson/WonderBoy/WonderBoyExpert.json"
+                                }
                         },
                         {   
                             fileName: "Level_BasicSwipe", 
@@ -175,7 +219,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "Chandelier_LB", 
                             duration: "1:09",
                             mp3Path:"Level_Mp3AndJson/Chandelier/Chandelier.mp3", 
-                            jsonPath:"Level_Mp3AndJson/Chandelier/Chandelier.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/Chandelier/ChandelierEasy.json",
+                                Medium: "Level_Mp3AndJson/Chandelier/ChandelierMedium.json",
+                                Hard: "Level_Mp3AndJson/Chandelier/ChandelierHard.json",
+                                Expert: "Level_Mp3AndJson/Chandelier/ChandelierExpert.json"
+                                }
                         },
                         {   
                             fileName: "Level_BasicSwipe", 
@@ -183,7 +232,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "ElasticHeart_LB", 
                             duration: "1:24",
                             mp3Path:"Level_Mp3AndJson/ElasticHeart/ElasticHeart.wav", 
-                            jsonPath:"Level_Mp3AndJson/ElasticHeart/ElasticHeart.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/ElasticHeart/ElasticHeartEasy.json",
+                                Medium: "Level_Mp3AndJson/ElasticHeart/ElasticHeartMedium.json",
+                                Hard: "Level_Mp3AndJson/ElasticHeart/ElasticHeartHard.json",
+                                Expert: "Level_Mp3AndJson/ElasticHeart/ElasticHeartExpert.json"
+                                }
                         },
                         {   
                             fileName: "Level_BasicSwipe", 
@@ -191,7 +245,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "Apache_LB", 
                             duration: "1:24",
                             mp3Path:"Level_Mp3AndJson/Apache/Apache.mp3", 
-                            jsonPath:"Level_Mp3AndJson/Apache/Apache.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/Apache/ApacheEasy.json",
+                                Medium: "Level_Mp3AndJson/Apache/ApacheMedium.json",
+                                Hard: "Level_Mp3AndJson/Apache/ApacheHard.json",
+                                Expert: "Level_Mp3AndJson/Apache/ApacheExpert.json"
+                                }
                         },
                         {   
                             fileName: "Level_BasicSwipe", 
@@ -199,7 +258,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "Houdini_LB", 
                             duration: ":56",
                             mp3Path:"Level_Mp3AndJson/Houdini/Houdini.mp3", 
-                            jsonPath:"Level_Mp3AndJson/Houdini/Houdini.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/Houdini/HoudiniEasy.json",
+                                Medium: "Level_Mp3AndJson/Houdini/HoudiniMedium.json",
+                                Hard: "Level_Mp3AndJson/Houdini/HoudiniHard.json",
+                                Expert: "Level_Mp3AndJson/Houdini/HoudiniExpert.json"
+                                }
                         },
                         {   
                             fileName: "Level_BasicSwipe", 
@@ -207,7 +271,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "MagicalMysteryTour_LB", 
                             duration: ":56",
                             mp3Path:"Level_Mp3AndJson/MagicalMysteryTour/MagicalMysteryTour.mp3", 
-                            jsonPath:"Level_Mp3AndJson/MagicalMysteryTour/MagicalMysteryTour.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/MagicalMysteryTour/MagicalMysteryTourEasy.json",
+                                Medium: "Level_Mp3AndJson/MagicalMysteryTour/MagicalMysteryTourMedium.json",
+                                Hard: "Level_Mp3AndJson/MagicalMysteryTour/MagicalMysteryTourHard.json",
+                                Expert: "Level_Mp3AndJson/MagicalMysteryTour/MagicalMysteryTourExpert.json"
+                                }
                         },
                 
                         {   
@@ -216,7 +285,12 @@ export default class SongSelect_Box
                             fireBaseLevelLeaderBoard: "Level_3NoteTest_LB", 
                             duration: ":07",
                             mp3Path:"Level_Mp3AndJson/LevelRecorder/7secTest.mp3", 
-                            jsonPath:"Level_Mp3AndJson/LevelRecorder/7secTest.json"
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/LevelRecorder/7secTest.json",
+                                Medium: "Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancerMedium.json",
+                                Hard: "Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancerHard.json",
+                                Expert: "Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancerExpert.json"
+                                }
                         },
                         {   
                             fileName: "Level_05_Recorder", 
