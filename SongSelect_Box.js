@@ -81,20 +81,72 @@ export default class SongSelect_Box
                         },
                         {
                             fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'Just Dance'  Lady Gaga", 
-                            fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",
+                            levelDisplayName: "'Havana'  Camila Cabello", 
+                            fireBaseLevelLeaderBoard: "Havana_LB",
                             duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
+                            mp3Path:"Level_Mp3AndJson/Havana/Havana.mp3",
                             jsonPaths: {
-                                Easy: "Level_Mp3AndJson/JustDance/JustDanceEasy.json",
-                                Medium: "Level_Mp3AndJson/JustDance/JustDanceMedium.json",
-                                Hard: "Level_Mp3AndJson/JustDance/JustDanceHard.json",
-                                Expert: "Level_Mp3AndJson/JustDance/JustDanceExpert.json"
+                                Easy: "Level_Mp3AndJson/Havana/HavanaEasy.json",
+                                Medium: "Level_Mp3AndJson/Havana/HavanaMedium.json",
+                                Hard: "Level_Mp3AndJson/Havana/HavanaHard.json",
+                                Expert: "Level_Mp3AndJson/Havana/HavanaExpert.json"
                                 }
                             
-                            
                         },
-                        
+                        {   
+                            fileName: "Level_BasicSwipe", 
+                            levelDisplayName: "'Houdini'  Dua Lipa", 
+                            fireBaseLevelLeaderBoard: "Houdini_LB", 
+                            duration: ":56",
+                            mp3Path:"Level_Mp3AndJson/Houdini/Houdini.mp3", 
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/Houdini/HoudiniEasy.json",
+                                Medium: "Level_Mp3AndJson/Houdini/HoudiniMedium.json",
+                                Hard: "Level_Mp3AndJson/Houdini/HoudiniHard.json",
+                                Expert: "Level_Mp3AndJson/Houdini/HoudiniExpert.json"
+                                }
+                        },
+                        {
+                            fileName: "Level_BasicSwipe", 
+                            levelDisplayName: "'BlankSpace'  Taylor Swift", 
+                            fireBaseLevelLeaderBoard: "BlankSpace_LB",
+                            duration: "1:07",
+                            mp3Path:"Level_Mp3AndJson/BlankSpace/BlankSpace.mp3",
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson//BlankSpace/BlankSpaceEasy.json",
+                                Medium: "Level_Mp3AndJson/BlankSpace/BlankSpaceMedium.json",
+                                Hard: "Level_Mp3AndJson/BlankSpace/BlankSpaceHard.json",
+                                Expert: "Level_Mp3AndJson//BlankSpace/BlankSpaceExpert.json"
+                                }
+                        },
+                       
+                        {   
+                            fileName: "Level_BasicSwipe", 
+                            levelDisplayName: "'Dance The Night'  Dua Lipa", 
+                            fireBaseLevelLeaderBoard: "DanceTheNight_LeaderBoard", 
+                            duration: "1:05",
+                            mp3Path:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.mp3", 
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/DanceTheNight/DanceTheNightEasy.json",
+                                Medium: "Level_Mp3AndJson/DanceTheNight/DanceTheNightMedium.json",
+                                Hard: "Level_Mp3AndJson/DanceTheNight/DanceTheNightHard.json",
+                                Expert: "Level_Mp3AndJson/DanceTheNight/DanceTheNightExpert.json"
+                                }
+                        },
+                        {
+                            fileName: "Level_BasicSwipe", 
+                            levelDisplayName: "'Rush'  Troye Sivan", 
+                            fireBaseLevelLeaderBoard: "Rush_LB",
+                            duration: "1:07",
+                            mp3Path:"Level_Mp3AndJson/Rush/Rush.mp3",
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson/Rush/RushEasy.json",
+                                Medium: "Level_Mp3AndJson/Rush/RushMedium.json",
+                                Hard: "Level_Mp3AndJson/Rush/RushHard.json",
+                                Expert: "Level_Mp3AndJson/Rush/RushExpert.json"
+                                }
+                        }, 
+                     
                         {
                             fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Rhythm is a Dancer'  SNAP", 
@@ -108,20 +160,7 @@ export default class SongSelect_Box
                                 Expert: "Level_Mp3AndJson/RhythmIsADancer/RhythmIsADancerExpert.json"
                                 }
                         },
-                        {
-                            fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'Havana'  Camila Cabello", 
-                            fireBaseLevelLeaderBoard: "Havana_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/Havana/Havana.mp3",
-                            jsonPaths: {
-                                Easy: "Level_Mp3AndJson/Havana/HavanaEasy.json",
-                                Medium: "Level_Mp3AndJson/Havana/HavanaMedium.json",
-                                Hard: "Level_Mp3AndJson/Havana/HavanaHard.json",
-                                Expert: "Level_Mp3AndJson/Havana/HavanaExpert.json"
-                                }
-                            
-                        },
+                  
                         {
                             fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Back On 74'  Jungle", 
@@ -150,30 +189,19 @@ export default class SongSelect_Box
                         },
                         {
                             fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'BlankSpace'  Taylor Swift", 
-                            fireBaseLevelLeaderBoard: "BlankSpace_LB",
+                            levelDisplayName: "'Just Dance'  Lady Gaga", 
+                            fireBaseLevelLeaderBoard: "JustDance_easy_LeaderBoard",
                             duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/BlankSpace/BlankSpace.mp3",
+                            mp3Path:"Level_Mp3AndJson/JustDance/JustDance.mp3",
                             jsonPaths: {
-                                Easy: "Level_Mp3AndJson//BlankSpace/BlankSpaceEasy.json",
-                                Medium: "Level_Mp3AndJson/BlankSpace/BlankSpaceMedium.json",
-                                Hard: "Level_Mp3AndJson/BlankSpace/BlankSpaceHard.json",
-                                Expert: "Level_Mp3AndJson//BlankSpace/BlankSpaceExpert.json"
+                                Easy: "Level_Mp3AndJson/JustDance/JustDanceEasy.json",
+                                Medium: "Level_Mp3AndJson/JustDance/JustDanceMedium.json",
+                                Hard: "Level_Mp3AndJson/JustDance/JustDanceHard.json",
+                                Expert: "Level_Mp3AndJson/JustDance/JustDanceExpert.json"
                                 }
-                        },
-                        {
-                            fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'Rush'  Troye Sivan", 
-                            fireBaseLevelLeaderBoard: "Rush_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/Rush/Rush.mp3",
-                            jsonPaths: {
-                                Easy: "Level_Mp3AndJson/Rush/RushEasy.json",
-                                Medium: "Level_Mp3AndJson/Rush/RushMedium.json",
-                                Hard: "Level_Mp3AndJson/Rush/RushHard.json",
-                                Expert: "Level_Mp3AndJson/Rush/RushExpert.json"
-                                }
-                        },            
+                            
+                            
+                        },          
                         {   
                             fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Pneuma'  Tool", 
@@ -186,20 +214,7 @@ export default class SongSelect_Box
                                 Hard: "Level_Mp3AndJson/Tool/ToolEasyHard.json",
                                 Expert: "Level_Mp3AndJson/Tool/ToolEasyExpert.json"
                                 }
-                        },
-                        {   
-                            fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'Dance The Night'  Dua Lipa", 
-                            fireBaseLevelLeaderBoard: "DanceTheNight_LeaderBoard", 
-                            duration: "1:05",
-                            mp3Path:"Level_Mp3AndJson/DanceTheNight/DanceTheNight.mp3", 
-                            jsonPaths: {
-                                Easy: "Level_Mp3AndJson/DanceTheNight/DanceTheNightEasy.json",
-                                Medium: "Level_Mp3AndJson/DanceTheNight/DanceTheNightMedium.json",
-                                Hard: "Level_Mp3AndJson/DanceTheNight/DanceTheNightHard.json",
-                                Expert: "Level_Mp3AndJson/DanceTheNight/DanceTheNightExpert.json"
-                                }
-                        },
+                        },                   
                         {   
                             fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'WonderBoy'  Tenacious D", 
@@ -252,19 +267,7 @@ export default class SongSelect_Box
                                 Expert: "Level_Mp3AndJson/Apache/ApacheExpert.json"
                                 }
                         },
-                        {   
-                            fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'Houdini'  Dua Lipa", 
-                            fireBaseLevelLeaderBoard: "Houdini_LB", 
-                            duration: ":56",
-                            mp3Path:"Level_Mp3AndJson/Houdini/Houdini.mp3", 
-                            jsonPaths: {
-                                Easy: "Level_Mp3AndJson/Houdini/HoudiniEasy.json",
-                                Medium: "Level_Mp3AndJson/Houdini/HoudiniMedium.json",
-                                Hard: "Level_Mp3AndJson/Houdini/HoudiniHard.json",
-                                Expert: "Level_Mp3AndJson/Houdini/HoudiniExpert.json"
-                                }
-                        },
+                     
                         {   
                             fileName: "Level_BasicSwipe", 
                             levelDisplayName: "'Magical Mystery Tour'  Beatles", 
@@ -408,8 +411,8 @@ export default class SongSelect_Box
         this.draw();
     }
     
-    
-    //for song select clicking working but not withupdating leadboard
+    /*
+    //old just in case but can prob delete soon!
     handleMouseClick(event) {
         const rect = this.canvas.getBoundingClientRect();
         const scaleX = this.canvas.width / rect.width; // Scale for the X coordinate
@@ -425,9 +428,6 @@ export default class SongSelect_Box
             let index = i + this.scrollPosition; // Index in the levelArray, adjusted for scroll position
     
 
-    
-
-
               if (index < this.levelArray.length) {
             let level = this.levelArray[index];
             if (!level) {
@@ -440,10 +440,52 @@ export default class SongSelect_Box
     
                 // Calculate the width of the text for horizontal alignment
                 let textWidth = this.ctx.measureText(level.levelDisplayName).width;
+                let levelLeftX = this.TEXT_CENTER_X - (textWidth / 2) - 170;
+                let levelRightX = this.TEXT_CENTER_X + (textWidth / 2) +100;
+    
+                // Check if the click coordinates are within the bounds of the song item
+                if (clickX >= levelLeftX && clickX <= levelRightX && clickY >= levelTopY && clickY <= levelBottomY) {
+                    this.setCurrentLevelIndex(index);
+                    this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[index]); // Update the current level based on the clicked song
+                    this.draw(); // Redraw the component to reflect changes
+                    this.dispatchSongSelectedEvent(); // Dispatch an event for the song selection
+                    break; // Exit the loop as the click has been handled
+                }
+            }
+        }
+    }
+    */
+
+    handleMouseClick(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width; // Scale for the X coordinate
+        const scaleY = this.canvas.height / rect.height; // Scale for the Y coordinate
+        const clickX = (event.clientX - rect.left) * scaleX;
+        const clickY = (event.clientY - rect.top) * scaleY;
+    
+        // Constants for layout calculation
+        const Y_OFFSET = this.SCORE_LINE_HEIGHT / 2; // Vertical offset for alignment
+        const itemHeight = this.SCORE_LINE_HEIGHT; // Height of each item
+    
+        for (let i = 0; i < this.itemsToShow; i++) {
+            let index = i + this.scrollPosition; // Index in the levelArray, adjusted for scroll position
+            if (index < this.levelArray.length) {
+                let level = this.levelArray[index];
+                if (!level) continue; // Skip this iteration if level is undefined
+    
+                // Calculate the Y position for the top and bottom of each song item
+                let levelTopY = this.LEADERBOARD_Y + this.HEADER_HEIGHT + this.SCORE_MARGIN_TOP + (i * itemHeight) - Y_OFFSET;
+                let levelBottomY = levelTopY + itemHeight;
+    
+                // Measure the text width dynamically
+                this.ctx.font = `${this.SCORE_FONT_SIZE}px Arial`; // Use the same font size as in your draw function
+                let textWidth = this.ctx.measureText(level.levelDisplayName).width;
+                
+                // Dynamically calculate the left and right boundaries of the text
                 let levelLeftX = this.TEXT_CENTER_X - (textWidth / 2);
                 let levelRightX = this.TEXT_CENTER_X + (textWidth / 2);
     
-                // Check if the click coordinates are within the bounds of the song item
+                // Check if the click coordinates are within the bounds of the song item text
                 if (clickX >= levelLeftX && clickX <= levelRightX && clickY >= levelTopY && clickY <= levelBottomY) {
                     this.setCurrentLevelIndex(index);
                     this.playInfoBoxVisual.updateCurrentLevel(this.levelArray[index]); // Update the current level based on the clicked song
@@ -457,7 +499,7 @@ export default class SongSelect_Box
     
     
     
-
+//old working but yuk scroll
     handleMouseDown(event) {
         const rect = this.canvas.getBoundingClientRect();
         const mouseY = (event.clientY - rect.top) * (this.canvas.height / rect.height);
@@ -470,6 +512,8 @@ export default class SongSelect_Box
             this.initialThumbPosition = this.scrollPosition;
         }
     }
+    
+
     
     handleMouseMove(event) {
         if (this.isDraggingScrollbar) {
@@ -493,13 +537,18 @@ export default class SongSelect_Box
             this.draw();
         }
     }
-
- 
     
+
+
+
+
 
     handleMouseUp(event) {
         this.isDraggingScrollbar = false;
     }
+
+
+    
 
    
     //help methods for scroll bar mouse clicking.

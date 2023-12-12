@@ -193,32 +193,3 @@ normalizeSpeed(swipeSpeed) {
 }
 
 
-
-
-
-/*
- //working way
-emit(startPosition, swipeAngleDegrees, radius = 70) {  // Radius to match the circle
- let particleCount = 50;
-
- // Convert the swipe angle to a direction vector
- // Adjust the angle for coordinate system differences
- let angleInRadians = (swipeAngleDegrees + 180) % 360 * (Math.PI / 180);
-
- for (let i = 0; i < particleCount; i++) {
-     // Emit from the circle's circumference
-     let angleIncrement = (Math.PI * 2) / particleCount;
-     let startAngle = angleIncrement * i;
-
-     let x = startPosition.x + radius * Math.cos(startAngle);
-     let y = startPosition.y + radius * Math.sin(startAngle);
-
-     // Use the angle to set the direction, adjusted for coordinate system
-     let directionX = Math.cos(angleInRadians);
-     let directionY = Math.sin(angleInRadians);
-
-     let color = this.colors[Math.floor(Math.random() * this.colors.length)];
-     this.particles.push(new Particle(x, y, directionX, directionY, color));
- }
-}
-*/

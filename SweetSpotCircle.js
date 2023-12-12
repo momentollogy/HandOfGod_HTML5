@@ -197,13 +197,16 @@ export default class SweetSpotCircle {
         }
     
         // advance to the next beatRange
-        if(this.isCurrentTimeOnBeatRangeEnd()){
+        if(this.isCurrentTimeOnBeatRangeEnd())
+        {
             if(this.beatIndex < this.beatCircles_Array.length - 1 ){
                 this.beatIndex++;
                 this.beatPassed = false;
                 if (!this.touched) {
                     this.beatsMissed++;
-                    document.dispatchEvent(new Event("BeatMissed"));
+                  //  document.dispatchEvent(new Event("BeatMissed"));
+                    document.dispatchEvent(new CustomEvent("BeatMissed", { detail: { missedCircleIndex: this.circleIndex } }));
+
                 }
                 this.touched = false;
                 this.touchable = false;

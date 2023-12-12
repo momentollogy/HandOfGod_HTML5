@@ -112,7 +112,7 @@ export default class Results_Box
         let maxScore = 0;
         let comboMultiplier = 1;
 
-        console.log("Calculating max score for total notes:", this.totalNotes);
+      //  console.log("Calculating max score for total notes:", this.totalNotes);
 
 
         for (let i = 1; i <= this.totalNotes; i++) {
@@ -124,7 +124,7 @@ export default class Results_Box
                 comboMultiplier = 2;
             }
             maxScore += scorePerNote * comboMultiplier;
-            console.log(`Note ${i}: Combo Multiplier: ${comboMultiplier}, Max Score: ${maxScore}`);
+          //  console.log(`Note ${i}: Combo Multiplier: ${comboMultiplier}, Max Score: ${maxScore}`);
 
         }
 
@@ -132,12 +132,12 @@ export default class Results_Box
     }
 
     calculateGrade(score, totalNotes) {
-      console.log("Total notes in calulate grade method:", this.totalNotes);
+    //  console.log("Total notes in calulate grade method:", this.totalNotes);
 
       let maxScore = this.calculateMaxPossibleScore(this.totalNotes);
       let scorePercentage = (score / maxScore) * 100;
 
-      console.log("Calculating grade - Score:", score, "Max Score:", maxScore, "Score Percentage:", scorePercentage);
+     // console.log("Calculating grade - Score:", score, "Max Score:", maxScore, "Score Percentage:", scorePercentage);
 
   
       if (scorePercentage >= 100) {
@@ -271,7 +271,7 @@ export default class Results_Box
 
 
   dispose() {
-    console.log("Disposing Results_Box...");
+   // console.log("Disposing Results_Box...");
 
     if (this.box) {
         this.box.dispose();

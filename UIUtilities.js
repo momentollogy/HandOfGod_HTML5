@@ -74,48 +74,7 @@ export class UIUtilities
     }
 
 
-/*
-    static drawScore(ctx, scoreNumber, comboNumber, bufferValue, maxBufferLimit) 
-    {
-        // Positioning for the score and combo display
-        const baseXPosition = 10; // left padding
-        const baseYPosition = 10; // top padding
-        const lineWidth = 150; // width of the horizontal lines, adjust as needed
 
-        // Style for the text labels (e.g., "Combo")
-        ctx.fillStyle = "rgb(255,255,255)"; // Text color (white)
-
-        // Combo stuff
-        ctx.fillRect(baseXPosition, baseYPosition, lineWidth, 2);
-        const comboText = "Combo";
-        ctx.font = "24px Verdana";
-        ctx.textAlign = "center";
-        const comboTextX = baseXPosition + (lineWidth / 2);
-        ctx.fillText(comboText, comboTextX, baseYPosition + 20);
-
-        ctx.font = "30px Verdana";
-        const comboNumberX = baseXPosition + (lineWidth / 2);
-        ctx.fillText(comboNumber, comboNumberX, baseYPosition + 60);
-
-        // Score stuff
-        ctx.fillRect(baseXPosition, baseYPosition + 120, lineWidth, 2);
-        ctx.font = "24px Verdana";
-        const scoreNumberX = baseXPosition + (lineWidth / 2);
-        ctx.fillText(scoreNumber, scoreNumberX, baseYPosition + 160);
-
-        // Misses stuff
-        ctx.fillRect(baseXPosition, baseYPosition + 200, lineWidth, 2);
-        ctx.font = "24px Verdana";
-
-        // Calculate the number of misses left based on bufferValue
-        const missesLeft = bufferValue; // bufferValue should decrement with each miss
-        const missesText = "Misses Left: " + missesLeft;
-
-        const missesTextX = baseXPosition + (lineWidth / 2);
-        ctx.fillText(missesText, missesTextX, baseYPosition + 250);
-
-    }   
-    */
 
     static drawScore(ctx, scoreNumber, comboNumber, bufferValue, maxBufferLimit) {
         // Base position and scale factor

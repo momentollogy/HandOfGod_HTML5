@@ -4,7 +4,7 @@ export class OverlayText {
     constructor() {
 
         this.textObjects = [];
-        this.fadeDuration = 200; // Number of frames over which the text will fade out
+        this.fadeDuration = 500; // Number of frames over which the text will fade out
         this.horizontalMoveDistance = 2,5; // The horizontal distance text will move each frame
         this.verticalMoveDistance = -2.5; // The vertical distance text will move each frame
         this.startSize = 30; // Start size of the text
@@ -72,7 +72,7 @@ export class OverlayText {
 export class MissesOverlay {
     constructor() {
         this.missObjects = [];
-        this.fadeDuration = 100; // Number of frames over which the text will fade out
+        this.fadeDuration = 40; // Number of frames over which the text will fade out
         this.horizontalMoveDistance = -3; // The horizontal distance text will move each frame
         this.verticalMoveDistance = 3; // The vertical distance text will move each frame
         this.startSize = 40; // Start size of the text
