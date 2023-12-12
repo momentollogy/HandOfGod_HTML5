@@ -139,14 +139,19 @@ export default class Particles {
 
 
     }
-
  
 emit(startPosition, swipeAngleDegrees, swipeSpeed, radius = 70) {
+
+  //  swipeAngleDegrees = 178;
+   // swipeSpeed = 500;
     
     console.log("zzzzzzEmitting particles:", { startPosition, swipeAngleDegrees, swipeSpeed, radius });
+
+     
     
     let particleCount = 50;
     let angleInRadians = (swipeAngleDegrees + 180) % 360 * (Math.PI / 180);
+    
 
     for (let i = 0; i < particleCount; i++) {
         let angleIncrement = (Math.PI * 2) / particleCount;
@@ -164,6 +169,8 @@ emit(startPosition, swipeAngleDegrees, swipeSpeed, radius = 70) {
         this.particles.push(new Particle(x, y, directionX, directionY, color, swipeSpeed));
     }
 }
+
+
 
 
 normalizeSpeed(swipeSpeed) {
