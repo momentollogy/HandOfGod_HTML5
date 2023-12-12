@@ -1,4 +1,4 @@
-/*
+
 export default class BeatCircle 
 {
     constructor(level,circleData, ss_pos) {
@@ -26,6 +26,8 @@ export default class BeatCircle
         this.angle = -90;
         this.distanceToSweetSpot = 0;
         this.fadeOut = true
+        this.isVisible = true;  // New visibility flag
+
 
 
 
@@ -66,6 +68,10 @@ export default class BeatCircle
     
 draw() {
     this.ctx.save();
+
+    if (!this.isVisible) {
+        return; // Skip drawing if the beat circle is not visible
+    }
 
     // Convert degrees to radians for rotation
     var rotationDegrees =this.direction;//  = 90; Change this value dynicmally to rotate by a different angle based on each beat in the json 
@@ -132,7 +138,7 @@ draw() {
         if(this.distanceToSweetSpot <0){
             this.color = this.postBeatColor
 
-            this.alpha = 0+this.distanceToSweetSpot/180;
+            this.alpha = 1+this.distanceToSweetSpot/180;
             if (this.alpha < 0 ){this.alpha = 0;}
         }
         else{
@@ -160,6 +166,6 @@ draw() {
     }
 }
 
-*/
+
 
 

@@ -455,7 +455,13 @@ drawShortcutsBox() {
         
         this.checkForFingerTouchCircles(); 
         // update display stuff and process classes stuff
-        for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
+       // for(let sweetspotcircle of this.SweetSpotCircleArray) { sweetspotcircle.updateAndDraw(); }
+
+       for (let sweetspotcircle of this.SweetSpotCircleArray) {
+       // NOT SURE I NEED THISsweetspotcircle.updateAndDraw(); // Updates the state of the sweet spot circle
+        sweetspotcircle.draw(); // Draws the sweet spot circle
+        sweetspotcircle.drawBeatCircles(); // Updates and draws the beat circles, including beat ranges if required
+    }
         
         //for keyboard inputs
         this.checkForClick();
@@ -628,76 +634,14 @@ drawShortcutsBox() {
     
         this.stats.increaseCombo(); 
         this.stats.addScore(percentAccuracy);  
-        this.stats.removeMiss();   
-        //hide beat circle
-        this.particles.emit(startPosition, sweetspotcircle.lastSwipeAngle, sweetspotcircle.lastSwipeSpeed);
-
-
-
-    }
-
-
-
-
-    
-        /*
-        // Emit particles from the circle's rim
-        // Make sure to pass the swipe angle to the emit method
-        if (sweetspotcircle.lastSwipeAngle !== undefined) {
-            console.log("GEORGE ITS WORKING!!!!! SEE1!!! BETTER?")
-            this.particles.emit(startPosition, sweetspotcircle.lastSwipeAngle);
-
-            
-        } else {
-            // Fallback in case there's no swipe angle defined
-            this.particles.emit(startPosition, 0); // Default angle, e.g., 0 degrees
-            console.log("NOPE!!!!!!!")
-
-        }
-        */
-   
-    
-
-
-
-/*
-    touchSuccessfulWithPercentage(percentAccuracy, sweetspotcircle) {
-        if(!this.audioManager.isPlaying){return};
-        let startPosition = { x: sweetspotcircle.position.x, y: sweetspotcircle.position.y };
-        this.overlayText.addText(percentAccuracy, sweetspotcircle.color, startPosition);
-    
-        this.stats.increaseCombo(); 
-        this.stats.addScore(percentAccuracy);  
-        this.stats.removeMiss();   
+        this.stats.removeMiss();  
         
-        // Emit particles from the circle's rim
-        // Make sure to pass the swipe angle to the emit method
-        console.log("TOUCHWITH LOG", startPosition, sweetspotcircle.lastSwipeAngle, this.currentSwipespeed).
-
-       // this.particles.emit(startPosition, sweetspotcircle.lastSwipeAngle);
-        this.particles.emit(startPosition, 0); // Default angle, e.g., 0 degrees
-
-
-/*
-        if (sweetspotcircle.lastSwipeAngle !== undefined) 
-        {
-    
-            console.log("TOUCHWITH LOG", startPosition, sweetspotcircle.lastSwipeAngle, this.currentSwipespeed).
-            this.particles.emit(startPosition, sweetspotcircle.lastSwipeAngle, this.currentSwipespeed);
-            
-        } 
-
-        else 
-        {
-            // Fallback in case there's no swipe angle defined
-            this.particles.emit(startPosition, 0); // Default angle, e.g., 0 degrees
+        if (sweetspotcircle.beatIndex < sweetspotcircle.beatCircles_Array.length) {
+            sweetspotcircle.beatCircles_Array[sweetspotcircle.beatIndex].isVisible = false;
         }
-
-}
-   
-    */
-
-   
+        //hide CURRENT beat circle HERE PERHAPS???
+        this.particles.emit(startPosition, sweetspotcircle.lastSwipeAngle, sweetspotcircle.lastSwipeSpeed);
+    }
 
 
     

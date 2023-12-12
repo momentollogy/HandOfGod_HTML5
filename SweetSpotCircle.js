@@ -110,7 +110,7 @@ export default class SweetSpotCircle {
 
     updateAndDrawBeatCircles() {
         let audioCurrentTime = this.level.getCurrentAudioTime(); // Get current time from Level_BasicTouch
-    
+
         for (let i = 0; i < this.beatCircles_Array.length; i++) {
             this.beatCircles_Array[i].update(audioCurrentTime, this.velocity, this.beatCirclePathDirectionAngle);
             this.beatCircles_Array[i].draw();
@@ -143,7 +143,20 @@ export default class SweetSpotCircle {
 
 
 
-
+    drawBeatCircles() {
+        let audioCurrentTime = this.level.getCurrentAudioTime();
+    
+        for (let i = 0; i < this.beatCircles_Array.length; i++) {
+            this.beatCircles_Array[i].update(audioCurrentTime, this.velocity, this.beatCirclePathDirectionAngle);
+            this.beatCircles_Array[i].draw();
+        }
+    
+        // Draw beat ranges if the flag is true
+        if (this.showBeatRanges) {
+            this.drawBeatRanges();
+        }
+    }
+    
 
     //methods to change beatRangers on the fly
     increaseBeatBufferTime(amount) {this.beatBufferTime += amount;}
@@ -188,6 +201,9 @@ export default class SweetSpotCircle {
         
     }
 
+
+    /*
+    //beatcircles always pulse but work
     updateForPlay(){        
     
         // pulse on the beats
@@ -195,10 +211,13 @@ export default class SweetSpotCircle {
             if(this.pulseOnBeats){this.pulse();}
             this.beatPassed = true;
         }
+
     
         // advance to the next beatRange
         if(this.isCurrentTimeOnBeatRangeEnd()){
             if(this.beatIndex < this.beatCircles_Array.length - 1 ){
+              //  this.beatCircles_Array[this.beatIndex].isVisible = true;
+
                 this.beatIndex++;
                 this.beatPassed = false;
                 if (!this.touched) {
@@ -216,7 +235,43 @@ export default class SweetSpotCircle {
         if(this.isCurrentTimeOnBeatRangeStart()){
             this.touchable = true;
         }
+
+        
     }
+    */
+
+    updateForPlay() {
+        // Only pulse when the current time is exactly on the beat
+        if (this.isCurrentTimeOnBeat() && !this.beatPassed) {
+            if (this.pulseOnBeats) {
+                this.pulse();
+            }
+            this.beatPassed = true; // Prevents pulsing again until the next beat
+        }
+    
+        // Reset beatPassed at the start of the next beat range
+        if (this.isCurrentTimeOnBeatRangeStart()) {
+            this.beatPassed = false;
+            this.touchable = true;
+        }
+    
+        // Additional logic for advancing to the next beatRange
+        if (this.isCurrentTimeOnBeatRangeEnd()) {
+            if (this.beatIndex < this.beatCircles_Array.length - 1) {
+                this.beatIndex++;
+                if (!this.touched) {
+                    this.beatsMissed++;
+                    document.dispatchEvent(new Event("BeatMissed"));
+                }
+                this.touched = false;
+            } else {
+                // Optional: Pulse at the end of the last beat circle
+                // Remove or comment out the line below if not needed
+                this.pulse();
+            }
+        }
+    }
+    
     
 
     // this is where touches from the level are received during play mode
@@ -239,9 +294,11 @@ export default class SweetSpotCircle {
     }
 
 
-    
+  
     draw(){
         // Save the current context state
+
+        /*
         this.ctx.save();
     
         // For thin opaque outer circle
@@ -257,7 +314,8 @@ export default class SweetSpotCircle {
     
         // Restore the context to its original state
         this.ctx.restore();
-    
+    */
+   
         // Save the context state again before drawing inner circle
         this.ctx.save();
     
@@ -274,6 +332,7 @@ export default class SweetSpotCircle {
         this.ctx.restore();
     }
     
+
 
     
 
@@ -301,6 +360,8 @@ export default class SweetSpotCircle {
         return currentTime >= this.findBeatRangeEndForCurrentBeatRange();
     }
     
+
+
     findBeatRangeEndForCurrentBeatRange() {
         // Add a check to ensure the beatIndex is within bounds
         if (this.beatIndex >= this.beatCircles_Array.length) {
@@ -320,7 +381,8 @@ export default class SweetSpotCircle {
     }
     
 
-    findBeatRangeStartForCurrentBeatRange() {
+    findBeatRangeStartForCurrentBeatRange() 
+    {
         // Check if the beatIndex is within the bounds of the array
         if (this.beatIndex >= this.beatCircles_Array.length || this.beatIndex < 0) {
             return 0; // Return 0 or an appropriate default value if out of bounds
@@ -340,6 +402,8 @@ export default class SweetSpotCircle {
         return beatRangeStart;
     }
     
+
+
 
 
 
