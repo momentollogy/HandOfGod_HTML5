@@ -123,6 +123,7 @@ export default class PlayInfoBoxVisual
   }
 
 
+
   handleDifficultySelection(difficulty) 
   {
     // Update selected difficulty
@@ -141,6 +142,24 @@ export default class PlayInfoBoxVisual
   }
 
 
+handleDifficultySelection(difficulty) {
+  this.selectedDifficulty = difficulty;
+
+  // Check if JSON path exists for the selected difficulty
+  if (this.currentLevelData && this.currentLevelData.jsonPaths && this.currentLevelData.jsonPaths[difficulty]) {
+    this.currentLevelData.jsonPath = this.currentLevelData.jsonPaths[difficulty];
+    this.canStartLevel = true;
+  } else {
+    this.canStartLevel = false;
+  }
+
+  // Update button visuals
+  this.difficultyButtons.forEach(button => {
+    button.isPressed = (button.actionData.difficulty === difficulty);
+    button.draw();
+  });
+}
+
 
 
   onKeyUp(event) {
@@ -151,16 +170,13 @@ export default class PlayInfoBoxVisual
 
 
 
-
-      updateCurrentLevel(event) 
-      {
-        if (this.songselect_box)
-        {  
-          this.currentLevelData = this.songselect_box.levelArray[this.songselect_box.currentSelectedLevelIndex];
-        }
-          this.draw();
-      }
-
+updateCurrentLevel(event) {
+  if (this.songselect_box) {  
+    this.currentLevelData = this.songselect_box.levelArray[this.songselect_box.currentSelectedLevelIndex];
+    this.handleDifficultySelection('Easy'); // Set to Easy by default
+  }
+  this.draw();
+}
 
 
       drawButton() 
@@ -300,8 +316,6 @@ export default class PlayInfoBoxVisual
 
 
 
-
-
     onPlayButtonClick(event = null) {
       let isButtonClick = false;
   
@@ -343,6 +357,8 @@ export default class PlayInfoBoxVisual
       }
   }
   
+  
+
     
 
 

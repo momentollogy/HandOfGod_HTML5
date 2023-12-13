@@ -106,19 +106,6 @@ export default class SongSelect_Box
                                 Expert: "Level_Mp3AndJson/Houdini/HoudiniExpert.json"
                                 }
                         },
-                        {
-                            fileName: "Level_BasicSwipe", 
-                            levelDisplayName: "'BlankSpace'  Taylor Swift", 
-                            fireBaseLevelLeaderBoard: "BlankSpace_LB",
-                            duration: "1:07",
-                            mp3Path:"Level_Mp3AndJson/BlankSpace/BlankSpace.mp3",
-                            jsonPaths: {
-                                Easy: "Level_Mp3AndJson//BlankSpace/BlankSpaceEasy.json",
-                                Medium: "Level_Mp3AndJson/BlankSpace/BlankSpaceMedium.json",
-                                Hard: "Level_Mp3AndJson/BlankSpace/BlankSpaceHard.json",
-                                Expert: "Level_Mp3AndJson//BlankSpace/BlankSpaceExpert.json"
-                                }
-                        },
                        
                         {   
                             fileName: "Level_BasicSwipe", 
@@ -131,6 +118,19 @@ export default class SongSelect_Box
                                 Medium: "Level_Mp3AndJson/DanceTheNight/DanceTheNightMedium.json",
                                 Hard: "Level_Mp3AndJson/DanceTheNight/DanceTheNightHard.json",
                                 Expert: "Level_Mp3AndJson/DanceTheNight/DanceTheNightExpert.json"
+                                }
+                        },
+                        {
+                            fileName: "Level_BasicSwipe", 
+                            levelDisplayName: "'BlankSpace'  Taylor Swift", 
+                            fireBaseLevelLeaderBoard: "BlankSpace_LB",
+                            duration: "1:07",
+                            mp3Path:"Level_Mp3AndJson/BlankSpace/BlankSpace.mp3",
+                            jsonPaths: {
+                                Easy: "Level_Mp3AndJson//BlankSpace/BlankSpaceEasy.json",
+                                Medium: "Level_Mp3AndJson/BlankSpace/BlankSpaceMedium.json",
+                                Hard: "Level_Mp3AndJson/BlankSpace/BlankSpaceHard.json",
+                                Expert: "Level_Mp3AndJson//BlankSpace/BlankSpaceExpert.json"
                                 }
                         },
                         {
