@@ -218,11 +218,12 @@ export default class SweetSpotCircle {
         // do this at the start of a range
         if(this.isCurrentTimeOnBeatRangeStart()){ 
             this.touchable = true;
-            console.log("make the circle touchable");
+          //  console.log("make the circle touchable");
         }
     }
     
-
+/*
+//old working touch before json push thing
     // this is where touches from the level are received during play mode
     touch(){
         let percentAccuracy = null;
@@ -231,7 +232,7 @@ export default class SweetSpotCircle {
                 let touchTimeDiff = Math.abs(this.beatCircles_Array[this.beatIndex].beatTime - this.level.getCurrentAudioTime()*1000 )
                 percentAccuracy = (100 - Math.round(touchTimeDiff/this.beatBufferTime*100));
 
-                //console.log(  this.beatCircles_Array[this.beatIndex].beatTime,    this.level.getCurrentAudioTime()*1000,     this.beatBufferTime,    percentAccuracy,     touchTimeDiff );
+                console.log(this.name, this.beatCircles_Array[this.beatIndex].beatTime);
             }
             this.touched=true;
         }
@@ -241,6 +242,33 @@ export default class SweetSpotCircle {
     pulse() {
         this.radius = this.baseRadius + 30;
     }
+*/
+
+// Revised touch method
+touch() {
+    let percentAccuracy = null;
+    if (this.touchable) {
+        if (!this.touched) {
+            let touchTimeDiff = Math.abs(this.beatCircles_Array[this.beatIndex].beatTime - this.level.getCurrentAudioTime() * 1000);
+            percentAccuracy = (100 - Math.round(touchTimeDiff / this.beatBufferTime * 100));
+
+            // Determine the hand based on the name of the circle
+            let hand = this.name.includes("Left") ? "left" : "right";
+
+            // Retrieve the beat time
+            let beatTime = this.beatCircles_Array[this.beatIndex].beatTime;
+
+            // Push the beat time and a placeholder for the direction
+            this.level.swipeData.push({ hand: hand, time: beatTime, dir: null });
+
+            console.log(this.name, beatTime);
+            this.touched = true;
+        }
+    }
+    return percentAccuracy;
+}
+
+
 
 
     

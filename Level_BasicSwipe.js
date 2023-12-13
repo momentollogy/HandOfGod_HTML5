@@ -51,7 +51,6 @@ export default class Level_BasicSwipe
         this.audioManager.loadHitSound1('sound2/hit_two.mp3');
 
         
-
         // Set the volume for the hit sounds
         this.audioManager.setVolumeForHitSound0(.03); // Set to 50% volume
         this.audioManager.setVolumeForHitSound1(.03); // Set to 50% volume
@@ -59,13 +58,15 @@ export default class Level_BasicSwipe
         //keeping track of audio ended. 
         this.audioManager.setAudioEndCallback(this.audioEnded.bind(this));
 
-        //For hit sounds to make sure they double hit/echo
-        this.lastPlayedBeatTime = null; // Add this line to track the last played beat time
+        //For hit sounds to make sure they dont double hit/echo
+       // this.lastPlayedBeatTime = null; // Add this line to track the last played beat time
+
+        this.audioOffset = -70; // Initial offset value
+
 
         //this.keyboardManager = new KeyboardManager(this);
         this.keyboardManager = new KeyboardManager(this, this.audioManager);
 
-        this.audioOffset = -70; // Initial offset value
 
 
         // Keyboard event listeners for adjusting SweetSpotCircles
@@ -81,6 +82,10 @@ export default class Level_BasicSwipe
 
         this.lastSwipeEntryPoint = null;
         this.lastSwipeAngle = null;
+
+        this.swipeData = []; // Array to hold combined data
+
+        
 
         this.showSwipeArrow = false;
         this.swipeEntryPoint = null;
@@ -175,6 +180,32 @@ export default class Level_BasicSwipe
 
 
     }
+
+
+
+
+
+
+    exportSwipeData() {
+        let leftCircleData = this.swipeData.filter(entry => entry.hand === "left").map(entry => ({ time: entry.time, dir: entry.dir }));
+        let rightCircleData = this.swipeData.filter(entry => entry.hand === "right").map(entry => ({ time: entry.time, dir: entry.dir }));
+    
+        let exportData = {
+            leftCircleData: leftCircleData,
+            rightCircleData: rightCircleData,
+            bpm: 120 // Assuming a static BPM, adjust as necessary
+        };
+    
+        // Convert to JSON string
+        let jsonStr = JSON.stringify(exportData, null, 2);
+    
+        // Code to save jsonStr to a file or handle as needed
+    }
+    
+    // Call exportSwipeData() when the audio ends
+    
+
+
     
 
     // Call this method to adjust the offset in real-time
@@ -189,7 +220,6 @@ export default class Level_BasicSwipe
 
         // Check if new audio system is being used
         if (this.audioManager) {
-         //   console.log('Using new audio system');
 
             return this.audioManager.getCurrentTime();
 
@@ -248,7 +278,6 @@ export default class Level_BasicSwipe
     
         // 'Level Select' button
         this.levelSelectButton = new BlueButton(leftButtonX, buttonY, buttonWidth, buttonHeight, buttonRadius, "#00008B", "#0000CD", "Level Select", "rgba(0, 0, 0, 0.5)", { levelName: "Level_StageSelect", leaderBoardState: "latestScores"}, actionData => {
-         //   console.log("Level select button clicked. Current buffer:", this.stats.buffer);
             document.dispatchEvent(new CustomEvent('levelChange', { detail: actionData }));
         });
     
@@ -711,6 +740,8 @@ updateForPlay() {
             totalNotes: this.totalNotes
 
         };
+
+        exportSwipeData();
     
         // Add the score and get the rank
         addScore(window.playerName, this.stats.score, this.levelArrayDataObject).then(({ id, rank }) => {
@@ -869,6 +900,21 @@ checkLineCircleTouch()
             let swipeArray = leftTouches ? this.leftSwipeArray : this.rightSwipeArray;
             let swipeAngle = this.calculateAngle(swipeArray[0].x, swipeArray[0].y, swipeArray[1].x, swipeArray[1].y);
             
+
+
+
+            // New code to log and push
+            let hand = leftTouches ? "left" : "right";
+            let direction = Math.abs(swipeAngle) <= 90 ? 90 : -90;
+
+            // Find the latest entry for the corresponding hand and update its direction
+            let latestEntry = this.swipeData.slice().reverse().find(entry => entry.hand === hand && entry.dir === null);
+            if (latestEntry) {
+                latestEntry.dir = direction;
+            }
+
+
+
             // Calculate distance for speed
             let distance = Math.sqrt(Math.pow(swipeArray[1].x - swipeArray[0].x, 2) + Math.pow(swipeArray[1].y - swipeArray[0].y, 2));
 
@@ -887,7 +933,18 @@ checkLineCircleTouch()
                 this.touchSuccessfulWithPercentage(percentAccuracyIfTouched, sweetSpotCircle);
             }
 
-            //console.log(`BOTTOM Swipe Direction: ${leftTouches ? "Left" : "Right"}, Angle: ${swipeAngle}, Speed: ${this.currentSwipeSpeed} units/second`);
+            console.log(`Swipe Direction: ${leftTouches ? "Left" : "Right"}, Angle: ${swipeAngle}`);
+
+
+            // New logging logic for record Direciton TEST only
+            if (Math.abs(swipeAngle) > 179) {
+           //     console.log("Left: -90");
+            } else {
+          //      console.log("Right: 90");
+            }
+
+            
+            
         }
         else if (!leftTouches && !rightTouches && sweetSpotCircle.swipeLogged) 
         {
@@ -896,6 +953,9 @@ checkLineCircleTouch()
             sweetSpotCircle.isSwipeActive = false; // Optionally reset the swipe activity flag
         }
     }
+
+
+    
 }
 
 
