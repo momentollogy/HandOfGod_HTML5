@@ -1,7 +1,7 @@
 // Particles.js
 class Particle {
     constructor(x, y, directionX, directionY, color, swipeSpeed) {
-        console.log("PARTICLE CLASS Creating particle:", { x, y, directionX, directionY, color, swipeSpeed });
+        //console.log("PARTICLE CLASS Creating particle:", { x, y, directionX, directionY, color, swipeSpeed });
 
         
         this.x = x;
@@ -12,8 +12,8 @@ class Particle {
         
         // Modulate the speed with the swipe speed
         let speedModifier = this.calculateSpeedModifier(swipeSpeed);
-        this.speedX = directionX * speedModifier;
-        this.speedY = directionY * speedModifier;
+        this.speedX = -directionX * speedModifier;
+        this.speedY = -directionY * speedModifier;
         this.noise = this.calculateNoise(swipeSpeed); // Dynamic noise based on speed
 
         this.color = this.adjustColorForSpeed(color, swipeSpeed);
@@ -25,7 +25,7 @@ class Particle {
         this.damping = 0.95;
         this.noise = Math.random() * 0.5 - 0.25;
 
-        console.log("Creating particle:", { x, y, directionX, directionY, color, swipeSpeed, speedModifier });
+        //console.log("Creating particle:", { x, y, directionX, directionY, color, swipeSpeed, speedModifier });
 
  }
 
@@ -145,7 +145,7 @@ emit(startPosition, swipeAngleDegrees, swipeSpeed, radius = 70) {
   //  swipeAngleDegrees = 178;
    // swipeSpeed = 500;
     
-    console.log("zzzzzzEmitting particles:", { startPosition, swipeAngleDegrees, swipeSpeed, radius });
+    //console.log("zzzzzzEmitting particles:", { startPosition, swipeAngleDegrees, swipeSpeed, radius });
 
      
     

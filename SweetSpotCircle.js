@@ -216,8 +216,9 @@ export default class SweetSpotCircle {
         }
     
         // do this at the start of a range
-        if(this.isCurrentTimeOnBeatRangeStart()){
+        if(this.isCurrentTimeOnBeatRangeStart()){ 
             this.touchable = true;
+            console.log("make the circle touchable");
         }
     }
     
@@ -230,7 +231,7 @@ export default class SweetSpotCircle {
                 let touchTimeDiff = Math.abs(this.beatCircles_Array[this.beatIndex].beatTime - this.level.getCurrentAudioTime()*1000 )
                 percentAccuracy = (100 - Math.round(touchTimeDiff/this.beatBufferTime*100));
 
-                console.log(  this.beatCircles_Array[this.beatIndex].beatTime,    this.level.getCurrentAudioTime()*1000,     this.beatBufferTime,    percentAccuracy,     touchTimeDiff );
+                //console.log(  this.beatCircles_Array[this.beatIndex].beatTime,    this.level.getCurrentAudioTime()*1000,     this.beatBufferTime,    percentAccuracy,     touchTimeDiff );
             }
             this.touched=true;
         }
@@ -296,7 +297,8 @@ export default class SweetSpotCircle {
     
     isCurrentTimeOnBeatRangeStart(){
         let currentTime = this.level.getCurrentAudioTime() * 1000;
-        return currentTime >= this.findBeatRangeStartForCurrentBeatRange();
+        if(this.findBeatRangeStartForCurrentBeatRange() > 0){   return currentTime >= this.findBeatRangeStartForCurrentBeatRange();}
+        else{return false}
     }
     
     isCurrentTimeOnBeatRangeEnd(){
