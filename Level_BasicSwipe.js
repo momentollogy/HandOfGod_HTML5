@@ -950,7 +950,7 @@ checkLineCircleTouch()
         {
             sweetSpotCircle.puffy = false;
             sweetSpotCircle.swipeLogged = false;
-            sweetSpotCircle.isSwipeActive = false; // Optionally reset the swipe activity flag
+            sweetSpotCircle.isSwipeActive = false; // Optionally reset the swipe activity flags
         }
     }
 
