@@ -397,7 +397,7 @@ export default class Level_BasicSwipe
 
             if(leftTouches && !sweetSpotCircle.puffy){
                 sweetSpotCircle.puffy=true;
-                //this.touchSuccesfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
+                ///this.touchSuccesfulWithPercentage(percentAccuracyIfTouched, sweetspotcircle);
                 console.log(this.calculateAngle(this.leftSwipeArray[0].x, this.leftSwipeArray[0].y, this.leftSwipeArray[1].x, this.leftSwipeArray[1].y))
             }
             else if(rightTouches && !sweetSpotCircle.puffy){
