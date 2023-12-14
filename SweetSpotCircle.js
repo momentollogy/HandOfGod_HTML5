@@ -260,6 +260,8 @@ touch() {
 
             // Push the beat time and a placeholder for the direction
             this.level.swipeData.push({ hand: hand, time: beatTime, dir: null });
+            console.log("New entry added to swipeData:", this.level.swipeData);
+
 
             console.log(this.name, beatTime);
             this.touched = true;
@@ -268,6 +270,9 @@ touch() {
     return percentAccuracy;
 }
 
+pulse() {
+    this.radius = this.baseRadius + 30;
+}
 
 
 

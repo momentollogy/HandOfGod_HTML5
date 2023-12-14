@@ -193,16 +193,23 @@ export default class Level_BasicSwipe
         let exportData = {
             leftCircleData: leftCircleData,
             rightCircleData: rightCircleData,
-            bpm: 120 // Assuming a static BPM, adjust as necessary
+            bpm: 120 // Adjust as necessary
         };
     
         // Convert to JSON string
         let jsonStr = JSON.stringify(exportData, null, 2);
     
-        // Code to save jsonStr to a file or handle as needed
-    }
+        // Create a Blob from the JSON string
+        let blob = new Blob([jsonStr], { type: "application/json" });
     
-    // Call exportSwipeData() when the audio ends
+        // Create a link element, use it to download the blob, and remove it
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "swipeData.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
     
 
 
@@ -634,9 +641,24 @@ drawShortcutsBox()
     beatMissed(sweetspotcircle) {
         this.stats.addMiss();
        
+    //record misses
+    // Determine the hand based on the name of the sweetspotcircle
+    let hand = sweetspotcircle.name.includes("Left") ? "left" : "right";
+
+    // Retrieve the correct beatTime for the missed beat
+    let missedBeatTime = sweetspotcircle.beatCircles_Array[sweetspotcircle.beatIndex].beatTime;
+
+    // Add an entry to swipeData for the missed beat
+    this.swipeData.push({ hand: hand, time: missedBeatTime, dir: 0 });
+
+
+
+
 
       const missedCircleIndex = event.detail.missedCircleIndex;
       const missedCircle = this.SweetSpotCircleArray[missedCircleIndex];
+
+      
 
         // Calculate the position for the miss animation, adjust if necessary
         const missPosition = {
@@ -741,7 +763,7 @@ updateForPlay() {
 
         };
 
-        exportSwipeData();
+        this.exportSwipeData();
     
         // Add the score and get the rank
         addScore(window.playerName, this.stats.score, this.levelArrayDataObject).then(({ id, rank }) => {
@@ -902,7 +924,7 @@ checkLineCircleTouch()
             
 
 
-
+/*
             // New code to log and push
             let hand = leftTouches ? "left" : "right";
             let direction = Math.abs(swipeAngle) <= 90 ? 90 : -90;
@@ -912,6 +934,26 @@ checkLineCircleTouch()
             if (latestEntry) {
                 latestEntry.dir = direction;
             }
+*/
+
+
+
+
+                        // Inside your swipe detection logic
+            let hand = leftTouches ? "left" : "right";
+            let direction = Math.abs(swipeAngle) <= 90 ? 90 : -90;
+            // Right after detecting a swipe and setting the direction
+            console.log(`Swipe detected: Hand: ${hand}, Direction: ${direction}`);
+
+            // Update the direction for the latest entry for the corresponding hand
+            let latestEntry = this.swipeData.slice().reverse().find(entry => entry.hand === hand && entry.dir === null);
+            if (latestEntry) {
+                latestEntry.dir = direction;
+            }
+                        console.log("swipeData state after update:", JSON.stringify(this.swipeData, null, 2));
+
+
+
 
 
 
